@@ -11,7 +11,7 @@ const should = chai.should();
 chai.use(chaiHttp);
 
 // Parent block
-describe('Books', () => {
+describe('Schools', () => {
     beforeEach((done) => { // Before each test, empty the database
         School.deleteMany({}, (err) => {
             done();
