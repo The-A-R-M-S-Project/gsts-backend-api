@@ -1,0 +1,17 @@
+{
+  "name": "grad-students-tracker-api",
+  "version": "1.0.0",
+  "description": "Repository for Graduate Students tracking System",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha --timeout 10000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://alvinabaho@bitbucket.org/thearmsproject/grad-students-tracker-api.git"
+  },
+  "author": "Alvin Abaho",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme"
+}
