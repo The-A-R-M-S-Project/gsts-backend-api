@@ -13,5 +13,12 @@
   },
   "author": "Alvin Abaho",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme"
+  "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "config": "^3.0.1",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.19",
+    "morgan": "^1.9.1"
+  }
 }
