@@ -45,6 +45,21 @@ describe('Books', () => {
                     done();
                 });
         });
+
+        it('Should NOT POST a school with no name', (done) => {
+            let school = {};
+            chai.request(server)
+                .post('/school')
+                .send(school)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('errors');
+                    res.body.errors.should.have.property('name');
+                    res.body.errors.name.should.have.property('kind').eql('required');
+                    done();
+                });
+        });
     });
 
 });
