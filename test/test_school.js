@@ -18,17 +18,30 @@ describe('Books', () => {
         });
     });
 
-    /*
-    * /GET route test
-    */
     describe('/GET school', () => {
-        it('it should GET all the schools', (done) => {
+        it('Should GET all the schools', (done) => {
             chai.request(server)
                 .get('/school')
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+
+    describe('/POST school', () => {
+        it('Should successfully add a school to the database', (done) => {
+            let school = {name: "School of Engineering"};
+            chai.request(server)
+                .post('/school')
+                .send(school)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').eql('School successfully added!');
+                    res.body.school.should.have.property('name');
                     done();
                 });
         });

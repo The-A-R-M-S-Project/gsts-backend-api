@@ -27,7 +27,8 @@ app.use(bodyParser.json({type: 'application/json'}));
 app.get("/", (req, res) => res.json({message: "Welcome to our the Graduate Students Tracking System!"}));
 
 app.route("/school")
-    .get(school.getSchools);
+    .get(school.getSchools)
+    .post(school.postSchools);
 
 
 app.listen(port, () => {

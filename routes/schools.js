@@ -6,11 +6,20 @@ const School = require('../models/schools');
  */
 function getSchools(req, res) {
     let query = School.find({});
-    query.exec((err, books) => {
+    query.exec((err, schools) => {
         if (err) res.send(err);
         //If no errors, send them back to the client
-        res.json(books);
+        res.json(schools);
     });
 }
 
-module.exports = {getSchools};
+
+function postSchools(req, res) {
+    let newSchool = School(req.body);
+    newSchool.save((err, school) => {
+        if (err) res.send(err);
+        else res.send({message: 'School successfully added!', school: school})
+    });
+}
+
+module.exports = {getSchools, postSchools};
