@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const SchoolSchema = new mongoose.Schema(
+const DepartmentSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},
-        departments: [
+        courses: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "department"
+                ref: "course"
             }
         ]
     },
@@ -15,4 +15,4 @@ const SchoolSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model('school', SchoolSchema);
+module.exports = mongoose.model('department', DepartmentSchema);
