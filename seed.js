@@ -2,44 +2,91 @@ const mongoose = require("mongoose");
 const School = require("./models/schools");
 const Department = require("./models/departments");
 
-const seeds = [
+const schools = [
+    {name: "School of Engineering"},
+    {name: "School of Built Environment"},
+    {name: "School of Industrial and Fine Arts"},
+];
+
+const departmentList = [
     {
-        name: "School of Engineering",
+        school: schools[0].name,
+        departs: [
+            {name: "Civil and Environmental Engineering"},
+            {name: "Electrical and Computer Engineering"},
+            {name: "Mechanical Engineering",}
+        ]
+    },
+    {
+        school: schools[1].name,
+        departs: [
+            {name: "Architecture and Physical planning"},
+            {name: "Construction Economics and Management"},
+            {name: "Geomatics and Land Management",}
+        ]
+    },
+    {
+        school: schools[2].name,
+        departs: [
+            {name: "Fine Art"},
+        ]
     },
 ];
 
-const departments = [
-    {
-        name: "Civil and Environmental Engineering",
-    },
-    {
-        name:
-            "Electrical and Computer Engineering",
-    },
-    {
-        name: "Mechanical Engineering",
+
+async function seedSchools() {
+    try {
+        for (const seed of schools) {
+            let school = await School.create(seed);
+            console.log('School created');
+        }
+    } catch (err) {
+        console.log(err);
     }
-];
+}
+
+async function seedDepartments() {
+    try {
+        for (const seed of schools) {
+            let currentSchool = seed.name;
+            let school = await School.findOne({name: currentSchool});
+            let depts;
+            for (const seed of departmentList) {
+                if (seed.school === currentSchool) {
+                    depts = seed.departs;
+                    break;
+                }
+            }
+            for (const dept of depts) {
+                let deptCreated = await Department.create(dept);
+                console.log('Department created');
+                school.departments.push(deptCreated);
+                await school.save();
+                console.log('--> Added to school!');
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function clearDB() {
+    try {
+        await School.deleteMany({});
+        console.log('Schools removed');
+        await Department.deleteMany({});
+        console.log('Departments removed');
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 // todo: Find a way of populating the db with all bits of data in one go
 async function seedDB() {
     try {
-        await School.remove({});
-        console.log('Schools removed');
-        await Department.remove({});
-        console.log('Departments removed');
-
-        for (const seed of seeds) {
-            let school = await School.create(seed);
-            console.log('School created');
-            let department = await Department.create(
-                departments[0]
-            );
-            console.log('Department created');
-            school.departments.push(department);
-            school.save();
-            console.log('Department added to school');
-        }
+        await clearDB();
+        await seedSchools();
+        await seedDepartments();
     } catch (err) {
         console.log(err);
     }
