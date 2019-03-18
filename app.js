@@ -5,6 +5,7 @@ const express = require('express'),
     morgan = require('morgan'),
     config = require('config'),
     school = require('./routes/schools'),
+    department = require('./routes/departments'),
     port = 8080;
 
 // -------------database--------------
@@ -34,6 +35,9 @@ app.route("/school/:id")
     .get(school.getSchool)
     .put(school.updateSchool)
     .delete(school.deleteSchool);
+
+app.route("/school/:id/department")
+    .get(department.getDepartments);
 
 
 app.listen(port, () => {
