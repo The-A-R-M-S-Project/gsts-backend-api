@@ -65,9 +65,9 @@ describe('Schools', () => {
     describe('/GET/:id school', () => {
         it('it should GET a school by the given id', (done) => {
             let school = new School({name: "School of Built Environment"});
-            school.save((err, book) => {
+            school.save((err, school) => {
                 chai.request(server)
-                    .get(`/school/${school.id}`)
+                    .get(`/school/${school._id}`)
                     .send(school)
                     .end((err, res) => {
                         res.should.have.status(200);

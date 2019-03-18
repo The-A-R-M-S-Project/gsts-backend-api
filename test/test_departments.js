@@ -24,7 +24,7 @@ describe('Departments', () => {
             let school = new School({name: "School of Built Environment"});
             let department = new Department({name: "Architecture and Physical planning"});
             school.save((err, savedSchool) => {
-                department.save((err, savedDept) => {
+                department.save((err, department) => {
                     School.findById(savedSchool._id, (err, foundSchool) => {
                         foundSchool.departments.push(department);
                         foundSchool.save((err, school) => {
