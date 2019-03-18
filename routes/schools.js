@@ -39,4 +39,10 @@ function updateSchool(req, res) {
     });
 }
 
-module.exports = {getSchools, postSchools, getSchool, updateSchool};
+function deleteSchool(req, res) {
+    School.deleteOne({_id: req.params.id}, (err, result) => {
+        res.json({message: "School successfully deleted!", result});
+    });
+}
+
+module.exports = {getSchools, postSchools, getSchool, updateSchool, deleteSchool};

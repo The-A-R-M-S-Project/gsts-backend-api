@@ -100,4 +100,22 @@ describe('Schools', () => {
         });
     });
 
+    describe('/DELETE/:id school', () => {
+        it('it should DELETE a school given the id', (done) => {
+            let school = new School({name: "School of Engineering"});
+            school.save((err, school) => {
+                chai.request(server)
+                    .delete(`/school/${school.id}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message').eql('School successfully deleted!');
+                        res.body.result.should.have.property('ok').eql(1);
+                        res.body.result.should.have.property('n').eql(1);
+                        done();
+                    });
+            });
+        });
+    });
+
 });
