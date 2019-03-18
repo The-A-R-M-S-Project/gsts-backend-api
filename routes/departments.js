@@ -14,9 +14,17 @@ function getDepartments(req, res) {
 }
 
 function getDepartment(req, res) {
-    Department.findById(req.params.id, (err, department) => {
+    School.findById(req.params.schoolID, (err, school) => {
         if (err) res.send(err);
-        else res.json(department);
+        else {
+            if (school.departments.indexOf(req.params.id) > -1) {
+                Department.findById(req.params.id, (err, department) => {
+                    if (err) res.send(err);
+                    else res.json(department);
+                });
+            }
+            else res.json({message: `department is not part of ${school.name}`});
+        }
     });
 }
 
