@@ -22,4 +22,11 @@ function postSchools(req, res) {
     });
 }
 
-module.exports = {getSchools, postSchools};
+function getSchool(req, res) {
+    School.findById(req.params.id, (err, school) => {
+        if (err) res.send(err);
+        else res.json(school);
+    });
+}
+
+module.exports = {getSchools, postSchools, getSchool};
