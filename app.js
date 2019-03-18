@@ -31,7 +31,8 @@ app.route("/school")
     .post(school.postSchools);
 
 app.route("/school/:id")
-    .get(school.getSchool);
+    .get(school.getSchool)
+    .put(school.updateSchool);
 
 
 app.listen(port, () => {

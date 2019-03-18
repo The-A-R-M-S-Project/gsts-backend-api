@@ -82,4 +82,22 @@ describe('Schools', () => {
         });
     });
 
+    describe('/PUT/:id school', () => {
+        it('it should UPDATE a school given the id', (done) => {
+            let school = new School({name: "School of Industrial and Fine Arts"});
+            school.save((err, school) => {
+                chai.request(server)
+                    .put(`/school/${school.id}`)
+                    .send({name: "School of Engineering"})
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message').eql('School updated!');
+                        res.body.school.should.have.property('name').eql('School of Engineering');
+                        done();
+                    });
+            });
+        });
+    });
+
 });

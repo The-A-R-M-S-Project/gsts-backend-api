@@ -29,4 +29,14 @@ function getSchool(req, res) {
     });
 }
 
-module.exports = {getSchools, postSchools, getSchool};
+function updateSchool(req, res) {
+    School.findById(req.params.id, (err, school) => {
+        if (err) res.send(err);
+        Object.assign(school, req.body).save((err, school) => {
+            if (err) res.send(err);
+            res.json({message: "School updated!", school})
+        })
+    });
+}
+
+module.exports = {getSchools, postSchools, getSchool, updateSchool};
