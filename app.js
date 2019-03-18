@@ -39,6 +39,9 @@ app.route("/school/:id")
 app.route("/school/:id/department")
     .get(department.getDepartments);
 
+app.route("/school/:schoolID/department/:id")
+    .get(department.getDepartment);
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
