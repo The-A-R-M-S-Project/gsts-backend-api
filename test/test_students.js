@@ -1,0 +1,63 @@
+process.env.NODE_ENV = 'test';
+
+const mongoose = require("mongoose");
+const Student = require('../models/students');
+const Department = require("../models/departments");
+const Course = require('../models/courses');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const server = require('../app');
+const should = chai.should();
+
+chai.use(chaiHttp);
+
+// Parent block
+describe('Students', () => {
+    beforeEach((done) => {
+        Student.deleteMany({}, (err) => {
+        });
+        Course.deleteMany({}, (err) => {
+        });
+        done();
+    });
+
+    describe('/GET students from Course', () => {
+        it.only('Should GET all the students in a particular course', (done) => {
+            let course = new Course({name: "Master of Architecture"});
+            let student = new Student({
+                    bioData: {
+                        name: "Test Student",
+                        netID: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                }
+            );
+            course.save((err, savedCourse) => {
+                student.save((err, savedStudent) => {
+                    Student.findById(savedStudent._id, (err, foundStudent) => {
+                        foundStudent.course = savedCourse;
+                        foundStudent.save((err, std) => {
+                            savedCourse.students.push(std);
+                            savedCourse.save((err, crs) => {
+                                chai.request(server)
+                                    .get(`/course/${crs._id}/student`)
+                                    .end((err, res) => {
+                                        res.should.have.status(200);
+                                        res.body.should.be.a('array');
+                                        res.body.length.should.not.be.eql(0);
+                                        res.body[0].should.have.property('_id');
+                                        res.body[0].bioData.should.have.property('name').eq('Test Student');
+                                        res.body[0].bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                                        res.body[0].bioData.should.have.property('phoneNumber').eq('12345');
+                                        res.body[0].should.have.property('course').eq(`${crs._id}`);
+                                        done();
+                                    });
+                            })
+                        })
+                    })
+                })
+            });
+        });
+    });
+
+});

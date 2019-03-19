@@ -6,6 +6,7 @@ const express = require('express'),
     config = require('config'),
     school = require('./routes/schools'),
     department = require('./routes/departments'),
+    student = require('./routes/students'),
     seed = require('./seed'),
     port = 8080;
 
@@ -44,6 +45,8 @@ app.route("/school/:id/department")
 app.route("/school/:schoolID/department/:id")
     .get(department.getDepartment);
 
+app.route("/course/:id/student")
+    .get(student.getStudentsFromDepartment);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
