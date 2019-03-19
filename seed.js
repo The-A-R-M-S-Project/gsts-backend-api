@@ -81,7 +81,6 @@ async function clearDB() {
     }
 }
 
-// todo: Find a way of populating the db with all bits of data in one go
 async function seedDB() {
     try {
         await clearDB();
