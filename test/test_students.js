@@ -21,8 +21,8 @@ describe('Students', () => {
         done();
     });
 
-    describe('/GET students from Course', () => {
-        it.only('Should GET all the students in a particular course', (done) => {
+    describe('/GET /course/:id/student', () => {
+        it('Should GET all the students in a particular course', (done) => {
             let course = new Course({name: "Master of Architecture"});
             let student = new Student({
                     bioData: {
@@ -57,6 +57,34 @@ describe('Students', () => {
                     })
                 })
             });
+        });
+    });
+
+    describe('/GET /student/:id', () => {
+        it('should GET a particular student given their ID', (done) => {
+            let student = new Student({
+                    bioData: {
+                        name: "Test Student",
+                        netID: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                }
+            );
+            // todo: Refactor this to use a async/await and eliminate occasional callback hell!
+            // todo: Might want to refactor other tests too with chai-http promises
+            student.save((err, savedStudent) => {
+                chai.request(server)
+                    .get(`/student/${student._id}/`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('_id').eq(`${student._id}`);
+                        res.body.bioData.should.have.property('name').eq('Test Student');
+                        res.body.bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                        res.body.bioData.should.have.property('phoneNumber').eq('12345');
+                        done();
+                    });
+            })
         });
     });
 

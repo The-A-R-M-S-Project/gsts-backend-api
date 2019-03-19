@@ -14,4 +14,17 @@ function getStudentsFromDepartment(req, res) {
         });
 }
 
-module.exports = {getStudentsFromDepartment};
+
+function getStudent(req, res) {
+    Student.findById(req.params.id)
+        .populate('course')
+        .exec((err, student) => {
+            if (err) res.send(err);
+            else {
+                res.json(student);
+            }
+        });
+}
+
+
+module.exports = {getStudentsFromDepartment, getStudent};
