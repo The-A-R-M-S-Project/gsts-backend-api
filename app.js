@@ -64,6 +64,9 @@ app.route("/course/:id/student")
 app.route('/lecturer')
     .get(lecturer.getLecturers);
 
+app.route('/lecturer/:id')
+    .get(lecturer.getLecturer);
+
 // Course Routes
 app.route("/department/:id/course")
     .get(course.getCourses);

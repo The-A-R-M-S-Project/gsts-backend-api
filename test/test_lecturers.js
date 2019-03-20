@@ -24,7 +24,7 @@ describe('Lecturers', () => {
     });
 
     describe('/GET /lecturer', () => {
-        it.only('Should GET all lecturers ', (done) => {
+        it('Should GET all lecturers ', (done) => {
             let lecturer = new Lecturer({
                     bioData: {
                         name: "Test Lecturer",
@@ -52,6 +52,35 @@ describe('Lecturers', () => {
             });
         });
 
+    });
+
+
+    describe('/GET /lecturer', () => {
+        it.only('Should GET a particular Lecturer given their ID', (done) => {
+            let lecturer = new Lecturer({
+                    bioData: {
+                        name: "Test Lecturer",
+                        netID: "admin@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                    isAdministrator: true
+                },
+            );
+            lecturer.save((err, lecturer) => {
+                chai.request(server)
+                    .get(`/lecturer/${lecturer._id}/`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('_id').eq(`${lecturer._id}`);
+                        res.body.bioData.should.have.property('name').eq('Test Lecturer');
+                        res.body.bioData.should.have.property('netID').eq('admin@cedat.mak.ac.ug');
+                        res.body.bioData.should.have.property('phoneNumber').eq('12345');
+                        res.body.should.have.property('students');
+                        done();
+                    });
+            })
+        });
     });
 
 });
