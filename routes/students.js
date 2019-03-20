@@ -33,4 +33,16 @@ function postStudent(req, res) {
     });
 }
 
-module.exports = {getStudentsFromDepartment, getStudent, postStudent};
+
+function updateStudent(req, res) {
+    // todo: Use async to wait for findById in order to update student info for test to pass
+    Student.findById(req.params.id, (err, student) => {
+        if (err) res.send(err);
+        Object.assign(student, req.body).save((err, student) => {
+            if (err) res.send(err);
+            res.json({message: "Student information updated!", student: student})
+        })
+    });
+}
+
+module.exports = {getStudentsFromDepartment, getStudent, postStudent, updateStudent};

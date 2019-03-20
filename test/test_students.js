@@ -113,4 +113,35 @@ describe('Students', () => {
                 });
         });
     });
+
+    describe('/PUT /student/:id', () => {
+        it('should update student information given the id', (done) => {
+            let student = new Student({
+                    bioData: {
+                        name: "Test Student",
+                        netID: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                }
+            );
+            student.save((err, student) => {
+                chai.request(server)
+                    .put(`/student/${student._id}`)
+                    .send({
+                        bioData: {
+                            name: "Test Student",
+                            netID: "test@cedat.mak.ac.ug",
+                            phoneNumber: "54321",
+                        },
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message').eql('Student information updated!');
+                        res.body.student.bioData.should.have.property('phoneNumber').eql('54321');
+                        done();
+                    });
+            });
+        });
+    });
 });
