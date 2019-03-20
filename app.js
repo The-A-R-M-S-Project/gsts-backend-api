@@ -8,6 +8,7 @@ const express = require('express'),
     department = require('./routes/departments'),
     student = require('./routes/students'),
     course = require('./routes/courses'),
+    lecturer = require('./routes/lecturers'),
     seed = require('./seed'),
     port = 8080;
 
@@ -58,6 +59,10 @@ app.route("/student/:id")
 
 app.route("/course/:id/student")
     .get(student.getStudentsFromCourse);
+
+// lecturer routes
+app.route('/lecturer')
+    .get(lecturer.getLecturers);
 
 // Course Routes
 app.route("/department/:id/course")

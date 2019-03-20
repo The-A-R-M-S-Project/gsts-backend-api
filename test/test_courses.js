@@ -47,7 +47,7 @@ describe('Courses', () => {
     });
 
     describe('/GET /course/:id ', () => {
-        it.only('it should GET a course by the given id', (done) => {
+        it('it should GET a course by the given id', (done) => {
             let course = new Course({name: "Master of Science in Civil Engineering"});
             course.save((err, course) => {
                 chai.request(server)
