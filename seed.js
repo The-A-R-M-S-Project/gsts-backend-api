@@ -1,38 +1,15 @@
 const mongoose = require("mongoose");
 const School = require("./models/schools");
 const Department = require("./models/departments");
+const Course = require('./models/courses');
+const Student = require('./models/students');
+const Lecturer = require('./models/lecturers');
+const data = require('./seederData');
 
-const schools = [
-    {name: "School of Engineering"},
-    {name: "School of Built Environment"},
-    {name: "School of Industrial and Fine Arts"},
-];
-
-const departmentList = [
-    {
-        school: schools[0].name,
-        departs: [
-            {name: "Civil and Environmental Engineering"},
-            {name: "Electrical and Computer Engineering"},
-            {name: "Mechanical Engineering",}
-        ]
-    },
-    {
-        school: schools[1].name,
-        departs: [
-            {name: "Architecture and Physical planning"},
-            {name: "Construction Economics and Management"},
-            {name: "Geomatics and Land Management",}
-        ]
-    },
-    {
-        school: schools[2].name,
-        departs: [
-            {name: "Fine Art"},
-        ]
-    },
-];
-
+let schools = data.schools;
+let departmentList = data.departments;
+let studentList = data.students;
+let courseList = data.courses;
 
 async function seedSchools() {
     try {
@@ -70,12 +47,48 @@ async function seedDepartments() {
     }
 }
 
+async function seedCourses() {
+    try {
+        for (const department of courseList) {
+            let currentDepartment = await Department.findOne({name: department.depart});
+            for (const course of department.courses) {
+                let newCourse = await Course.create(course);
+                currentDepartment.courses.push(newCourse);
+                currentDepartment.save();
+                console.log('--> Added Course to Department');
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function seedStudents() {
+    try {
+        let counter = 0;
+        for (const course of courseList) {
+            let currentCourse = await Course.findOne({name: course.courses[0].name});
+            let newStudent = await Student.create(studentList[counter]);
+            newStudent.course = currentCourse;
+            await newStudent.save();
+            currentCourse.students.push(newStudent);
+            await currentCourse.save();
+            console.log('--> Added Student to Course');
+            counter++;
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 async function clearDB() {
     try {
         await School.deleteMany({});
-        console.log('Schools removed');
         await Department.deleteMany({});
-        console.log('Departments removed');
+        await Lecturer.deleteMany({});
+        await Course.deleteMany({});
+        await Student.deleteMany({});
+        console.log('Entire Database Cleaned!');
     } catch (err) {
         console.log(err);
     }
@@ -86,6 +99,8 @@ async function seedDB() {
         await clearDB();
         await seedSchools();
         await seedDepartments();
+        await seedCourses();
+        await seedStudents();
     } catch (err) {
         console.log(err);
     }

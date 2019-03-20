@@ -54,9 +54,8 @@ describe('Lecturers', () => {
 
     });
 
-
     describe('/GET /lecturer', () => {
-        it.only('Should GET a particular Lecturer given their ID', (done) => {
+        it('Should GET a particular Lecturer given their ID', (done) => {
             let lecturer = new Lecturer({
                     bioData: {
                         name: "Test Lecturer",
