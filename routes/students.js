@@ -14,7 +14,6 @@ function getStudentsFromDepartment(req, res) {
         });
 }
 
-
 function getStudent(req, res) {
     Student.findById(req.params.id)
         .populate('course')
@@ -26,5 +25,12 @@ function getStudent(req, res) {
         });
 }
 
+function postStudent(req, res) {
+    let newStudent = Student(req.body);
+    newStudent.save((err, student) => {
+        if (err) res.send(err);
+        else res.json({message: 'Student successfully added!', student: student})
+    });
+}
 
-module.exports = {getStudentsFromDepartment, getStudent};
+module.exports = {getStudentsFromDepartment, getStudent, postStudent};

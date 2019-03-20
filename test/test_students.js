@@ -88,4 +88,29 @@ describe('Students', () => {
         });
     });
 
+    describe('/POST /student/', () => {
+        it('should successfully add a student to the database', (done) => {
+            let student = new Student({
+                    bioData: {
+                        name: "Test Student",
+                        netID: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                }
+            );
+            chai.request(server)
+                .post(`/student`)
+                .send(student)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').eql('Student successfully added!');
+                    res.body.student.should.have.property('_id');
+                    res.body.student.bioData.should.have.property('name').eq('Test Student');
+                    res.body.student.bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                    res.body.student.bioData.should.have.property('phoneNumber').eq('12345');
+                    done();
+                });
+        });
+    });
 });
