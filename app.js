@@ -7,6 +7,7 @@ const express = require('express'),
     school = require('./routes/schools'),
     department = require('./routes/departments'),
     student = require('./routes/students'),
+    course = require('./routes/courses'),
     seed = require('./seed'),
     port = 8080;
 
@@ -30,6 +31,7 @@ app.use(bodyParser.json({type: 'application/json'}));
 // ---------------ROUTES ---------------------
 app.get("/", (req, res) => res.json({message: "Welcome to our the Graduate Students Tracking System!"}));
 
+// School Routes
 app.route("/school")
     .get(school.getSchools)
     .post(school.postSchools);
@@ -39,12 +41,14 @@ app.route("/school/:id")
     .put(school.updateSchool)
     .delete(school.deleteSchool);
 
+// Department Routes
 app.route("/school/:id/department")
     .get(department.getDepartments);
 
 app.route("/school/:schoolID/department/:id")
     .get(department.getDepartment);
 
+// Student Routes
 app.route("/student")
     .post(student.postStudent);
 
@@ -53,7 +57,14 @@ app.route("/student/:id")
     .put(student.updateStudent);
 
 app.route("/course/:id/student")
-    .get(student.getStudentsFromDepartment);
+    .get(student.getStudentsFromCourse);
+
+// Course Routes
+app.route("/department/:id/course")
+    .get(course.getCourses);
+
+app.route("/course/:id")
+    .get(course.getCourse);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

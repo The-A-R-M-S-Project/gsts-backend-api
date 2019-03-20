@@ -3,7 +3,7 @@ const Department = require('../models/departments');
 const Course = require("../models/courses");
 const Student = require('../models/students');
 
-function getStudentsFromDepartment(req, res) {
+function getStudentsFromCourse(req, res) {
     Course.findOne({_id: req.params.id})
         .populate('students')
         .exec((err, department) => {
@@ -45,4 +45,4 @@ function updateStudent(req, res) {
     });
 }
 
-module.exports = {getStudentsFromDepartment, getStudent, postStudent, updateStudent};
+module.exports = {getStudentsFromCourse, getStudent, postStudent, updateStudent};
