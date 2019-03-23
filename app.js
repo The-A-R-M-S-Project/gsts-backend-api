@@ -43,8 +43,11 @@ app.route("/school/:id")
     .delete(school.deleteSchool);
 
 // Department Routes
+app.route('/department')
+    .get(department.getAllDepartments);
+
 app.route("/school/:id/department")
-    .get(department.getDepartments);
+    .get(department.getDepartmentsFromSchool);
 
 app.route("/department/:id")
     .get(department.getDepartment);

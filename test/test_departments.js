@@ -19,6 +19,19 @@ describe('Departments', () => {
         done();
     });
 
+    describe('/GET /department/', () => {
+        it('should GET all departments regardless of school', (done) => {
+            chai.request(server)
+                .get('/department')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    res.body.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+
     describe('/GET school/:id/department ', () => {
         it('Should GET all departments for a given school id', (done) => {
             let school = new School({name: "School of Built Environment"});
