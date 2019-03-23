@@ -19,7 +19,7 @@ describe('Departments', () => {
         done();
     });
 
-    describe('/GET/:id/department ', () => {
+    describe('/GET school/:id/department ', () => {
         it('Should GET all departments for a given school id', (done) => {
             let school = new School({name: "School of Built Environment"});
             let department = new Department({name: "Architecture and Physical planning"});
@@ -46,28 +46,20 @@ describe('Departments', () => {
         });
     });
 
-    describe('/GET/:schoolID/department/:id ', () => {
+    describe('/GET /department/:id ', () => {
         it('it should GET a department by the given id', (done) => {
-            let school = new School({name: "School of Engineering"});
             let department = new Department({name: "Electrical and Computer Engineering"});
-            school.save((err, savedSchool) => {
-                department.save((err, department) => {
-                    School.findById(savedSchool._id, (err, foundSchool) => {
-                        foundSchool.departments.push(department);
-                        foundSchool.save((err, school) => {
-                            chai.request(server)
-                                .get(`/school/${school._id}/department/${department.id}`)
-                                .end((err, res) => {
-                                    res.should.have.status(200);
-                                    res.body.should.be.a('object');
-                                    res.body.should.have.property('name').eq('Electrical and Computer Engineering');
-                                    res.body.should.have.property('courses');
-                                    res.body.should.have.property('_id').eql(department.id);
-                                    done();
-                                });
-                        });
-                    })
-                });
+            department.save((err, department) => {
+                chai.request(server)
+                    .get(`/department/${department.id}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('name').eq('Electrical and Computer Engineering');
+                        res.body.should.have.property('courses');
+                        res.body.should.have.property('_id').eql(department.id);
+                        done();
+                    });
             });
         });
     });

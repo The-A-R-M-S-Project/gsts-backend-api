@@ -46,7 +46,7 @@ app.route("/school/:id")
 app.route("/school/:id/department")
     .get(department.getDepartments);
 
-app.route("/school/:schoolID/department/:id")
+app.route("/department/:id")
     .get(department.getDepartment);
 
 // Student Routes
