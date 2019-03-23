@@ -20,6 +20,13 @@ describe('Students', () => {
         });
         done();
     });
+    afterEach((done) => {
+        Student.deleteMany({}, (err) => {
+        });
+        Course.deleteMany({}, (err) => {
+        });
+        done();
+    });
 
     describe('/GET /course/:id/student', () => {
         it('Should GET all the students in a particular course', (done) => {

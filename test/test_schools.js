@@ -17,6 +17,11 @@ describe('Schools', () => {
             done();
         });
     });
+    afterEach((done) => { // Before each test, empty the database
+        School.deleteMany({}, (err) => {
+            done();
+        });
+    });
 
     describe('/GET school', () => {
         it('Should GET all the schools', (done) => {

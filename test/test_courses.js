@@ -18,6 +18,13 @@ describe('Courses', () => {
         });
         done();
     });
+    afterEach((done) => {
+        Department.deleteMany({}, (err) => {
+        });
+        Course.deleteMany({}, (err) => {
+        });
+        done();
+    });
 
     describe('/GET /department/:id/course ', () => {
         it('Should GET all courses for a given department id', (done) => {

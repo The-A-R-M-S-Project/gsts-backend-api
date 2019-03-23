@@ -23,6 +23,16 @@ describe('Lecturers', () => {
         done();
     });
 
+    afterEach((done) => {
+        Lecturer.deleteMany({}, (err) => {
+        });
+        Department.deleteMany({}, (err) => {
+        });
+        Student.deleteMany({}, (err) => {
+        });
+        done();
+    });
+
     describe('/GET /lecturer', () => {
         it('Should GET all lecturers ', (done) => {
             let lecturer = new Lecturer({

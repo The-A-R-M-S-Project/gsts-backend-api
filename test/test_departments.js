@@ -18,6 +18,13 @@ describe('Departments', () => {
         });
         done();
     });
+    afterEach((done) => {
+        School.deleteMany({}, (err) => {
+        });
+        Department.deleteMany({}, (err) => {
+        });
+        done();
+    });
 
     describe('/GET /department/', () => {
         it('should GET all departments regardless of school', (done) => {
