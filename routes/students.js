@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Department = require('../models/departments');
-const Course = require("../models/courses");
+const Program = require("../models/programs");
 const Student = require('../models/students');
 
-function getStudentsFromCourse(req, res) {
-    Course.findOne({_id: req.params.id})
+function getStudentsFromProgram(req, res) {
+    Program.findOne({_id: req.params.id})
         .populate('students')
         .exec((err, department) => {
             if (err) res.send(err);
@@ -16,7 +16,7 @@ function getStudentsFromCourse(req, res) {
 
 function getStudent(req, res) {
     Student.findById(req.params.id)
-        .populate('course')
+        .populate('program')
         .exec((err, student) => {
             if (err) res.send(err);
             else {
@@ -45,4 +45,4 @@ function updateStudent(req, res) {
     });
 }
 
-module.exports = {getStudentsFromCourse, getStudent, postStudent, updateStudent};
+module.exports = {getStudentsFromProgram, getStudent, postStudent, updateStudent};

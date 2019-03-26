@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const mongoose = require("mongoose");
 const Department = require('../models/departments');
-const Course = require('../models/courses');
+const Program = require('../models/programs');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../app');
@@ -10,33 +10,33 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
-describe('Courses', () => {
+describe('Programs', () => {
     beforeEach((done) => {
         Department.deleteMany({}, (err) => {
         });
-        Course.deleteMany({}, (err) => {
+        Program.deleteMany({}, (err) => {
         });
         done();
     });
     afterEach((done) => {
         Department.deleteMany({}, (err) => {
         });
-        Course.deleteMany({}, (err) => {
+        Program.deleteMany({}, (err) => {
         });
         done();
     });
 
-    describe('/GET /department/:id/course ', () => {
-        it('Should GET all courses for a given department id', (done) => {
+    describe('/GET /department/:id/program ', () => {
+        it('Should GET all programs for a given department id', (done) => {
             let department = new Department({name: "Architecture and Physical planning"});
-            let course = new Course({name: "Master of Architecture"});
+            let program = new Program({name: "Master of Architecture"});
             department.save((err, department) => {
-                course.save((err, course) => {
+                program.save((err, program) => {
                     Department.findById(department._id, (err, foundDept) => {
-                        foundDept.courses.push(course);
+                        foundDept.programs.push(program);
                         foundDept.save((err, dept) => {
                             chai.request(server)
-                                .get(`/department/${dept._id}/course`)
+                                .get(`/department/${dept._id}/program`)
                                 .end((err, res) => {
                                     res.should.have.status(200);
                                     res.body.should.be.a('array');
@@ -53,18 +53,18 @@ describe('Courses', () => {
         });
     });
 
-    describe('/GET /course/:id ', () => {
-        it('it should GET a course by the given id', (done) => {
-            let course = new Course({name: "Master of Science in Civil Engineering"});
-            course.save((err, course) => {
+    describe('/GET /program/:id ', () => {
+        it('it should GET a program by the given id', (done) => {
+            let program = new Program({name: "Master of Science in Civil Engineering"});
+            program.save((err, program) => {
                 chai.request(server)
-                    .get(`/course/${course.id}`)
+                    .get(`/program/${program.id}`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
                         res.body.should.have.property('name').eq('Master of Science in Civil Engineering');
                         res.body.should.have.property('students');
-                        res.body.should.have.property('_id').eql(course.id);
+                        res.body.should.have.property('_id').eql(program.id);
                         done();
                     });
             });

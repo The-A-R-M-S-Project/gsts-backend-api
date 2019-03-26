@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'test';
 const mongoose = require("mongoose");
 const Student = require('../models/students');
 const Department = require("../models/departments");
-const Course = require('../models/courses');
+const Program = require('../models/programs');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../app');
@@ -16,21 +16,21 @@ describe('Students', () => {
     beforeEach((done) => {
         Student.deleteMany({}, (err) => {
         });
-        Course.deleteMany({}, (err) => {
+        Program.deleteMany({}, (err) => {
         });
         done();
     });
     afterEach((done) => {
         Student.deleteMany({}, (err) => {
         });
-        Course.deleteMany({}, (err) => {
+        Program.deleteMany({}, (err) => {
         });
         done();
     });
 
-    describe('/GET /course/:id/student', () => {
-        it('Should GET all the students in a particular course', (done) => {
-            let course = new Course({name: "Master of Architecture"});
+    describe('/GET /program/:id/student', () => {
+        it('Should GET all the students in a particular program', (done) => {
+            let program = new Program({name: "Master of Architecture"});
             let student = new Student({
                     bioData: {
                         name: "Test Student",
@@ -39,15 +39,15 @@ describe('Students', () => {
                     },
                 }
             );
-            course.save((err, savedCourse) => {
+            program.save((err, savedProgram) => {
                 student.save((err, savedStudent) => {
                     Student.findById(savedStudent._id, (err, foundStudent) => {
-                        foundStudent.course = savedCourse;
+                        foundStudent.program = savedProgram;
                         foundStudent.save((err, std) => {
-                            savedCourse.students.push(std);
-                            savedCourse.save((err, crs) => {
+                            savedProgram.students.push(std);
+                            savedProgram.save((err, crs) => {
                                 chai.request(server)
-                                    .get(`/course/${crs._id}/student`)
+                                    .get(`/program/${crs._id}/student`)
                                     .end((err, res) => {
                                         res.should.have.status(200);
                                         res.body.should.be.a('array');
@@ -56,7 +56,7 @@ describe('Students', () => {
                                         res.body[0].bioData.should.have.property('name').eq('Test Student');
                                         res.body[0].bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
                                         res.body[0].bioData.should.have.property('phoneNumber').eq('12345');
-                                        res.body[0].should.have.property('course').eq(`${crs._id}`);
+                                        res.body[0].should.have.property('program').eq(`${crs._id}`);
                                         done();
                                     });
                             })

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const CourseSchema = new mongoose.Schema(
+const ProgramSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},
         students: [
@@ -15,4 +15,4 @@ const CourseSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model('course', CourseSchema);
+module.exports = mongoose.model('program', ProgramSchema);

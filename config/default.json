@@ -1,3 +1,4 @@
 {
-  "DBHost" : "mongodb+srv://alvin:vagknTm57dKr@gstscluster-hf6oy.mongodb.net/gsts?retryWrites=true"
+  "DBHost" : "mongodb+srv://alvin:vagknTm57dKr@gstscluster-hf6oy.mongodb.net/gsts?retryWrites=true",
+  "localDBHost" : "mongodb://localhost:27017/gsts"
 }

@@ -7,13 +7,13 @@ const express = require('express'),
     school = require('./routes/schools'),
     department = require('./routes/departments'),
     student = require('./routes/students'),
-    course = require('./routes/courses'),
+    program = require('./routes/programs'),
     lecturer = require('./routes/lecturers'),
     seed = require('./seed'),
     port = 8080;
 
 // -------------database--------------
-mongoose.connect(config.DBHost, {useNewUrlParser: true});
+mongoose.connect(config.localDBHost, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -59,8 +59,8 @@ app.route("/student/:id")
     .get(student.getStudent)
     .put(student.updateStudent);
 
-app.route("/course/:id/student")
-    .get(student.getStudentsFromCourse);
+app.route("/program/:id/student")
+    .get(student.getStudentsFromProgram);
 
 // lecturer routes
 app.route('/lecturer')
@@ -69,12 +69,12 @@ app.route('/lecturer')
 app.route('/lecturer/:id')
     .get(lecturer.getLecturer);
 
-// Course Routes
-app.route("/department/:id/course")
-    .get(course.getCourses);
+// Program Routes
+app.route("/department/:id/program")
+    .get(program.getPrograms);
 
-app.route("/course/:id")
-    .get(course.getCourse);
+app.route("/program/:id")
+    .get(program.getProgram);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

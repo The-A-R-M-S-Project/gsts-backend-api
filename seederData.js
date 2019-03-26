@@ -29,46 +29,46 @@ const departments = [
     },
 ];
 
-const courses = [
+const programs = [
     {
         depart: departments[0].departs[0].name,
-        courses: [
+        programs: [
             {name: "Master of Science in Civil Engineering"},
         ]
     },
     {
         depart: departments[0].departs[1].name,
-        courses: [
+        programs: [
             {name: "Master of Science in Telecommunication Engineering"},
         ]
     },
     {
         depart: departments[0].departs[2].name,
-        courses: [
+        programs: [
             {name: "Master of Science in Technology Innovation and Industrial Development"},
         ]
     },
     {
         depart: departments[1].departs[0].name,
-        courses: [
+        programs: [
             {name: "Master of Architecture"},
         ]
     },
     {
         depart: departments[1].departs[1].name,
-        courses: [
+        programs: [
             {name: "Master of Science in Construction Management"},
         ]
     },
     {
         depart: departments[1].departs[2].name,
-        courses: [
+        programs: [
             {name: "Master of Science in Geo-Information Science and Technology"},
         ]
     },
     {
         depart: departments[2].departs[0].name,
-        courses: [
+        programs: [
             {name: "Master of Arts in Fine Art"},
         ]
     },
@@ -101,4 +101,4 @@ const students = [
     },
 ];
 
-module.exports = {schools, departments, courses, students};
+module.exports = {schools, departments, programs, students};

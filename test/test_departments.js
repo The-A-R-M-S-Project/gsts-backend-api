@@ -56,7 +56,7 @@ describe('Departments', () => {
                                     res.body.length.should.not.be.eql(0);
                                     res.body[0].should.have.property('_id');
                                     res.body[0].should.have.property('name').eq('Architecture and Physical planning');
-                                    res.body[0].should.have.property('courses');
+                                    res.body[0].should.have.property('programs');
                                     done();
                                 });
                         });
@@ -76,7 +76,7 @@ describe('Departments', () => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
                         res.body.should.have.property('name').eq('Electrical and Computer Engineering');
-                        res.body.should.have.property('courses');
+                        res.body.should.have.property('programs');
                         res.body.should.have.property('_id').eql(department.id);
                         done();
                     });

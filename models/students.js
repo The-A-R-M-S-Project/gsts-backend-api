@@ -7,7 +7,7 @@ const StudentSchema = new mongoose.Schema(
             netID: {type: String, required: true},
             phoneNumber: {type: String, required: true},
         },
-        course: {type: mongoose.Schema.Types.ObjectId, ref: "course"},
+        program: {type: mongoose.Schema.Types.ObjectId, ref: "program"},
         yearOfStudy: Number,
         isRegistered: Boolean,
         plan: String,
