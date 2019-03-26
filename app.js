@@ -10,13 +10,10 @@ const express = require('express'),
     program = require('./routes/programs'),
     lecturer = require('./routes/lecturers'),
     seed = require('./seed');
-let port = process.env.PORT;
+let port = process.env.PORT || 8080;
 
 // -------------database--------------
-let uri = process.env.DATABASEURL;
-if (uri == null || uri === "") {
-    uri = config.DBHost;
-}
+let uri = process.env.DATABASEURL || config.DBHost;
 
 mongoose.connect(uri, {useNewUrlParser: true});
 const db = mongoose.connection;
@@ -80,10 +77,6 @@ app.route("/api/department/:id/program")
 
 app.route("/api/program/:id")
     .get(program.getProgram);
-
-if (port == null || port === "") {
-    port = 8080;
-}
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
