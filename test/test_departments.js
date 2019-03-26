@@ -26,10 +26,10 @@ describe('Departments', () => {
         done();
     });
 
-    describe('/GET /department/', () => {
+    describe('/GET /api/department/', () => {
         it('should GET all departments regardless of school', (done) => {
             chai.request(server)
-                .get('/department')
+                .get('/api/department')
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('array');
@@ -39,7 +39,7 @@ describe('Departments', () => {
         });
     });
 
-    describe('/GET school/:id/department ', () => {
+    describe('/GET /api/school/:id/department ', () => {
         it('Should GET all departments for a given school id', (done) => {
             let school = new School({name: "School of Built Environment"});
             let department = new Department({name: "Architecture and Physical planning"});
@@ -49,7 +49,7 @@ describe('Departments', () => {
                         foundSchool.departments.push(department);
                         foundSchool.save((err, school) => {
                             chai.request(server)
-                                .get(`/school/${school._id}/department`)
+                                .get(`/api/school/${school._id}/department`)
                                 .end((err, res) => {
                                     res.should.have.status(200);
                                     res.body.should.be.a('array');
@@ -66,12 +66,12 @@ describe('Departments', () => {
         });
     });
 
-    describe('/GET /department/:id ', () => {
+    describe('/GET /api/department/:id ', () => {
         it('it should GET a department by the given id', (done) => {
             let department = new Department({name: "Electrical and Computer Engineering"});
             department.save((err, department) => {
                 chai.request(server)
-                    .get(`/department/${department.id}`)
+                    .get(`/api/department/${department.id}`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');

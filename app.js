@@ -13,7 +13,7 @@ const express = require('express'),
     port = 8080;
 
 // -------------database--------------
-mongoose.connect(config.localDBHost, {useNewUrlParser: true});
+mongoose.connect(config.DBHost, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -29,51 +29,51 @@ app.use(bodyParser.text());
 app.use(bodyParser.json({type: 'application/json'}));
 
 // ---------------ROUTES ---------------------
-app.get("/", (req, res) => res.json({message: "Welcome to our the Graduate Students Tracking System!"}));
+app.get("/", (req, res) => res.json({message: "Welcome to the Graduate Students Tracking System!"}));
 
 // School Routes
-app.route("/school")
+app.route("/api/school")
     .get(school.getSchools)
     .post(school.postSchools);
 
-app.route("/school/:id")
+app.route("/api/school/:id")
     .get(school.getSchool)
     .put(school.updateSchool)
     .delete(school.deleteSchool);
 
 // Department Routes
-app.route('/department')
+app.route("/api/department")
     .get(department.getAllDepartments);
 
-app.route("/school/:id/department")
+app.route("/api/school/:id/department")
     .get(department.getDepartmentsFromSchool);
 
-app.route("/department/:id")
+app.route("/api/department/:id")
     .get(department.getDepartment);
 
 // Student Routes
-app.route("/student")
+app.route("/api/student")
     .post(student.postStudent);
 
-app.route("/student/:id")
+app.route("/api/student/:id")
     .get(student.getStudent)
     .put(student.updateStudent);
 
-app.route("/program/:id/student")
+app.route("/api/program/:id/student")
     .get(student.getStudentsFromProgram);
 
 // lecturer routes
-app.route('/lecturer')
+app.route("/api/lecturer")
     .get(lecturer.getLecturers);
 
-app.route('/lecturer/:id')
+app.route("/api/lecturer/:id")
     .get(lecturer.getLecturer);
 
 // Program Routes
-app.route("/department/:id/program")
+app.route("/api/department/:id/program")
     .get(program.getPrograms);
 
-app.route("/program/:id")
+app.route("/api/program/:id")
     .get(program.getProgram);
 
 app.listen(port, () => {

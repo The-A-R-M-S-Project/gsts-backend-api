@@ -28,7 +28,7 @@ describe('Students', () => {
         done();
     });
 
-    describe('/GET /program/:id/student', () => {
+    describe('/GET /api/program/:id/student', () => {
         it('Should GET all the students in a particular program', (done) => {
             let program = new Program({name: "Master of Architecture"});
             let student = new Student({
@@ -47,7 +47,7 @@ describe('Students', () => {
                             savedProgram.students.push(std);
                             savedProgram.save((err, crs) => {
                                 chai.request(server)
-                                    .get(`/program/${crs._id}/student`)
+                                    .get(`/api/program/${crs._id}/student`)
                                     .end((err, res) => {
                                         res.should.have.status(200);
                                         res.body.should.be.a('array');
@@ -67,7 +67,7 @@ describe('Students', () => {
         });
     });
 
-    describe('/GET /student/:id', () => {
+    describe('/GET /api/student/:id', () => {
         it('should GET a particular student given their ID', (done) => {
             let student = new Student({
                     bioData: {
@@ -81,7 +81,7 @@ describe('Students', () => {
             // todo: Might want to refactor other tests too with chai-http promises
             student.save((err, savedStudent) => {
                 chai.request(server)
-                    .get(`/student/${student._id}/`)
+                    .get(`/api/student/${student._id}/`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
@@ -95,7 +95,7 @@ describe('Students', () => {
         });
     });
 
-    describe('/POST /student/', () => {
+    describe('/POST /api/student/', () => {
         it('should successfully add a student to the database', (done) => {
             let student = new Student({
                     bioData: {
@@ -106,7 +106,7 @@ describe('Students', () => {
                 }
             );
             chai.request(server)
-                .post(`/student`)
+                .post(`/api/student`)
                 .send(student)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -121,7 +121,7 @@ describe('Students', () => {
         });
     });
 
-    describe('/PUT /student/:id', () => {
+    describe('/PUT /api/student/:id', () => {
         it('should update student information given the id', (done) => {
             let student = new Student({
                     bioData: {
@@ -133,7 +133,7 @@ describe('Students', () => {
             );
             student.save((err, student) => {
                 chai.request(server)
-                    .put(`/student/${student._id}`)
+                    .put(`/api/student/${student._id}`)
                     .send({
                         bioData: {
                             name: "Test Student",

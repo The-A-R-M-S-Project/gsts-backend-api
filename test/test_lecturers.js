@@ -33,7 +33,7 @@ describe('Lecturers', () => {
         done();
     });
 
-    describe('/GET /lecturer', () => {
+    describe('/GET /api/lecturer', () => {
         it('Should GET all lecturers ', (done) => {
             let lecturer = new Lecturer({
                     bioData: {
@@ -47,7 +47,7 @@ describe('Lecturers', () => {
             lecturer.save((err, lecturer) => {
                 Lecturer.find((err, lect) => {
                     chai.request(server)
-                        .get(`/lecturer`)
+                        .get(`/api/lecturer`)
                         .end((err, res) => {
                             res.should.have.status(200);
                             res.body.should.be.a('array');
@@ -64,7 +64,7 @@ describe('Lecturers', () => {
 
     });
 
-    describe('/GET /lecturer', () => {
+    describe('/GET /api/lecturer', () => {
         it('Should GET a particular Lecturer given their ID', (done) => {
             let lecturer = new Lecturer({
                     bioData: {
@@ -77,7 +77,7 @@ describe('Lecturers', () => {
             );
             lecturer.save((err, lecturer) => {
                 chai.request(server)
-                    .get(`/lecturer/${lecturer._id}/`)
+                    .get(`/api/lecturer/${lecturer._id}/`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');

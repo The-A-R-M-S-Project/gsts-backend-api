@@ -23,10 +23,10 @@ describe('Schools', () => {
         });
     });
 
-    describe('/GET school', () => {
+    describe('/GET /api/school', () => {
         it('Should GET all the schools', (done) => {
             chai.request(server)
-                .get('/school')
+                .get('/api/school')
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('array');
@@ -36,11 +36,11 @@ describe('Schools', () => {
         });
     });
 
-    describe('/POST school', () => {
+    describe('/POST /api/school', () => {
         it('Should successfully add a school to the database', (done) => {
             let school = {name: "School of Engineering"};
             chai.request(server)
-                .post('/school')
+                .post('/api/school')
                 .send(school)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -54,7 +54,7 @@ describe('Schools', () => {
         it('Should NOT POST a school with no name', (done) => {
             let school = {};
             chai.request(server)
-                .post('/school')
+                .post('/api/school')
                 .send(school)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -67,12 +67,12 @@ describe('Schools', () => {
         });
     });
 
-    describe('/GET/:id school', () => {
+    describe('/GET /api/school/:id', () => {
         it('it should GET a school by the given id', (done) => {
             let school = new School({name: "School of Built Environment"});
             school.save((err, school) => {
                 chai.request(server)
-                    .get(`/school/${school._id}`)
+                    .get(`/api/school/${school._id}`)
                     .send(school)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -87,12 +87,12 @@ describe('Schools', () => {
         });
     });
 
-    describe('/PUT/:id school', () => {
+    describe('/PUT /api/school/:id', () => {
         it('it should UPDATE a school given the id', (done) => {
             let school = new School({name: "School of Industrial and Fine Arts"});
             school.save((err, school) => {
                 chai.request(server)
-                    .put(`/school/${school.id}`)
+                    .put(`/api/school/${school.id}`)
                     .send({name: "School of Engineering"})
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -105,12 +105,12 @@ describe('Schools', () => {
         });
     });
 
-    describe('/DELETE/:id school', () => {
+    describe('/DELETE /api/school/:id', () => {
         it('it should DELETE a school given the id', (done) => {
             let school = new School({name: "School of Engineering"});
             school.save((err, school) => {
                 chai.request(server)
-                    .delete(`/school/${school.id}`)
+                    .delete(`/api/school/${school.id}`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
