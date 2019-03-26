@@ -9,8 +9,8 @@ const express = require('express'),
     student = require('./routes/students'),
     program = require('./routes/programs'),
     lecturer = require('./routes/lecturers'),
-    seed = require('./seed'),
-    port = 8080;
+    seed = require('./seed');
+let port = process.env.PORT;
 
 // -------------database--------------
 mongoose.connect(config.DBHost, {useNewUrlParser: true});
@@ -75,6 +75,10 @@ app.route("/api/department/:id/program")
 
 app.route("/api/program/:id")
     .get(program.getProgram);
+
+if (port == null || port === "") {
+    port = 8080;
+}
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
