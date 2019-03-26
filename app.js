@@ -16,7 +16,6 @@ const express = require('express'),
 mongoose.connect(config.DBHost, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-// seed();
 
 // -------------logs------------------
 if (config.util.getEnv('NODE_ENV') !== 'test') {
