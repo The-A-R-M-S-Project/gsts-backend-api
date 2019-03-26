@@ -13,7 +13,12 @@ const express = require('express'),
 let port = process.env.PORT;
 
 // -------------database--------------
-mongoose.connect(config.DBHost, {useNewUrlParser: true});
+let uri = process.env.DATABASEURL;
+if (uri == null || uri === "") {
+    uri = config.DBHost;
+}
+
+mongoose.connect(uri, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
