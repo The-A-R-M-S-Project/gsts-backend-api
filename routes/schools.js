@@ -6,7 +6,7 @@ const School = require('../models/schools');
  */
 function getSchools(req, res) {
     let query = School.find({});
-    query.populate({ path: 'departments', select: 'name _id' }).sort({ name: 1 }).exec((err, schools) => {
+    query.populate({path: 'departments', select: 'name -_id'}).sort({name: 1}).exec((err, schools) => {
         if (err) res.send(err);
         //If no errors, send them back to the client
         res.json(schools);
@@ -23,7 +23,8 @@ function postSchools(req, res) {
 }
 
 function getSchool(req, res) {
-    School.findById(req.params.id, (err, school) => {
+    let query = School.findById(req.params.id);
+    query.populate({path: 'departments', select: 'name _id'}).sort({name: 1}).exec((err, school) => {
         if (err) res.send(err);
         else res.json(school);
     });
