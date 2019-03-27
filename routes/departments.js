@@ -4,11 +4,11 @@ const Department = require('../models/departments');
 
 function getDepartmentsFromSchool(req, res) {
     School.findOne({_id: req.params.id})
-        .populate('departments')
+        .populate({path: 'departments', select: 'name _id'})
         .exec((err, school) => {
             if (err) res.send(err);
             else {
-                res.json(school.departments)
+                res.json({school: school.name, departments: school.departments})
             }
         });
 }

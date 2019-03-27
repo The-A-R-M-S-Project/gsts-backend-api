@@ -52,11 +52,10 @@ describe('Departments', () => {
                                 .get(`/api/school/${school._id}/department`)
                                 .end((err, res) => {
                                     res.should.have.status(200);
-                                    res.body.should.be.a('array');
-                                    res.body.length.should.not.be.eql(0);
-                                    res.body[0].should.have.property('_id');
-                                    res.body[0].should.have.property('name').eq('Architecture and Physical planning');
-                                    res.body[0].should.have.property('programs');
+                                    res.body.should.be.a('object');
+                                    res.body.departments.should.be.a('array');
+                                    res.body.departments.length.should.not.be.eql(0);
+                                    res.body.departments[0].should.have.property('name').eq('Architecture and Physical planning');
                                     done();
                                 });
                         });
