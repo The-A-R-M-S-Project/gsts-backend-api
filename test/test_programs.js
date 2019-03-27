@@ -39,11 +39,11 @@ describe('Programs', () => {
                                 .get(`/api/department/${dept._id}/program`)
                                 .end((err, res) => {
                                     res.should.have.status(200);
-                                    res.body.should.be.a('array');
-                                    res.body.length.should.not.be.eql(0);
-                                    res.body[0].should.have.property('_id');
-                                    res.body[0].should.have.property('name').eq('Master of Architecture');
-                                    res.body[0].should.have.property('students');
+                                    res.body.should.be.a('object');
+                                    res.body.programs.should.be.a('array');
+                                    res.body.programs.length.should.not.be.eql(0);
+                                    res.body.programs[0].should.have.property('_id');
+                                    res.body.programs[0].should.have.property('name').eq('Master of Architecture');
                                     done();
                                 });
                         });

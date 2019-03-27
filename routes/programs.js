@@ -4,11 +4,11 @@ const Department = require('../models/departments');
 
 function getPrograms(req, res) {
     Department.findOne({_id: req.params.id})
-        .populate('programs')
+        .populate({path: 'programs', select: 'name _id'}).sort({name: 1})
         .exec((err, department) => {
             if (err) res.send(err);
             else {
-                res.json(department.programs)
+                res.json({department: department.name, programs: department.programs})
             }
         });
 }
