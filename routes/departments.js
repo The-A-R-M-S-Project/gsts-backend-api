@@ -15,7 +15,7 @@ function getDepartmentsFromSchool(req, res) {
 
 function getAllDepartments(req, res) {
     let query = Department.find({});
-    query.populate('programs').exec((err, departments) => {
+    query.populate({path: 'programs', select: 'name -_id'}).sort({name: 1}).exec((err, departments) => {
         if (err) res.send(err);
         else res.json(departments);
     })
