@@ -22,10 +22,12 @@ function getAllDepartments(req, res) {
 }
 
 function getDepartment(req, res) {
-    Department.findById(req.params.id, (err, department) => {
-        if (err) res.send(err);
-        else res.json(department);
-    });
+    Department.findById(req.params.id)
+        .populate({path: 'programs', select: 'name -_id'})
+        .exec((err, department) => {
+            if (err) res.send(err);
+            else res.json(department);
+        });
 }
 
 
