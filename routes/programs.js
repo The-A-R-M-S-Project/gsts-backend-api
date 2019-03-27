@@ -15,7 +15,7 @@ function getPrograms(req, res) {
 
 function getProgram(req, res) {
     Program.findById({_id: req.params.id})
-        .populate('students')
+        .populate({path: 'students', select: 'bioData.name bioData.netID -_id'}).sort({name: 1})
         .exec((err, program) => {
             if (err) res.send(err);
             else {
