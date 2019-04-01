@@ -11,3 +11,10 @@ install: ## Install npm dependencies for the api
 srv: ## Run server on port 8080
 	@echo "Running Server on PORT 8080"
 	@npm start
+	
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.DEFAULT_GOAL := help
+
+.PHONY: test install help
