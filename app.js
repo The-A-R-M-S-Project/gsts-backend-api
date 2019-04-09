@@ -3,6 +3,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
     morgan = require('morgan'),
+    cors = require('cors'),
     config = require('config'),
     school = require('./routes/schools'),
     department = require('./routes/departments'),
@@ -29,6 +30,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());
 app.use(bodyParser.json({type: 'application/json'}));
+
+// ------------ ENABLE CORS FOR ALL ORIGINS -------
+app.use(cors());
 
 // ---------------ROUTES ---------------------
 app.get("/", (req, res) => res.json({message: "Welcome to the Graduate Students Tracking System!"}));
