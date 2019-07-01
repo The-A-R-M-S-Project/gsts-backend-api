@@ -43,16 +43,6 @@ const router = express.Router();
 const routes = require('./routes/app.js');
 app.use('/api', routes(router));
 
-// Department Routes
-app.route("/api/department")
-    .get(department.getAllDepartments);
-
-app.route("/api/school/:id/department")
-    .get(department.getDepartmentsFromSchool);
-
-app.route("/api/department/:id")
-    .get(department.getDepartment);
-
 // Student Routes
 app.route("/api/student")
     .post(student.postStudent);
