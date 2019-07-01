@@ -6,7 +6,6 @@ const express = require('express'),
     cors = require('cors'),
     config = require('config'),
     student = require('./routes/students'),
-    program = require('./routes/programs'),
     lecturer = require('./routes/lecturers'),
     seed = require('./seed');
 let port = process.env.PORT || 8080;
@@ -55,13 +54,6 @@ app.route("/api/lecturer")
 
 app.route("/api/lecturer/:id")
     .get(lecturer.getLecturer);
-
-// Program Routes
-app.route("/api/department/:id/program")
-    .get(program.getPrograms);
-
-app.route("/api/program/:id")
-    .get(program.getProgram);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
