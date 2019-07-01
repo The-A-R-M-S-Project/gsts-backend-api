@@ -57,7 +57,7 @@ describe('Schools', () => {
                 .post('/api/school')
                 .send(school)
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(500);
                     res.body.should.be.a('object');
                     res.body.should.have.property('errors');
                     res.body.errors.should.have.property('name');

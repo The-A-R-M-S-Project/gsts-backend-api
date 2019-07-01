@@ -5,7 +5,6 @@ const express = require('express'),
     morgan = require('morgan'),
     cors = require('cors'),
     config = require('config'),
-    school = require('./routes/schools'),
     department = require('./routes/departments'),
     student = require('./routes/students'),
     program = require('./routes/programs'),
@@ -37,15 +36,12 @@ app.use(cors());
 // ---------------ROUTES ---------------------
 app.get("/", (req, res) => res.json({message: "Welcome to the Graduate Students Tracking System!"}));
 
-// School Routes
-app.route("/api/school")
-    .get(school.getSchools)
-    .post(school.postSchools);
+// ------------ ENABLE CORS FOR ALL ORIGINS -------
+app.use(cors());
 
-app.route("/api/school/:id")
-    .get(school.getSchool)
-    .put(school.updateSchool)
-    .delete(school.deleteSchool);
+const router = express.Router();
+const routes = require('./routes/app.js');
+app.use('/api', routes(router));
 
 // Department Routes
 app.route("/api/department")
