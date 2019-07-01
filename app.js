@@ -14,6 +14,8 @@ mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
+require('dotenv').config(); // Sets up dotenv as soon as our application starts
+
 // -------------logs------------------
 if (config.util.getEnv('NODE_ENV') !== 'test') {
     app.use(morgan('combined'));

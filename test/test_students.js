@@ -130,6 +130,68 @@ describe('Students', () => {
         });
     });
 
+    describe('/POST /api/student/login', () => {
+        it('should successfully login with correct credentials', (done) => {
+            let student = new Student({
+                    bioData: {
+                        firstName: "Joseph",
+                        lastName: "Doe",
+                        email: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                    password: 'testPassword'
+                }
+            );
+            student.save((err, savedStudent) => {
+                chai.request(server)
+                    .post(`/api/student/login`)
+                    .send({
+                        bioData: {
+                            "email": "test@cedat.mak.ac.ug"
+                        },
+                        password: "testPassword"
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('success').eql(true);
+                        res.body.should.have.property('token');
+                        done();
+                    });
+            });
+        });
+
+        it('should return Authentication error for incorrect credentials', (done) => {
+            let student = new Student({
+                    bioData: {
+                        firstName: "Jane",
+                        lastName: "Doe",
+                        email: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                    password: 'testPassword'
+                }
+            );
+            student.save((err, savedStudent) => {
+                chai.request(server)
+                    .post(`/api/student/login`)
+                    .send({
+                        bioData: {
+                            "email": "test@cedat.mak.ac.ug"
+                        },
+                        password: "wrongTestPassword"
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(401);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('success').eql(false);
+                        res.body.should.have.property('error').eql('Authentication error');
+                        done();
+                    });
+            });
+        });
+    });
+
     describe('/PUT /api/student/:id', () => {
         it('should update student information given the id', (done) => {
             let student = new Student({
