@@ -5,7 +5,6 @@ const express = require('express'),
     morgan = require('morgan'),
     cors = require('cors'),
     config = require('config'),
-    department = require('./routes/departments'),
     student = require('./routes/students'),
     program = require('./routes/programs'),
     lecturer = require('./routes/lecturers'),
@@ -35,10 +34,6 @@ app.use(cors());
 
 // ---------------ROUTES ---------------------
 app.get("/", (req, res) => res.json({message: "Welcome to the Graduate Students Tracking System!"}));
-
-// ------------ ENABLE CORS FOR ALL ORIGINS -------
-app.use(cors());
-
 const router = express.Router();
 const routes = require('./routes/app.js');
 app.use('/api', routes(router));
