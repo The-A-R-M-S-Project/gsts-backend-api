@@ -9,9 +9,6 @@ const SchoolSchema = new mongoose.Schema(
                 ref: "department"
             }
         ]
-    },
-    {
-        versionKey: false
     }
 );
 

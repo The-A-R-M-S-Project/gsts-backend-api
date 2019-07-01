@@ -14,9 +14,6 @@ const StudentSchema = new mongoose.Schema(
         isRegistered: Boolean,
         plan: String,
         proposal: {supervisor: String,}
-    },
-    {
-        versionKey: false
     }
 );
 

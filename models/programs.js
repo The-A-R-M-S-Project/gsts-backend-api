@@ -9,9 +9,6 @@ const ProgramSchema = new mongoose.Schema(
                 ref: "student"
             }
         ]
-    },
-    {
-        versionKey: false
     }
 );
 

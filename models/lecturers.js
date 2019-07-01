@@ -13,9 +13,6 @@ const LecturerSchema = new mongoose.Schema(
             {type: mongoose.Schema.Types.ObjectId, ref: "student"}
         ],
         isAdministrator: {type: Boolean, required: true},
-    },
-    {
-        versionKey: false
     }
 );
 

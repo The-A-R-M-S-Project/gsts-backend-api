@@ -9,9 +9,6 @@ const DepartmentSchema = new mongoose.Schema(
                 ref: "program"
             }
         ]
-    },
-    {
-        versionKey: false
     }
 );
 
