@@ -15,11 +15,12 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "config": "^3.0.1",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^3.13.1",
     "mongoose": "^5.4.20",
     "morgan": "^1.9.1"
   },
@@ -27,7 +28,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "locus": "^2.0.1",
-    "mocha": "^6.0.2"
+    "mocha": "^6.1.4"
   },
   "engines": {
     "node": "10.x"
