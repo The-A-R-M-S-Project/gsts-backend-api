@@ -5,7 +5,6 @@ const express = require('express'),
     morgan = require('morgan'),
     cors = require('cors'),
     config = require('config'),
-    student = require('./routes/students'),
     lecturer = require('./routes/lecturers'),
     seed = require('./seed');
 let port = process.env.PORT || 8080;
@@ -37,16 +36,6 @@ const router = express.Router();
 const routes = require('./routes/app.js');
 app.use('/api', routes(router));
 
-// Student Routes
-app.route("/api/student")
-    .post(student.postStudent);
-
-app.route("/api/student/:id")
-    .get(student.getStudent)
-    .put(student.updateStudent);
-
-app.route("/api/program/:id/student")
-    .get(student.getStudentsFromProgram);
 
 // lecturer routes
 app.route("/api/lecturer")
