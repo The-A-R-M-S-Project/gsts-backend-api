@@ -5,13 +5,11 @@ const express = require('express'),
     morgan = require('morgan'),
     cors = require('cors'),
     config = require('config'),
-    lecturer = require('./routes/lecturers'),
     seed = require('./seed');
 let port = process.env.PORT || 8080;
 
 // -------------database--------------
 let uri = process.env.DATABASEURL || config.DBHost;
-
 mongoose.connect(uri, {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -36,13 +34,6 @@ const router = express.Router();
 const routes = require('./routes/app.js');
 app.use('/api', routes(router));
 
-
-// lecturer routes
-app.route("/api/lecturer")
-    .get(lecturer.getLecturers);
-
-app.route("/api/lecturer/:id")
-    .get(lecturer.getLecturer);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
