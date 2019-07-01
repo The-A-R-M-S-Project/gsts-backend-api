@@ -24,7 +24,7 @@ module.exports = {
         let status = 200;
 
         Program.findById({_id: req.params.id})
-            .populate({path: 'students', select: 'bioData.name bioData.netID -_id'}).sort({name: 1})
+            .populate({path: 'students', select: 'bioData.name bioData.email -_id'}).sort({name: 1})
             .exec((err, program) => {
                 if (!err) {
                     result = program;

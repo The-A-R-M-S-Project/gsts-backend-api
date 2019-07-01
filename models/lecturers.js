@@ -4,7 +4,7 @@ const LecturerSchema = new mongoose.Schema(
     {
         bioData: {
             name: {type: String, required: true},
-            netID: {type: String, required: true},
+            email: {type: String, required: true},
             phoneNumber: {type: String, required: true},
         },
         designation: {type: String, default: "Lecturer"},

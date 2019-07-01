@@ -38,7 +38,7 @@ describe('Lecturers', () => {
             let lecturer = new Lecturer({
                     bioData: {
                         name: "Test Lecturer",
-                        netID: "admin@cedat.mak.ac.ug",
+                        email: "admin@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                     isAdministrator: false
@@ -54,7 +54,7 @@ describe('Lecturers', () => {
                             res.body.length.should.not.be.eql(0);
                             res.body[0].should.have.property('_id');
                             res.body[0].bioData.should.have.property('name').eq('Test Lecturer');
-                            res.body[0].bioData.should.have.property('netID').eq('admin@cedat.mak.ac.ug');
+                            res.body[0].bioData.should.have.property('email').eq('admin@cedat.mak.ac.ug');
                             res.body[0].bioData.should.have.property('phoneNumber').eq('12345');
                             done();
                         });
@@ -69,7 +69,7 @@ describe('Lecturers', () => {
             let lecturer = new Lecturer({
                     bioData: {
                         name: "Test Lecturer",
-                        netID: "admin@cedat.mak.ac.ug",
+                        email: "admin@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                     isAdministrator: true
@@ -83,7 +83,7 @@ describe('Lecturers', () => {
                         res.body.should.be.a('object');
                         res.body.should.have.property('_id').eq(`${lecturer._id}`);
                         res.body.bioData.should.have.property('name').eq('Test Lecturer');
-                        res.body.bioData.should.have.property('netID').eq('admin@cedat.mak.ac.ug');
+                        res.body.bioData.should.have.property('email').eq('admin@cedat.mak.ac.ug');
                         res.body.bioData.should.have.property('phoneNumber').eq('12345');
                         res.body.should.have.property('students');
                         done();

@@ -34,7 +34,7 @@ describe('Students', () => {
             let student = new Student({
                     bioData: {
                         name: "Test Student",
-                        netID: "test@cedat.mak.ac.ug",
+                        email: "test@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                 }
@@ -54,7 +54,7 @@ describe('Students', () => {
                                         res.body.length.should.not.be.eql(0);
                                         res.body[0].should.have.property('_id');
                                         res.body[0].bioData.should.have.property('name').eq('Test Student');
-                                        res.body[0].bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                                        res.body[0].bioData.should.have.property('email').eq('test@cedat.mak.ac.ug');
                                         res.body[0].bioData.should.have.property('phoneNumber').eq('12345');
                                         res.body[0].should.have.property('program').eq(`${crs._id}`);
                                         done();
@@ -72,7 +72,7 @@ describe('Students', () => {
             let student = new Student({
                     bioData: {
                         name: "Test Student",
-                        netID: "test@cedat.mak.ac.ug",
+                        email: "test@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                 }
@@ -87,7 +87,7 @@ describe('Students', () => {
                         res.body.should.be.a('object');
                         res.body.should.have.property('_id').eq(`${student._id}`);
                         res.body.bioData.should.have.property('name').eq('Test Student');
-                        res.body.bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                        res.body.bioData.should.have.property('email').eq('test@cedat.mak.ac.ug');
                         res.body.bioData.should.have.property('phoneNumber').eq('12345');
                         done();
                     });
@@ -100,7 +100,7 @@ describe('Students', () => {
             let student = new Student({
                     bioData: {
                         name: "Test Student",
-                        netID: "test@cedat.mak.ac.ug",
+                        email: "test@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                 }
@@ -114,7 +114,7 @@ describe('Students', () => {
                     res.body.should.have.property('message').eql('Student successfully added!');
                     res.body.student.should.have.property('_id');
                     res.body.student.bioData.should.have.property('name').eq('Test Student');
-                    res.body.student.bioData.should.have.property('netID').eq('test@cedat.mak.ac.ug');
+                    res.body.student.bioData.should.have.property('email').eq('test@cedat.mak.ac.ug');
                     res.body.student.bioData.should.have.property('phoneNumber').eq('12345');
                     done();
                 });
@@ -126,7 +126,7 @@ describe('Students', () => {
             let student = new Student({
                     bioData: {
                         name: "Test Student",
-                        netID: "test@cedat.mak.ac.ug",
+                        email: "test@cedat.mak.ac.ug",
                         phoneNumber: "12345",
                     },
                 }
@@ -137,7 +137,7 @@ describe('Students', () => {
                     .send({
                         bioData: {
                             name: "Test Student",
-                            netID: "test@cedat.mak.ac.ug",
+                            email: "test@cedat.mak.ac.ug",
                             phoneNumber: "54321",
                         },
                     })
