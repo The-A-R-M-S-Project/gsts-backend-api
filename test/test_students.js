@@ -71,7 +71,7 @@ describe('Students', () => {
     });
 
     describe('/GET /api/student/:id', () => {
-        it.only('should GET a particular student given their ID with Authorization token', (done) => {
+        it('should GET a particular student given their ID with Authorization token', (done) => {
             let student = new Student({
                     bioData: {
                         firstName: "John",
@@ -118,7 +118,7 @@ describe('Students', () => {
             })
         });
 
-        it.only('should require Authorization to GET student details', (done) => {
+        it('should require Authorization to GET student details', (done) => {
             let student = new Student({
                     bioData: {
                         firstName: "John",
@@ -260,23 +260,41 @@ describe('Students', () => {
                     password: 'testPassword'
                 }
             );
+            let token;
             student.save((err, student) => {
-                chai.request(server)
-                    .put(`/api/student/${student._id}`)
+                let client = chai.request.agent(server);
+                client
+                    .post(`/api/student/login`)
                     .send({
                         bioData: {
-                            firstName: "Jane",
-                            lastName: "Doe",
-                            email: "test@cedat.mak.ac.ug",
-                            phoneNumber: "54321",
+                            "email": "test@cedat.mak.ac.ug"
                         },
+                        password: "testPassword"
                     })
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
-                        res.body.should.have.property('message').eql('Student information updated!');
-                        res.body.student.bioData.should.have.property('phoneNumber').eql('54321');
-                        done();
+                        res.body.should.have.property('success').eql(true);
+                        res.body.should.have.property('token');
+                        token = res.body.token;
+                        return client
+                            .put(`/api/student/${student._id}/`)
+                            .set('Authorization', 'bearer ' + token)
+                            .send({
+                                bioData: {
+                                    firstName: "Jane",
+                                    lastName: "Doe",
+                                    email: "test@cedat.mak.ac.ug",
+                                    phoneNumber: "54321",
+                                },
+                            })
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('message').eql('Student information updated!');
+                                res.body.student.bioData.should.have.property('phoneNumber').eql('54321');
+                                done();
+                            });
                     });
             });
         });
