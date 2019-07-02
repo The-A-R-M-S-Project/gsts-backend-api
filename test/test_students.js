@@ -71,7 +71,7 @@ describe('Students', () => {
     });
 
     describe('/GET /api/student/:id', () => {
-        it('should GET a particular student given their ID', (done) => {
+        it.only('should GET a particular student given their ID with Authorization token', (done) => {
             let student = new Student({
                     bioData: {
                         firstName: "John",
@@ -82,21 +82,77 @@ describe('Students', () => {
                     password: 'testPassword'
                 }
             );
+            let token;
             // todo: Refactor this to use a async/await and eliminate occasional callback hell!
             // todo: Might want to refactor other tests too with chai-http promises
             student.save((err, savedStudent) => {
-                chai.request(server)
-                    .get(`/api/student/${student._id}/`)
+                let client = chai.request.agent(server);
+                client
+                    .post(`/api/student/login`)
+                    .send({
+                        bioData: {
+                            "email": "test@cedat.mak.ac.ug"
+                        },
+                        password: "testPassword"
+                    })
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
-                        res.body.should.have.property('_id').eq(`${student._id}`);
-                        res.body.bioData.should.have.property('firstName').eq('John');
-                        res.body.bioData.should.have.property('lastName').eq('Doe');
-                        res.body.bioData.should.have.property('email').eq('test@cedat.mak.ac.ug');
-                        res.body.bioData.should.have.property('phoneNumber').eq('12345');
-                        done();
-                    });
+                        res.body.should.have.property('success').eql(true);
+                        res.body.should.have.property('token');
+                        token = res.body.token;
+                        return client
+                            .get(`/api/student/${student._id}/`)
+                            .set('Authorization', 'bearer ' + token)
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('_id').eq(`${student._id}`);
+                                res.body.bioData.should.have.property('firstName').eq('John');
+                                res.body.bioData.should.have.property('lastName').eq('Doe');
+                                res.body.bioData.should.have.property('email').eq('test@cedat.mak.ac.ug');
+                                res.body.bioData.should.have.property('phoneNumber').eq('12345');
+                                done();
+                            });
+                    })
+            })
+        });
+
+        it.only('should require Authorization to GET student details', (done) => {
+            let student = new Student({
+                    bioData: {
+                        firstName: "John",
+                        lastName: "Doe",
+                        email: "test@cedat.mak.ac.ug",
+                        phoneNumber: "12345",
+                    },
+                    password: 'testPassword'
+                }
+            );
+            student.save((err, savedStudent) => {
+                let client = chai.request.agent(server);
+                client
+                    .post(`/api/student/login`)
+                    .send({
+                        bioData: {
+                            "email": "test@cedat.mak.ac.ug"
+                        },
+                        password: "testPassword"
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('success').eql(true);
+                        res.body.should.have.property('token');
+                        return client
+                            .get(`/api/student/${student._id}/`)
+                            .end((err, res) => {
+                                res.should.have.status(401);
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('error').eq('Authentication error. Token required.');
+                                done();
+                            });
+                    })
             })
         });
     });

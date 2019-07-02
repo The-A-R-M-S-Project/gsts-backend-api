@@ -37,6 +37,10 @@ module.exports = {
                         const secret = process.env.JWT_SECRET;
                         result.success = true;
                         result.token = jwt.sign(payload, secret, options);
+                        result.user = {
+                            name: `${student.bioData.firstName} ${student.bioData.lastName}`,
+                            id: `${student._id}`
+                        };
                     } else {
                         status = 401;
                         result.success = false;
@@ -78,7 +82,7 @@ module.exports = {
         let status = 200;
 
         Student.findById(req.params.id)
-            .populate('program')
+            .populate({path: 'program', select: 'name -_id'})
             .exec((err, student) => {
                 if (!err) {
                     result = student;

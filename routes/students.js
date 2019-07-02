@@ -1,4 +1,5 @@
 const controller = require('../controllers/students');
+const validateToken = require('../_helpers/auth-utils').validateToken;
 
 module.exports = (router) => {
     router.route('/student')
@@ -6,8 +7,8 @@ module.exports = (router) => {
     router.route('/student/login')
         .post(controller.login);
     router.route('/student/:id')
-        .get(controller.getById)
-        .put(controller.update);
+        .get(validateToken, controller.getById)
+        .put(validateToken, controller.update);
     router.route('/program/:id/student')
         .get(controller.getStudentsFromProgram);
 };
