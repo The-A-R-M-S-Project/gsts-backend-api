@@ -1,13 +1,15 @@
-const schools = require('./schools');
-const departments = require('./departments');
-const programs = require('./programs');
-const students = require('./students');
-const lecturers = require('./lecturers');
+let schools = require('./schools'),
+    departments = require('./departments'),
+    programs = require('./programs'),
+    students = require('./students'),
+    lecturers = require('./lecturers'),
+    admin = require('./admin');
 
 module.exports = (router) => {
     schools(router);
     departments(router);
     programs(router);
+    admin(router);
     students(router);
     lecturers(router);
     return router;
