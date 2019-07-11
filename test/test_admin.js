@@ -1,73 +1,76 @@
 process.env.NODE_ENV = 'test';
-
-const mongoose = require('mongoose');
-const Admin = require('../models/admin');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+
+const Admin = require('../models/admin');
 const server = require('../server');
-const should = chai.should();
 
 chai.use(chaiHttp);
 
 describe('Admin', () => {
-  beforeEach((done) => {
-    Admin.deleteMany({}, (err) => {
-    });
+  beforeEach(done => {
+    Admin.deleteMany({}, () => {});
     done();
   });
-  afterEach((done) => {
-    Admin.deleteMany({}, (err) => {
-    });
+  afterEach(done => {
+    Admin.deleteMany({}, () => {});
     done();
   });
 
   describe('/POST /api/admin/', () => {
-    xit('should successfully add a admin to the database', (done) => {
-      let admin = new Admin({
-          bioData: {
-            firstName: 'Jane',
-            lastName: 'Doe',
-            email: 'admin@cedat.mak.ac.ug',
-            phoneNumber: '12345'
-          },
-          password: 'adminPassword'
-        }
-      );
-      chai.request(server)
+    // FIXME: This tests fails. Remember to refactor to use async later
+    xit('should successfully add a admin to the database', done => {
+      const admin = new Admin({
+        bioData: {
+          firstName: 'Jane',
+          lastName: 'Doe',
+          email: 'admin@cedat.mak.ac.ug',
+          phoneNumber: '12345'
+        },
+        password: 'adminPassword'
+      });
+      chai
+        .request(server)
         .post(`/api/admin`)
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('message').eql('Admin successfully added!');
+          res.body.should.have
+            .property('message')
+            .eql('Admin successfully added!');
           res.body.admin.should.have.property('_id');
           res.body.admin.bioData.should.have.property('firstName').eq('Jane');
           res.body.admin.bioData.should.have.property('lastName').eq('Doe');
-          res.body.admin.bioData.should.have.property('email').eq('admin@cedat.mak.ac.ug');
-          res.body.admin.bioData.should.have.property('phoneNumber').eq('12345');
+          res.body.admin.bioData.should.have
+            .property('email')
+            .eq('admin@cedat.mak.ac.ug');
+          res.body.admin.bioData.should.have
+            .property('phoneNumber')
+            .eq('12345');
           done();
         });
     });
   });
 
   describe('/POST /api/admin/login', () => {
-    it('should successfully login with correct credentials', (done) => {
-      let admin = new Admin({
-          bioData: {
-            firstName: 'Joseph',
-            lastName: 'Doe',
-            email: 'admin@cedat.mak.ac.ug',
-            phoneNumber: '12345'
-          },
-          password: 'adminPassword'
-        }
-      );
-      admin.save((err, savedAdmin) => {
-        chai.request(server)
+    it('should successfully login with correct credentials', done => {
+      const admin = new Admin({
+        bioData: {
+          firstName: 'Joseph',
+          lastName: 'Doe',
+          email: 'admin@cedat.mak.ac.ug',
+          phoneNumber: '12345'
+        },
+        password: 'adminPassword'
+      });
+      admin.save(() => {
+        chai
+          .request(server)
           .post(`/api/admin/login`)
           .send({
             bioData: {
-              'email': 'admin@cedat.mak.ac.ug'
+              email: 'admin@cedat.mak.ac.ug'
             },
             password: 'adminPassword'
           })
@@ -81,23 +84,23 @@ describe('Admin', () => {
       });
     });
 
-    it('should return Authentication error for incorrect credentials', (done) => {
-      let admin = new Admin({
-          bioData: {
-            firstName: 'Jane',
-            lastName: 'Doe',
-            email: 'admin@cedat.mak.ac.ug',
-            phoneNumber: '12345'
-          },
-          password: 'adminPassword'
-        }
-      );
-      admin.save((err, savedAdmin) => {
-        chai.request(server)
+    it('should return Authentication error for incorrect credentials', done => {
+      const admin = new Admin({
+        bioData: {
+          firstName: 'Jane',
+          lastName: 'Doe',
+          email: 'admin@cedat.mak.ac.ug',
+          phoneNumber: '12345'
+        },
+        password: 'adminPassword'
+      });
+      admin.save(() => {
+        chai
+          .request(server)
           .post(`/api/admin/login`)
           .send({
             bioData: {
-              'email': 'admin@cedat.mak.ac.ug'
+              email: 'admin@cedat.mak.ac.ug'
             },
             password: 'wrongTestPassword'
           })
@@ -111,5 +114,4 @@ describe('Admin', () => {
       });
     });
   });
-
 });

@@ -1,31 +1,27 @@
-//During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-
-const mongoose = require('mongoose');
-const School = require('../models/schools');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const School = require('../models/schools');
 const server = require('../server');
-const should = chai.should();
 
 chai.use(chaiHttp);
 
-// Parent block
 describe('Schools', () => {
-  beforeEach((done) => { // Before each test, empty the database
-    School.deleteMany({}, (err) => {
+  beforeEach(done => {
+    School.deleteMany({}, () => {
       done();
     });
   });
-  afterEach((done) => { // Before each test, empty the database
-    School.deleteMany({}, (err) => {
+  afterEach(done => {
+    School.deleteMany({}, () => {
       done();
     });
   });
 
   describe('/GET /api/school', () => {
-    it('Should GET all the schools', (done) => {
-      chai.request(server)
+    it('Should GET all the schools', done => {
+      chai
+        .request(server)
         .get('/api/school')
         .end((err, res) => {
           res.should.have.status(200);
@@ -37,23 +33,27 @@ describe('Schools', () => {
   });
 
   describe('/POST /api/school', () => {
-    it('Should successfully add a school to the database', (done) => {
-      let school = { name: 'School of Engineering' };
-      chai.request(server)
+    it('Should successfully add a school to the database', done => {
+      const school = { name: 'School of Engineering' };
+      chai
+        .request(server)
         .post('/api/school')
         .send(school)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('message').eql('School successfully added!');
+          res.body.should.have
+            .property('message')
+            .eql('School successfully added!');
           res.body.school.should.have.property('name');
           done();
         });
     });
 
-    it('Should NOT POST a school with no name', (done) => {
-      let school = {};
-      chai.request(server)
+    it('Should NOT POST a school with no name', done => {
+      const school = {};
+      chai
+        .request(server)
         .post('/api/school')
         .send(school)
         .end((err, res) => {
@@ -68,10 +68,11 @@ describe('Schools', () => {
   });
 
   describe('/GET /api/school/:id', () => {
-    it('it should GET a school by the given id', (done) => {
-      let school = new School({ name: 'School of Built Environment' });
-      school.save((err, school) => {
-        chai.request(server)
+    it('it should GET a school by the given id', done => {
+      const school = new School({ name: 'School of Built Environment' });
+      school.save(() => {
+        chai
+          .request(server)
           .get(`/api/school/${school._id}`)
           .send(school)
           .end((err, res) => {
@@ -83,22 +84,24 @@ describe('Schools', () => {
             done();
           });
       });
-
     });
   });
 
   describe('/PUT /api/school/:id', () => {
-    it('it should UPDATE a school given the id', (done) => {
-      let school = new School({ name: 'School of Industrial and Fine Arts' });
-      school.save((err, school) => {
-        chai.request(server)
+    it('it should UPDATE a school given the id', done => {
+      const school = new School({ name: 'School of Industrial and Fine Arts' });
+      school.save(() => {
+        chai
+          .request(server)
           .put(`/api/school/${school.id}`)
           .send({ name: 'School of Engineering' })
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('message').eql('School updated!');
-            res.body.school.should.have.property('name').eql('School of Engineering');
+            res.body.school.should.have
+              .property('name')
+              .eql('School of Engineering');
             done();
           });
       });
@@ -106,15 +109,18 @@ describe('Schools', () => {
   });
 
   describe('/DELETE /api/school/:id', () => {
-    it('it should DELETE a school given the id', (done) => {
-      let school = new School({ name: 'School of Engineering' });
-      school.save((err, school) => {
-        chai.request(server)
+    it('it should DELETE a school given the id', done => {
+      const school = new School({ name: 'School of Engineering' });
+      school.save(() => {
+        chai
+          .request(server)
           .delete(`/api/school/${school.id}`)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
-            res.body.should.have.property('message').eql('School successfully deleted!');
+            res.body.should.have
+              .property('message')
+              .eql('School successfully deleted!');
             res.body.result.should.have.property('ok').eql(1);
             res.body.result.should.have.property('n').eql(1);
             done();
@@ -122,5 +128,4 @@ describe('Schools', () => {
       });
     });
   });
-
 });
