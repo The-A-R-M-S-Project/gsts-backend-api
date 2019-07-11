@@ -7,8 +7,8 @@ module.exports = (router) => {
     router.route('/student/login')
         .post(controller.login);
     router.route('/student/:id')
-        .get(validateToken, controller.getById)
-        .put(validateToken, controller.update);
+        .get(validateToken(), controller.getById)
+        .put(validateToken(), controller.update);
     router.route('/program/:id/student')
         .get(controller.getStudentsFromProgram);
 };
