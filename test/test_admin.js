@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 const Admin = require('../models/admin');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../app');
+const server = require('../server');
 const should = chai.should();
 
 chai.use(chaiHttp);
 
-describe('Admin', () => {
+describe.skip('Admin', () => {
     beforeEach((done) => {
         Admin.deleteMany({}, (err) => {
         });

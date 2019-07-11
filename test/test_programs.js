@@ -5,7 +5,7 @@ const Department = require('../models/departments');
 const Program = require('../models/programs');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../app');
+const server = require('../server');
 const should = chai.should();
 
 chai.use(chaiHttp);

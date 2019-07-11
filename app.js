@@ -1,24 +1,13 @@
 const express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
-    mongoose = require('mongoose'),
     morgan = require('morgan'),
-    cors = require('cors'),
-    config = require('config'),
-    seed = require('./seed');
-let port = process.env.PORT || 8080;
-
-// -------------database--------------
-let uri = process.env.DATABASEURL || config.DBHost;
-mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-
-require('dotenv').config(); // Sets up dotenv as soon as our application starts
+    cors = require('cors');
 
 // -------------logs------------------
-if (config.util.getEnv('NODE_ENV') !== 'test') {
-    app.use(morgan('combined'));
+if (process.env.NODE_ENV !== 'test') {
+    let logger = process.env.NODE_ENV === 'development' ? 'dev' : 'combined';
+    app.use(morgan(logger));
 }
 
 // -------------parsing App data--------------
@@ -36,9 +25,5 @@ const router = express.Router();
 const routes = require('./routes/app.js');
 app.use('/api', routes(router));
 
-
-app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
-});
 
 module.exports = app;
