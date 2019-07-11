@@ -19,6 +19,23 @@ module.exports = {
             res.status(status).send(result);
         });
     },
+    getAllDepartmentsFromSchool: (req, res) => {
+        let result = {};
+        let status = 200;
+        School.findOne({_id: req.params.id})
+            .populate({path: 'departments', select: 'name _id'})
+            .exec((err, school) => {
+
+                if (!err) {
+                    result.school = school.name;
+                    result.departments = school.departments;
+                } else {
+                    status = 500;
+                    result = err;
+                }
+                res.status(status).send(result);
+            });
+    },
     getAll: (req, res) => {
         let result = {};
         let status = 200;

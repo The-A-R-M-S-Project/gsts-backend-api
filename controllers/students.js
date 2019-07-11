@@ -62,21 +62,6 @@ module.exports = {
             }
         });
     },
-    getStudentsFromProgram: (req, res) => {
-        let result = {};
-        let status = 200;
-        Program.findOne({_id: req.params.id})
-            .populate('students')
-            .exec((err, department) => {
-                if (!err) {
-                    result = department.students;
-                } else {
-                    status = 500;
-                    result = err;
-                }
-                res.status(status).send(result);
-            });
-    },
     getById: (req, res) => {
         let result = {};
         let status = 200;

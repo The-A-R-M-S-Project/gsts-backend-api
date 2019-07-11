@@ -3,23 +3,6 @@ const School = require('../models/' + 'schools');
 const Department = require('../models/' + 'departments');
 
 module.exports = {
-    getAllDepartmentsFromSchool: (req, res) => {
-        let result = {};
-        let status = 200;
-        School.findOne({_id: req.params.id})
-            .populate({path: 'departments', select: 'name _id'})
-            .exec((err, school) => {
-
-                if (!err) {
-                    result.school = school.name;
-                    result.departments = school.departments;
-                } else {
-                    status = 500;
-                    result = err;
-                }
-                res.status(status).send(result);
-            });
-    },
     getAll: (req, res) => {
         let result = {};
         let status = 200;
@@ -49,6 +32,22 @@ module.exports = {
                 }
                 res.status(status).send(result);
 
+            });
+    },
+    getAllProgramsFromDepartment: (req, res) => {
+        let result = {};
+        let status = 200;
+        Department.findOne({_id: req.params.id})
+            .populate({path: 'programs', select: 'name _id'}).sort({name: 1})
+            .exec((err, department) => {
+                if (!err) {
+                    result.department = department.name;
+                    result.programs = department.programs;
+                } else {
+                    status = 500;
+                    result = err;
+                }
+                res.status(status).send(result);
             });
     },
 };

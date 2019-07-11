@@ -1,8 +1,12 @@
+const express = require('express');
 const controller = require('../controllers/programs');
 
-module.exports = (router) => {
-    router.route('/program/:id')
-        .get(controller.getById);
-    router.route('/department/:id/program')
-        .get(controller.getAllProgramsFromDepartment);
-};
+const router = express.Router();
+
+router.route('/:id')
+    .get(controller.getById);
+
+router.route('/:id/student')
+    .get(controller.getStudentsFromProgram);
+
+module.exports = router;

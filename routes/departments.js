@@ -1,10 +1,13 @@
+const express = require('express');
 const controller = require('../controllers/departments');
 
-module.exports = (router) => {
-    router.route('/department')
-        .get(controller.getAll);
-    router.route('/department/:id')
-        .get(controller.getById);
-    router.route('/school/:id/department')
-        .get(controller.getAllDepartmentsFromSchool);
-};
+const router = express.Router();
+
+router.route('/')
+    .get(controller.getAll);
+router.route('/:id')
+    .get(controller.getById);
+router.route('/:id/program')
+    .get(controller.getAllProgramsFromDepartment);
+
+module.exports = router;

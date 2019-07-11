@@ -1,8 +1,11 @@
+const express = require('express');
 const controller = require('../controllers/lecturers');
 
-module.exports = (router) => {
-    router.route('/lecturer')
-        .get(controller.getAll);
-    router.route('/lecturer/:id')
-        .get(controller.getById);
-};
+const router = express.Router();
+
+router.route('/')
+    .get(controller.getAll);
+router.route('/:id')
+    .get(controller.getById);
+
+module.exports = router;
