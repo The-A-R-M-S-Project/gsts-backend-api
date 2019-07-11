@@ -9,7 +9,7 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
-describe.skip('Admin', () => {
+describe('Admin', () => {
     beforeEach((done) => {
         Admin.deleteMany({}, (err) => {
         });
