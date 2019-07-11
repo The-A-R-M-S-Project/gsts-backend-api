@@ -1,8 +1,9 @@
-const express = require('express'),
-  app = express(),
-  bodyParser = require('body-parser'),
-  morgan = require('morgan'),
-  cors = require('cors');
+const express = require('express');
+
+const app = express();
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const cors = require('cors');
 
 const adminRouter = require('./routes/admin');
 const schoolRouter = require('./routes/schools');
@@ -13,7 +14,7 @@ const departmentRouter = require('./routes/departments');
 
 // -------------logs------------------
 if (process.env.NODE_ENV !== 'test') {
-  let logger = process.env.NODE_ENV === 'development' ? 'dev' : 'combined';
+  const logger = process.env.NODE_ENV === 'development' ? 'dev' : 'combined';
   app.use(morgan(logger));
 }
 
