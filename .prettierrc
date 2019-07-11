@@ -4,14 +4,11 @@
   "bracketSpacing": true,
   "overrides": [
     {
-      "files": [
-        ".prettierrc",
-        "package.json"
-      ],
+      "files": [".prettierrc", "package.json", ".eslintrc.json"],
       "options": {
         "tabWidth": 2,
         "useTabs": false,
-        "parser": "json-stringify"
+        "parser": "json"
       }
     }
   ]
