@@ -4,9 +4,9 @@ const controller = require('../controllers/programs');
 const router = express.Router();
 
 router.route('/:id')
-    .get(controller.getById);
+  .get(controller.getById);
 
 router.route('/:id/student')
-    .get(controller.getStudentsFromProgram);
+  .get(controller.getStudentsFromProgram);
 
 module.exports = router;

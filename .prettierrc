@@ -1,5 +1,18 @@
 {
-    "singleQuote": true,
-    "tabWidth": 4,
-    "bracketSpacing": false
+  "singleQuote": true,
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "overrides": [
+    {
+      "files": [
+        ".prettierrc",
+        "package.json"
+      ],
+      "options": {
+        "tabWidth": 2,
+        "useTabs": false,
+        "parser": "json-stringify"
+      }
+    }
+  ]
 }

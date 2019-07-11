@@ -5,12 +5,12 @@ const validateToken = require('../_helpers/auth-utils').validateToken;
 const router = express.Router();
 
 router.route('/')
-    .post(controller.add);
+  .post(controller.add);
 router.route('/login')
-    .post(controller.login);
+  .post(controller.login);
 router.route('/:id')
-    .get(validateToken(), controller.getById)
-    .put(validateToken(), controller.update);
+  .get(validateToken(), controller.getById)
+  .put(validateToken(), controller.update);
 
 
 module.exports = router;
