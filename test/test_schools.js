@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const School = require('../models/schools');
+const Department = require('../models/departments');
 const server = require('../server');
 
 chai.use(chaiHttp);
@@ -32,6 +33,37 @@ describe('Schools', () => {
     });
   });
 
+  describe('/GET /api/school/:id/department ', () => {
+    it('Should GET all departments for a given school id', done => {
+      const school = new School({ name: 'School of Built Environment' });
+      const department = new Department({
+        name: 'Architecture and Physical planning'
+      });
+      school.save(() => {
+        department.save((err, savedDepartment) => {
+          School.findById(school._id, (err, foundSchool) => {
+            foundSchool.departments.push(savedDepartment);
+            foundSchool.save(() => {
+              chai
+                .request(server)
+                .get(`/api/school/${school._id}/department`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.body.should.be.a('object');
+                  res.body.departments.should.be.a('array');
+                  res.body.departments.length.should.not.be.eql(0);
+                  res.body.departments[0].should.have
+                    .property('name')
+                    .eq('Architecture and Physical planning');
+                  done();
+                });
+            });
+          });
+        });
+      });
+    });
+  });
+
   describe('/POST /api/school', () => {
     it('Should successfully add a school to the database', done => {
       const school = { name: 'School of Engineering' };
@@ -40,7 +72,7 @@ describe('Schools', () => {
         .post('/api/school')
         .send(school)
         .end((err, res) => {
-          res.should.have.status(200);
+          res.should.have.status(201);
           res.body.should.be.a('object');
           res.body.should.have
             .property('message')
@@ -59,9 +91,10 @@ describe('Schools', () => {
         .end((err, res) => {
           res.should.have.status(500);
           res.body.should.be.a('object');
-          res.body.should.have.property('errors');
-          res.body.errors.should.have.property('name');
-          res.body.errors.name.should.have.property('kind').eql('required');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have
+            .property('message')
+            .eql('school validation failed: name: Path `name` is required.');
           done();
         });
     });
@@ -116,13 +149,8 @@ describe('Schools', () => {
           .request(server)
           .delete(`/api/school/${school.id}`)
           .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have
-              .property('message')
-              .eql('School successfully deleted!');
-            res.body.result.should.have.property('ok').eql(1);
-            res.body.result.should.have.property('n').eql(1);
+            res.should.have.status(204);
+            res.body.should.be.a('object').eql({});
             done();
           });
       });

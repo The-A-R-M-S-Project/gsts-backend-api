@@ -1,84 +1,71 @@
-const mongoose = require('mongoose');
-const School = require('../models/' + 'schools');
+const School = require('../models/schools');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
 
 module.exports = {
-  add: (req, res) => {
-    let result = {};
-    let status = 200;
-    let newSchool = School(req.body);
+  createSchool: catchAsync(async (req, res, next) => {
+    const newSchool = await School.create(req.body);
 
-    newSchool.save((err, school) => {
-      if (!err) {
-        result.message = 'School successfully added!';
-        result.school = school;
-      } else {
-        // console.error('Save error:', err.stack);
-        status = 500;
-        result = err;
-      }
-      res.status(status).send(result);
+    res.status(201).json({
+      message: 'School successfully added!',
+      school: newSchool
     });
-  },
-  getAllDepartmentsFromSchool: (req, res) => {
-    let result = {};
-    let status = 200;
-    School.findOne({ _id: req.params.id })
+  }),
+
+  getSchool: catchAsync(async (req, res, next) => {
+    const school = await School.findById(req.params.id)
       .populate({ path: 'departments', select: 'name _id' })
-      .exec((err, school) => {
+      .sort({ name: 1 });
 
-        if (!err) {
-          result.school = school.name;
-          result.departments = school.departments;
-        } else {
-          status = 500;
-          result = err;
-        }
-        res.status(status).send(result);
-      });
-  },
-  getAll: (req, res) => {
-    let result = {};
-    let status = 200;
-    let query = School.find({});
+    if (!school) {
+      return next(new AppError('No school found with that ID', 404));
+    }
 
-    query.populate({ path: 'departments', select: 'name -_id' }).sort({ name: 1 }).exec((err, schools) => {
-      if (!err) {
-        result = schools;
-      } else {
-        status = 500;
-        result.error = err;
-      }
-      res.status(status).send(result);
-    });
-  },
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
+    res.status(200).json(school);
+  }),
 
-    let query = School.findById(req.params.id);
-    query.populate({ path: 'departments', select: 'name _id' }).sort({ name: 1 }).exec((err, school) => {
-      if (!err) {
-        result = school;
-      } else {
-        status = 500;
-        result.error = err;
-      }
-      res.status(status).send(result);
-    });
-  },
-  update: (req, res) => {
-    School.findById(req.params.id, (err, school) => {
-      if (err) res.send(err);
-      Object.assign(school, req.body).save((err, school) => {
-        if (err) res.send(err);
-        res.json({ message: 'School updated!', school });
-      });
+  getAllDepartmentsFromSchool: catchAsync(async (req, res, next) => {
+    const school = await School.findOne({ _id: req.params.id }).populate({
+      path: 'departments',
+      select: 'name _id'
     });
 
-  },
-  _delete: (req, res) => {
-    School.deleteOne({ _id: req.params.id }, (err, result) => {
-      res.json({ message: 'School successfully deleted!', result });
+    if (!school) {
+      return next(new AppError('No school found with that ID', 404));
+    }
+
+    res.status(200).json({
+      school: school,
+      departments: school.departments
     });
-  }
+  }),
+
+  getAllSchools: catchAsync(async (req, res, next) => {
+    const schools = await School.find({})
+      .populate({ path: 'departments', select: 'name -_id' })
+      .sort({ name: 1 });
+
+    res.status(200).json(schools);
+  }),
+
+  updateSchool: catchAsync(async (req, res, next) => {
+    const school = await School.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!school) {
+      return next(new AppError('No school found with that ID', 404));
+    }
+
+    res.status(200).json({ message: 'School updated!', school });
+  }),
+
+  deleteSchool: catchAsync(async (req, res, next) => {
+    const school = await School.findByIdAndDelete(req.params.id);
+    if (!school) {
+      return next(new AppError('No school found with that ID', 404));
+    }
+    res.status(204).json({ message: 'School successfully deleted!' });
+  })
 };
