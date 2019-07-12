@@ -1,20 +1,48 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const StudentSchema = new mongoose.Schema({
-  bioData: {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    phoneNumber: { type: String, required: true, trim: true, unique: true }
-    // TODO: Add validation for phone number
+  firstName: {
+    type: String,
+    required: [true, 'Please tell us your first name!']
   },
-  password: { type: String, required: true, trim: true },
+  lastName: {
+    type: String,
+    required: [true, 'Please tell us your last name!']
+  },
+  email: {
+    type: String,
+    required: [true, 'Please provide your email'],
+    unique: true,
+    lowercase: true,
+    validate: [validator.isEmail, 'Please provide a valid email']
+  },
+  password: {
+    type: String,
+    required: [true, 'Please provide a password'],
+    minlength: 8,
+    select: false
+  },
+  passwordConfirm: {
+    type: String,
+    required: [true, 'Please confirm your password']
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true,
+    validate: {
+      validator: function() {
+        return validator.isMobilePhone(this.phoneNumber, 'en-UG');
+      },
+      message: 'Please enter a valid Phone Number (en-UG)'
+    }
+  },
+  photo: String,
   program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
-  yearOfStudy: Number,
-  isRegistered: Boolean,
-  plan: String,
-  proposal: { supervisor: String }
+  yearOfStudy: Number
 });
 
 StudentSchema.pre('save', function(next) {
