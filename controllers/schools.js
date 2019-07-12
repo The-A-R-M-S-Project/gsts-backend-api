@@ -4,11 +4,11 @@ const AppError = require('./../utils/appError');
 
 module.exports = {
   createSchool: catchAsync(async (req, res, next) => {
-    const newSchool = await School.create(req.body);
+    const school = await School.create(req.body);
 
     res.status(201).json({
       message: 'School successfully added!',
-      school: newSchool
+      school
     });
   }),
 

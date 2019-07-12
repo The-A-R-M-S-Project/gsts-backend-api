@@ -1,26 +1,17 @@
-const mongoose = require('mongoose');
-const Program = require('../models/programs');
-const Student = require('../models/students');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Student = require('../models/students');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 module.exports = {
-  add: (req, res) => {
-    let result = {};
-    let status = 200;
-    let newStudent = Student(req.body);
-    newStudent.save((err, student) => {
-      if (!err) {
-        result.message = 'Student successfully added!';
-        result.student = student;
-      } else {
-        // console.error('Save error:', err.stack);
-        status = 500;
-        result = err;
-      }
-      res.status(status).send(result);
-    });
-  },
+  addStudent: catchAsync(async (req, res, next) => {
+    const student = await Student.create(req.body);
+
+    res.status(201).json({ student, message: 'Student successfully added!' });
+  }),
+
+  //TODO: Refactor this with async block and better auth process so that password comparison doesnot happen here
   login: (req, res) => {
     const { bioData, password } = req.body;
 
@@ -28,32 +19,40 @@ module.exports = {
     let status = 200;
     Student.findOne({ 'bioData.email': bioData.email }, (err, student) => {
       if (!err && student) {
-        bcrypt.compare(password, student.password).then(match => {
-          if (match) {
-            status = 200;
-            // Create a token
-            const payload = { user: `${student.bioData.firstName} ${student.bioData.lastName}` };
-            const options = { expiresIn: '30m', issuer: 'gsts.cedat.mak.ac.ug' };
-            const secret = process.env.JWT_SECRET;
-            result.success = true;
-            result.token = jwt.sign(payload, secret, options);
-            result.user = {
-              name: `${student.bioData.firstName} ${student.bioData.lastName}`,
-              id: `${student._id}`
-            };
-          } else {
-            status = 401;
-            result.success = false;
-            result.error = 'Authentication error';
-          }
-          res.status(status).send(result);
-        }).catch(err => {
-          result = {};
-          status = 500;
-          result.status = status;
-          result.error = err;
-          res.status(status).send(result);
-        });
+        bcrypt
+          .compare(password, student.password)
+          .then(match => {
+            if (match) {
+              status = 200;
+              // Create a token
+              const payload = {
+                user: `${student.bioData.firstName} ${student.bioData.lastName}`
+              };
+              const options = {
+                expiresIn: '30m',
+                issuer: 'gsts.cedat.mak.ac.ug'
+              };
+              const secret = process.env.JWT_SECRET;
+              result.success = true;
+              result.token = jwt.sign(payload, secret, options);
+              result.user = {
+                name: `${student.bioData.firstName} ${student.bioData.lastName}`,
+                id: `${student._id}`
+              };
+            } else {
+              status = 401;
+              result.success = false;
+              result.error = 'Authentication error';
+            }
+            res.status(status).send(result);
+          })
+          .catch(err => {
+            result = {};
+            status = 500;
+            result.status = status;
+            result.error = err;
+            res.status(status).send(result);
+          });
       } else {
         status = 404;
         result.status = status;
@@ -62,30 +61,27 @@ module.exports = {
       }
     });
   },
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
 
-    Student.findById(req.params.id)
-      .populate({ path: 'program', select: 'name -_id' })
-      .exec((err, student) => {
-        if (!err) {
-          result = student;
-        } else {
-          status = 500;
-          result = err;
-        }
-        res.status(status).send(result);
-      });
-  },
-  update: (req, res) => {
-    // todo: Use async to wait for findById in order to update student info for test to pass
-    Student.findById(req.params.id, (err, student) => {
-      if (err) res.send(err);
-      Object.assign(student, req.body).save((err, student) => {
-        if (err) res.send(err);
-        res.json({ message: 'Student information updated!', student: student });
-      });
+  getStudent: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id).populate({
+      path: 'program',
+      select: 'name -_id'
     });
-  }
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+    res.status(200).send(student);
+  }),
+
+  updateStudent: catchAsync(async (req, res, next) => {
+    const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!student) {
+      return next(new AppError('No student found with that id', 404));
+    }
+    res.json({ message: 'Student information updated!', student });
+  })
 };
