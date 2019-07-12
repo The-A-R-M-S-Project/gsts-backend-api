@@ -10,7 +10,7 @@ router
 router
   .route('/:id')
   .get(schoolController.getSchool)
-  .put(schoolController.updateSchool)
+  .patch(schoolController.updateSchool)
   .delete(schoolController.deleteSchool);
 
 router

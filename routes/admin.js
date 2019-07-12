@@ -9,6 +9,6 @@ router.route('/login').post(controller.login);
 router
   .route('/:id')
   .get(validateToken, controller.getById)
-  .put(validateToken, controller.update);
+  .patch(validateToken, controller.update);
 
 module.exports = router;
