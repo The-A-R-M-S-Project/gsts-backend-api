@@ -1,35 +1,22 @@
-const mongoose = require('mongoose');
 const Lecturer = require('../models/lecturers');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 module.exports = {
-  getAll: (req, res) => {
-    let result = {};
-    let status = 200;
-    Lecturer.find()
-      .populate('department')
-      .exec((err, lecturers) => {
-        if (!err) {
-          result = lecturers;
-        } else {
-          status = 500;
-          result.error = err;
-        }
-        res.status(status).send(result);
-      });
-  },
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
-    Lecturer.findById(req.params.id)
-      .populate('students')
-      .exec((err, lecturer) => {
-        if (!err) {
-          result = lecturer;
-        } else {
-          status = 500;
-          result.error = err;
-        }
-        res.status(status).send(result);
-      });
-  }
+  getAllLecturers: catchAsync(async (req, res, next) => {
+    const lecturers = await Lecturer.find({}).populate('department');
+
+    res.status(200).send(lecturers);
+  }),
+
+  getLecturer: catchAsync(async (req, res, next) => {
+    const lecturer = await Lecturer.findById(req.params.id).populate(
+      'students'
+    );
+
+    if (!lecturer) {
+      return next(new AppError('No lecturer found with that id', 404));
+    }
+    res.status(200).send(lecturer);
+  })
 };
