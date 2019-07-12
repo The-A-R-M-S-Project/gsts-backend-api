@@ -1,16 +1,15 @@
 const express = require('express');
-
-const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-
 const adminRouter = require('./routes/admin');
 const schoolRouter = require('./routes/schools');
 const programRouter = require('./routes/programs');
 const studentRouter = require('./routes/students');
 const lecturerRouter = require('./routes/lecturers');
 const departmentRouter = require('./routes/departments');
+
+const app = express();
 
 // -------------logs------------------
 if (process.env.NODE_ENV !== 'test') {

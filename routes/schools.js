@@ -13,8 +13,6 @@ router
   .put(controller.update)
   .delete(controller._delete);
 
-router.route('/:id/department')
-  .get(controller.getAllDepartmentsFromSchool);
-
+router.route('/:id/department').get(controller.getAllDepartmentsFromSchool);
 
 module.exports = router;
