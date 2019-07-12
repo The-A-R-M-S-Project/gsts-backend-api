@@ -94,7 +94,7 @@ describe('Schools', () => {
           res.body.should.have.property('status').eql('error');
           res.body.should.have
             .property('message')
-            .eql('school validation failed: name: Path `name` is required.');
+            .eql('school validation failed: name: A school must have a name');
           done();
         });
     });
@@ -120,13 +120,13 @@ describe('Schools', () => {
     });
   });
 
-  describe('/PUT /api/school/:id', () => {
+  describe('/PATCH /api/school/:id', () => {
     it('it should UPDATE a school given the id', done => {
       const school = new School({ name: 'School of Industrial and Fine Arts' });
       school.save(() => {
         chai
           .request(server)
-          .put(`/api/school/${school.id}`)
+          .patch(`/api/school/${school.id}`)
           .send({ name: 'School of Engineering' })
           .end((err, res) => {
             res.should.have.status(200);

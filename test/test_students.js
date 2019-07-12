@@ -260,7 +260,7 @@ describe('Students', () => {
     });
   });
 
-  describe('/PUT /api/student/:id', () => {
+  describe('/PATCH /api/student/:id', () => {
     it('should update student information given the id', done => {
       const student = new Student({
         bioData: {
@@ -289,7 +289,7 @@ describe('Students', () => {
             res.body.should.have.property('token');
             ({ token } = res.body);
             return client
-              .put(`/api/student/${student._id}/`)
+              .patch(`/api/student/${student._id}/`)
               .set('Authorization', `bearer ${token}`)
               .send({
                 bioData: {
