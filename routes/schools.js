@@ -1,18 +1,20 @@
 const express = require('express');
-const controller = require('../controllers/schools');
+const schoolController = require('../controllers/schools');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(controller.add)
-  .get(controller.getAll);
+  .post(schoolController.createSchool)
+  .get(schoolController.getAllSchools);
 router
   .route('/:id')
-  .get(controller.getById)
-  .put(controller.update)
-  .delete(controller._delete);
+  .get(schoolController.getSchool)
+  .put(schoolController.updateSchool)
+  .delete(schoolController.deleteSchool);
 
-router.route('/:id/department').get(controller.getAllDepartmentsFromSchool);
+router
+  .route('/:id/department')
+  .get(schoolController.getAllDepartmentsFromSchool);
 
 module.exports = router;
