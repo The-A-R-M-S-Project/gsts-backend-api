@@ -1,36 +1,25 @@
-const mongoose = require('mongoose');
 const Program = require('../models/programs');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 module.exports = {
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
+  getProgram: catchAsync(async (req, res, next) => {
+    const program = await Program.findById({ _id: req.params.id })
+      .populate({ path: 'students', select: 'bioData.name bioData.email -_id' })
+      .sort({ name: 1 });
 
-    Program.findById({ _id: req.params.id })
-      .populate({ path: 'students', select: 'bioData.name bioData.email -_id' }).sort({ name: 1 })
-      .exec((err, program) => {
-        if (!err) {
-          result = program;
-        } else {
-          status = 500;
-          result.error = err;
-        }
-        res.status(status).send(result);
-      });
-  },
-  getStudentsFromProgram: (req, res) => {
-    let result = {};
-    let status = 200;
-    Program.findOne({ _id: req.params.id })
-      .populate('students')
-      .exec((err, department) => {
-        if (!err) {
-          result = department.students;
-        } else {
-          status = 500;
-          result = err;
-        }
-        res.status(status).send(result);
-      });
-  }
+    if (!program) {
+      return next(new AppError('No program found with that id', 404));
+    }
+    res.status(200).send(program);
+  }),
+
+  getStudentsFromProgram: catchAsync(async (req, res, next) => {
+    const program = await Program.findById(req.params.id).populate('students');
+
+    if (!program) {
+      return next(new AppError('No proram found with that id', 404));
+    }
+    res.status(200).send(program.students);
+  })
 };
