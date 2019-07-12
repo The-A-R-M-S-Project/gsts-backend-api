@@ -1,53 +1,36 @@
-const mongoose = require('mongoose');
-const School = require('../models/' + 'schools');
-const Department = require('../models/' + 'departments');
+const Department = require('../models/departments');
+const AppError = require('./../utils/appError');
+const catchAsync = require('./../utils/catchAsync');
 
 module.exports = {
-  getAll: (req, res) => {
-    let result = {};
-    let status = 200;
-    let query = Department.find({});
-    query.populate({ path: 'programs', select: 'name -_id' }).sort({ name: 1 }).exec((err, departments) => {
-      if (!err) {
-        result = departments;
-      } else {
-        status = 500;
-        result.error = err;
-      }
-      res.status(status).send(result);
-    });
-  },
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
-
-    Department.findById(req.params.id)
+  getAllDepartments: catchAsync(async (req, res, next) => {
+    const departments = await Department.find({})
       .populate({ path: 'programs', select: 'name -_id' })
-      .exec((err, department) => {
-        if (!err) {
-          result = department;
-        } else {
-          status = 500;
-          result.error = err;
-        }
-        res.status(status).send(result);
+      .sort({ name: 1 });
 
-      });
-  },
-  getAllProgramsFromDepartment: (req, res) => {
-    let result = {};
-    let status = 200;
-    Department.findOne({ _id: req.params.id })
-      .populate({ path: 'programs', select: 'name _id' }).sort({ name: 1 })
-      .exec((err, department) => {
-        if (!err) {
-          result.department = department.name;
-          result.programs = department.programs;
-        } else {
-          status = 500;
-          result = err;
-        }
-        res.status(status).send(result);
-      });
+    res.status(200).json(departments);
+  }),
+
+  getDepartment: catchAsync(async (req, res, next) => {
+    const department = await Department.findById(req.params.id).populate({
+      path: 'programs',
+      select: 'name -_id'
+    });
+
+    if (!department) {
+      return next(new AppError('No department found with that id', 404));
+    }
+    res.status(200).json(department);
+  }),
+
+  getAllProgramsFromDepartment: async (req, res, next) => {
+    const department = await Department.findById(req.params.id)
+      .populate({ path: 'programs', select: 'name _id' })
+      .sort({ name: 1 });
+
+    if (!department) {
+      return next(new AppError('No department found with that id', 404));
+    }
+    res.status(200).json({ department, programs: department.programs });
   }
 };

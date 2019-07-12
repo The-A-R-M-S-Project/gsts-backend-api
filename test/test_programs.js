@@ -7,7 +7,7 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
-describe.only('Programs', () => {
+describe('Programs', () => {
   beforeEach(done => {
     Department.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});

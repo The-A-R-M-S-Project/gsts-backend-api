@@ -21,7 +21,7 @@ describe('Departments', () => {
   });
 
   describe('/GET /api/department/', () => {
-    it('should GET all departments regardless of school', done => {
+    it('should GET all departments in database', done => {
       chai
         .request(server)
         .get('/api/department')
