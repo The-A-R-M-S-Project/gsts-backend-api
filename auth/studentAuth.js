@@ -10,5 +10,6 @@ module.exports = {
   protect: () => catchAsync(StudentAuth.protect()),
   restrictTo: (...roles) => StudentAuth.restrictTo(...roles),
   forgotPassword: () => catchAsync(StudentAuth.forgotPassword()),
-  resetPassword: () => catchAsync(StudentAuth.resetPassword())
+  resetPassword: () => catchAsync(StudentAuth.resetPassword()),
+  updatePassword: () => catchAsync(StudentAuth.updatePassword())
 };
