@@ -45,6 +45,15 @@ module.exports = {
     });
   }),
 
+  deactivateMe: catchAsync(async (req, res, next) => {
+    await Student.findByIdAndUpdate(req.user.id, { active: false });
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  }),
+
   addStudent: catchAsync(async (req, res, next) => {
     const student = await Student.create(req.body);
 
