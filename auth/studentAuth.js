@@ -5,10 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const StudentAuth = new AuthController(Student);
 
 module.exports = {
-  signup: () => {
-    return catchAsync(StudentAuth.signup());
-  },
-  login: () => {
-    return catchAsync(StudentAuth.login());
-  }
+  signup: () => catchAsync(StudentAuth.signup()),
+  login: () => catchAsync(StudentAuth.login()),
+  protect: () => catchAsync(StudentAuth.protect())
 };
