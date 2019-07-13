@@ -45,8 +45,8 @@ const StudentSchema = new mongoose.Schema({
     trim: true,
     unique: true,
     validate: {
-      validator: function() {
-        return validator.isMobilePhone(this.phoneNumber, 'en-UG');
+      validator: function(number) {
+        return validator.isMobilePhone(number, 'en-UG');
       },
       message: 'Please enter a valid Phone Number (en-UG)'
     }
