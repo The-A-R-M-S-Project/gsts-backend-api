@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 const AppError = require('../utils/appError');
 
 const signToken = id => {
@@ -68,7 +69,7 @@ class AuthController {
       }
 
       // 2) Verification token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
       // 3) Check if user still exists
       const currentUser = await this.User.findById(decoded.id);
