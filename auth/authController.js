@@ -104,6 +104,21 @@ class AuthController {
       next();
     };
   }
+
+  forgotPassword() {
+    return async (req, res, next) => {
+      // 1) Get user based on POSTed email
+      const user = await this.User.findOne({ email: req.body.email });
+      if (!user) {
+        return next(new AppError('There is no user with email address.', 404));
+      }
+
+      // 2) Generate the random reset token
+      const resetToken = user.createPasswordResetToken(); // the method does not save to DB, it just updates field
+      console.log({ resetToken });
+      await user.save({ validateBeforeSave: false }); // persist it db without validation
+    };
+  }
 }
 
 module.exports = AuthController;

@@ -8,5 +8,6 @@ module.exports = {
   signup: () => catchAsync(StudentAuth.signup()),
   login: () => catchAsync(StudentAuth.login()),
   protect: () => catchAsync(StudentAuth.protect()),
-  restrictTo: (...roles) => StudentAuth.restrictTo(...roles)
+  restrictTo: (...roles) => StudentAuth.restrictTo(...roles),
+  forgotPassword: () => catchAsync(StudentAuth.forgotPassword())
 };
