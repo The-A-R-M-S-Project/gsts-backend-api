@@ -26,7 +26,14 @@ const StudentSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please confirm your password']
+    required: [true, 'Please confirm your password'],
+    validate: {
+      // This only works on CREATE and SAVE!!!
+      validator: function(el) {
+        return el === this.password;
+      },
+      message: 'Passwords are not the same!'
+    }
   },
   phoneNumber: {
     type: String,
@@ -46,24 +53,16 @@ const StudentSchema = new mongoose.Schema({
   yearOfStudy: Number
 });
 
-StudentSchema.pre('save', function(next) {
-  const student = this;
-  if (!student.isModified || !student.isNew) {
-    // don't rehash if it's an old user
-    next();
-  } else {
-    bcrypt.hash(student.password, 10, function(err, hash) {
-      if (err) {
-        console.log(
-          `Error hashing password for user: ${student.firstName} ${student.lastName}`
-        );
-        next(err);
-      } else {
-        student.password = hash;
-        next();
-      }
-    });
-  }
+StudentSchema.pre('save', async function(next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified('password')) return next();
+
+  // Hash the password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete passwordConfirm field and do not save it to DB
+  this.passwordConfirm = undefined;
+  next();
 });
 
 module.exports = mongoose.model('student', StudentSchema);
