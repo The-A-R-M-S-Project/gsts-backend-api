@@ -65,4 +65,11 @@ StudentSchema.pre('save', async function(next) {
   next();
 });
 
+StudentSchema.methods.isPasswordCorrect = async function(
+  passwordToCheck,
+  savedPassword
+) {
+  return await bcrypt.compare(passwordToCheck, savedPassword);
+};
+
 module.exports = mongoose.model('student', StudentSchema);
