@@ -11,6 +11,18 @@ module.exports = {
     res.status(201).json({ student, message: 'Student successfully added!' });
   }),
 
+  getAllStudents: catchAsync(async (req, res, next) => {
+    const students = await Student.find();
+
+    res.status(200).json({
+      status: 'success',
+      results: students.length,
+      data: {
+        students
+      }
+    });
+  }),
+
   //TODO: Refactor this with async block and better auth process so that password comparison doesnot happen here
   login: (req, res) => {
     const { bioData, password } = req.body;

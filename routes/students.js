@@ -7,7 +7,10 @@ const router = express.Router();
 
 router.post('/signup', authController.signup());
 
-router.route('/').post(controller.addStudent);
+router
+  .route('/')
+  .get(controller.getAllStudents)
+  .post(controller.addStudent);
 router.route('/login').post(controller.login);
 router
   .route('/:id')
