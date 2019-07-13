@@ -40,6 +40,7 @@ const StudentSchema = new mongoose.Schema({
       message: 'Please enter a valid Phone Number (en-UG)'
     }
   },
+  role: { type: String, default: 'Student' },
   photo: String,
   program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
   yearOfStudy: Number

@@ -1,8 +1,11 @@
 const express = require('express');
 const controller = require('../controllers/students');
 const { validateToken } = require('../_helpers/auth-utils');
+const authController = require('../auth/studentAuth');
 
 const router = express.Router();
+
+router.post('/signup', authController.signup());
 
 router.route('/').post(controller.addStudent);
 router.route('/login').post(controller.login);
