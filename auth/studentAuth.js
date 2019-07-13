@@ -7,5 +7,8 @@ const StudentAuth = new AuthController(Student);
 module.exports = {
   signup: () => {
     return catchAsync(StudentAuth.signup());
+  },
+  login: () => {
+    return catchAsync(StudentAuth.login());
   }
 };
