@@ -56,6 +56,11 @@ const StudentSchema = new mongoose.Schema({
     enum: ['student'],
     default: 'student'
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  },
   photo: String,
   program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
   yearOfStudy: Number
@@ -78,6 +83,13 @@ StudentSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// Query middleware that only finds documents with active set ot true
+StudentSchema.pre(/^find/, function(next) {
+  // 'this' points to the current query
+  this.find({ active: { $ne: false } });
   next();
 });
 
