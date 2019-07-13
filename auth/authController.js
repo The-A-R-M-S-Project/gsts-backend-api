@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const AppError = require('../utils/appError');
@@ -156,6 +157,35 @@ class AuthController {
           500
         );
       }
+    };
+  }
+
+  resetPassword() {
+    return async (req, res, next) => {
+      // 1) Get user based on the token
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(req.params.token)
+        .digest('hex');
+
+      const user = await this.User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() } // token should not have expired
+      });
+
+      // 2) If token has not expired, and there is user, set the new password
+      if (!user) {
+        return next(new AppError('Token is invalid or has expired', 400));
+      }
+      user.password = req.body.password;
+      user.passwordConfirm = req.body.passwordConfirm;
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+      // 3) Saving will call the prehook to Update changedPasswordAt property for the user
+
+      // 4) Log the user in, send JWT
+      createSendToken(user, 200, res);
     };
   }
 }
