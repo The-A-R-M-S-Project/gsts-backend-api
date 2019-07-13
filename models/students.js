@@ -35,6 +35,7 @@ const StudentSchema = new mongoose.Schema({
       message: 'Passwords are not the same!'
     }
   },
+  passwordChangedAt: Date,
   phoneNumber: {
     type: String,
     required: true,
@@ -65,11 +66,27 @@ StudentSchema.pre('save', async function(next) {
   next();
 });
 
-StudentSchema.methods.isPasswordCorrect = async function(
-  passwordToCheck,
-  savedPassword
-) {
+// only set Password modified if one modifies thier password
+StudentSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now();
+  next();
+});
+
+StudentSchema.methods.isPasswordCorrect = async function(passwordToCheck, savedPassword) {
   return await bcrypt.compare(passwordToCheck, savedPassword);
+};
+
+StudentSchema.methods.changedPasswordAfter = function(jwtTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+
+    return jwtTimestamp < changedTimestamp;
+  }
+
+  // False means password NOT changed
+  return false;
 };
 
 module.exports = mongoose.model('student', StudentSchema);
