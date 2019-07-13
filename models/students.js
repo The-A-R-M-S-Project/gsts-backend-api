@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
@@ -36,6 +37,8 @@ const StudentSchema = new mongoose.Schema({
     }
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date, // will expire after a certain amount of time
   phoneNumber: {
     type: String,
     required: true,
@@ -91,6 +94,20 @@ StudentSchema.methods.changedPasswordAfter = function(jwtTimestamp) {
 
   // False means password NOT changed
   return false;
+};
+
+StudentSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  // saved encrypted reset token
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes to expiry
+
+  return resetToken; // return non-encrypted version to send through email
 };
 
 module.exports = mongoose.model('student', StudentSchema);
