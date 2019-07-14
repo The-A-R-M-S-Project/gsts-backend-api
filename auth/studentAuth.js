@@ -10,5 +10,6 @@ module.exports = {
   restrictTo: (...roles) => StudentAuth.restrictTo(...roles),
   forgotPassword: () => StudentAuth.forgotPassword(),
   resetPassword: () => StudentAuth.resetPassword(),
-  updatePassword: () => StudentAuth.updatePassword()
+  updatePassword: () => StudentAuth.updatePassword(),
+  getMe: () => StudentAuth.getMe()
 };

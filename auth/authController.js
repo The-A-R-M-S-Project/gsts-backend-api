@@ -66,6 +66,13 @@ class AuthController {
     });
   }
 
+  getMe() {
+    return (req, res, next) => {
+      req.params.id = req.user.id;
+      next();
+    };
+  }
+
   protect() {
     return catchAsync(async (req, res, next) => {
       // 1) Getting token and check of it's there
