@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const cors = require('cors');
 
 const AppError = require('./utils/appError');
@@ -47,6 +48,9 @@ app.use(bodyParser.json({ type: 'application/json' }));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
 
 // ---------------ROUTES ---------------------
 app.get('/', (req, res) =>
