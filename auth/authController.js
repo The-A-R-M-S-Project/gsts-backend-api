@@ -79,6 +79,8 @@ class AuthController {
       let token;
       if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
+      } else if (req.cookie.jwt) {
+        token = req.cookie.jwt;
       }
 
       if (!token) {
