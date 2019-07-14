@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 
 const AppError = require('./utils/appError');
@@ -13,6 +14,16 @@ const lecturerRouter = require('./routes/lecturers');
 const departmentRouter = require('./routes/departments');
 
 const app = express();
+
+// GLOBAL MIDDLEWARE
+
+// Limit requests from same API
+const limiter = rateLimit({
+  max: 200,
+  windowMs: 3600 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter); // limit all routes that begin with /api
 
 // -------------logs------------------
 if (process.env.NODE_ENV !== 'test') {
