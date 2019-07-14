@@ -218,6 +218,16 @@ class AuthController {
       createSendToken(user, 200, res);
     });
   }
+
+  logout() {
+    return (req, res) => {
+      res.cookie('jwt', 'no-auth', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+      });
+      res.status(200).json({ status: 'success' });
+    };
+  }
 }
 
 module.exports = AuthController;
