@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const AppError = require('../utils/appError');
 const sendEmail = require('./../utils/email');
+const catchAsync = require('../utils/catchAsync');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -40,14 +41,14 @@ class AuthController {
   }
 
   signup() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       const user = await this.User.create(req.body);
       createSendToken(user, 201, res);
-    };
+    });
   }
 
   login() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       const { email, password } = req.body;
 
       // 1) Check if email and password exist
@@ -62,11 +63,11 @@ class AuthController {
       }
 
       createSendToken(user, 201, res);
-    };
+    });
   }
 
   protect() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       // 1) Getting token and check of it's there
       let token;
       if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -100,7 +101,7 @@ class AuthController {
       // GRANT ACCESS TO PROTECTED ROUTE
       req.user = currentUser;
       next();
-    };
+    });
   }
 
   restrictTo(...roles) {
@@ -117,7 +118,7 @@ class AuthController {
   }
 
   forgotPassword() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       // 1) Get user based on POSTed email
       const user = await this.User.findOne({ email: req.body.email });
       if (!user) {
@@ -156,11 +157,11 @@ class AuthController {
           500
         );
       }
-    };
+    });
   }
 
   resetPassword() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       // 1) Get user based on the token
       const hashedToken = crypto
         .createHash('sha256')
@@ -185,11 +186,11 @@ class AuthController {
 
       // 4) Log the user in, send JWT
       createSendToken(user, 200, res);
-    };
+    });
   }
 
   updatePassword() {
-    return async (req, res, next) => {
+    return catchAsync(async (req, res, next) => {
       // 1) Get user from collection
       const user = await this.User.findById(req.user.id).select('+password');
 
@@ -206,7 +207,7 @@ class AuthController {
 
       // 4) Log user in, send JWT
       createSendToken(user, 200, res);
-    };
+    });
   }
 }
 
