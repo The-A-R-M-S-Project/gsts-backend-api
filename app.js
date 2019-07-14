@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const cors = require('cors');
 
 const AppError = require('./utils/appError');
@@ -16,6 +17,9 @@ const departmentRouter = require('./routes/departments');
 const app = express();
 
 // GLOBAL MIDDLEWARE
+
+// Set security HTTP headers
+app.use(helmet());
 
 // Limit requests from same API
 const limiter = rateLimit({
