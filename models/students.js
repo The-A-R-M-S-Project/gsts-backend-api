@@ -97,7 +97,7 @@ StudentSchema.methods.isPasswordCorrect = async function(passwordToCheck, savedP
   return await bcrypt.compare(passwordToCheck, savedPassword);
 };
 
-StudentSchema.methods.changedPasswordAfter = function(jwtTimestamp) {
+StudentSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
