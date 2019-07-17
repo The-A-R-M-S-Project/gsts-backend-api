@@ -1,6 +1,7 @@
 const express = require('express');
 const controller = require('../controllers/students');
 const authController = require('../auth/studentAuth');
+const lecturerAuth = require('../auth/lecturerAuth');
 
 const router = express.Router();
 
@@ -10,15 +11,21 @@ router.get('/logout', authController.logout());
 router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
-// Protect all routes after this middleware
-router.use(authController.protect());
+router.patch('/updateMe', authController.protect(), controller.updateMe);
+router.delete('/deactivateMe', authController.protect(), controller.deactivateMe);
+router.get(
+  '/me',
+  authController.protect(),
+  authController.getMe(),
+  controller.getStudent
+);
+router.patch(
+  '/updatePassword',
+  authController.protect(),
+  authController.updatePassword()
+);
 
-router.patch('/updateMe', controller.updateMe);
-router.delete('/deactivateMe', controller.deactivateMe);
-router.get('/me', authController.getMe(), controller.getStudent);
-router.patch('/updatePassword', authController.updatePassword());
-
-// TODO: Will restrict these to admin users only
+router.use(lecturerAuth.protect(), lecturerAuth.restrictTo('admin', 'principal'));
 router
   .route('/')
   .get(controller.getAllStudents)
