@@ -1,0 +1,74 @@
+[
+  {
+    "_id": "5c8a201e2f8fb814b56fa189",
+    "role": "principal",
+    "firstName": "Principal",
+    "lastName": "Lecturer1",
+    "email": "principal@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111221"
+  },
+  {
+    "_id": "5c8a20d32f8fb814b56fa188",
+    "role": "dean",
+    "firstName": "Dean",
+    "lastName": "Lecturer2",
+    "email": "dean@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222332"
+  },
+  {
+    "_id": "5c8a211f2f8fb814b56fa191",
+    "role": "lecturer",
+    "firstName": "Test",
+    "lastName": "Lecturer3",
+    "email": "Lecturer3@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111223",
+    "department": "5c88fa8cf4afda39709c2957",
+    "students": [
+      "5c8a1d5b0190b214360dc057",
+      "5c8a1dfa2f8fb814b56fa181",
+      "5c8a1d5b0190b214360dc059"
+    ]
+  },
+  {
+    "_id": "5c8a21d02f8fb814b56fa198",
+    "role": "lecturer",
+    "firstName": "Test",
+    "lastName": "Lecturer4",
+    "email": "Lecturer4@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222334",
+    "department": "5c88fa8cf4afda39709c2957",
+    "students": ["5c8a1dfa2f8fb814b56fa183"]
+  },
+  {
+    "_id": "5c8a21f22f8fb814b56fa18a",
+    "role": "lecturer",
+    "firstName": "Test",
+    "lastName": "Lecturer5",
+    "email": "Lecturer5@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111225",
+    "department": "5c88fa8cf4afda39709c2957",
+    "students": ["5c8a1d5b0190b214360dc056", "5c8a1dfa2f8fb814b56fa182"]
+  },
+  {
+    "_id": "5c8a22c62f8fb814b56fa18b",
+    "role": "lecturer",
+    "firstName": "Test",
+    "lastName": "Lecturer6",
+    "email": "Lecturer6@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222336",
+    "department": "5c88fa8cf4afda39709c2957",
+    "students": ["5c8a1d5b0190b214360dc055", "5c8a1dfa2f8fb814b56fa185"]
+  }
+]

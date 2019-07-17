@@ -5,6 +5,7 @@ const Schools = require('../models/schools');
 const Departments = require('../models/departments');
 const Programs = require('../models/programs');
 const Students = require('../models/students');
+const Lecturers = require('../models/lecturers');
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ let schools = getDataPromise(`${__dirname}/schools.json`, 'utf-8');
 let departments = getDataPromise(`${__dirname}/departments.json`, 'utf-8');
 let programs = getDataPromise(`${__dirname}/programs.json`, 'utf-8');
 let students = getDataPromise(`${__dirname}/students.json`, 'utf-8');
+let lecturers = getDataPromise(`${__dirname}/lecturers.json`, 'utf-8');
 
 const importDataFromModel = async (Model, data) => {
   try {
@@ -50,17 +52,19 @@ const deleteDataFromModel = async Model => {
 
 // IMPORT DATA INTO DB
 const importData = async () => {
-  [schools, departments, programs, students] = await Promise.all([
+  [schools, departments, programs, students, lecturers] = await Promise.all([
     schools,
     departments,
     programs,
-    students
+    students,
+    lecturers
   ]);
 
   await importDataFromModel(Schools, JSON.parse(schools));
   await importDataFromModel(Departments, JSON.parse(departments));
   await importDataFromModel(Programs, JSON.parse(programs));
   await importDataFromModel(Students, JSON.parse(students));
+  await importDataFromModel(Lecturers, JSON.parse(lecturers));
   console.log('Data successfully imported!');
   process.exit();
 };
@@ -71,6 +75,7 @@ const deleteData = async () => {
   await deleteDataFromModel(Departments);
   await deleteDataFromModel(Programs);
   await deleteDataFromModel(Students);
+  await deleteDataFromModel(Lecturers);
   console.log('Data successfully deleted!');
   process.exit();
 };

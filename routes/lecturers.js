@@ -26,7 +26,7 @@ router
   .post(authController.restrictTo('admin'), controller.addLecturer);
 router
   .route('/:id')
-  .get(authController.restrictTo('admin'), controller.getLecturer)
-  .patch(authController.restrictTo('admin', 'dean'), controller.updateLecturer);
+  .get(authController.restrictTo('admin', 'principal'), controller.getLecturer)
+  .patch(authController.restrictTo('admin', 'principal'), controller.updateLecturer);
 
 module.exports = router;

@@ -20,5 +20,71 @@
     "phoneNumber": "+256772222333",
     "program": "5c88fa8cf4afda39709c295a",
     "yearOfStudy": 1
+  },
+  {
+    "_id": "5c8a1d5b0190b214360dc059",
+    "firstName": "Test",
+    "lastName": "Student3",
+    "email": "student3@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111221",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 1
+  },
+  {
+    "_id": "5c8a1dfa2f8fb814b56fa183",
+    "firstName": "Test",
+    "lastName": "Student4",
+    "email": "student4@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222331",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 1
+  },
+  {
+    "_id": "5c8a1d5b0190b214360dc056",
+    "firstName": "Test",
+    "lastName": "Student5",
+    "email": "student5@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111223",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 2
+  },
+  {
+    "_id": "5c8a1dfa2f8fb814b56fa182",
+    "firstName": "Test",
+    "lastName": "Student6",
+    "email": "student6@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222334",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 2
+  },
+  {
+    "_id": "5c8a1d5b0190b214360dc055",
+    "firstName": "Test",
+    "lastName": "Student7",
+    "email": "student7@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111224",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 2
+  },
+  {
+    "_id": "5c8a1dfa2f8fb814b56fa185",
+    "firstName": "Test",
+    "lastName": "Student8",
+    "email": "student8@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222338",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 1
   }
 ]
