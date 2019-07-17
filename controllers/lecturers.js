@@ -12,7 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
 
 module.exports = {
   getAllLecturers: catchAsync(async (req, res, next) => {
-    const lecturers = await Lecturer.find({}).populate('department');
+    const lecturers = await Lecturer.find({});
 
     res.status(200).send(lecturers);
   }),
