@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "5c8a1d5b0190b214360dc057",
+    "firstName": "Test",
+    "lastName": "Student1",
+    "email": "student1@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772111222",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 2
+  },
+  {
+    "_id": "5c8a1dfa2f8fb814b56fa181",
+    "firstName": "Test",
+    "lastName": "Student2",
+    "email": "student2@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222333",
+    "program": "5c88fa8cf4afda39709c295a",
+    "yearOfStudy": 1
+  }
+]

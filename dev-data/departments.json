@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Civil and Environmental Engineering",
+    "_id": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "name": "Electrical and Computer Engineering",
+    "_id": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "name": "Mechanical Engineering",
+    "_id": "5c88fa8cf4afda39709c2954",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "name": "Architecture and Physical planning",
+    "_id": "5c8a21d02f8fb814b56fa189",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "name": "Construction Economics and Management",
+    "_id": "5c8a201e2f8fb814b56fa186",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "name": "Geomatics and Land Management",
+    "_id": "5c8a1f292f8fb814b56fa184",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "name": "Fine Art",
+    "_id": "5c88fa8cf4afda39709c2953",
+    "school": "5c88fa8cf4afda39709c2958"
+  }
+]

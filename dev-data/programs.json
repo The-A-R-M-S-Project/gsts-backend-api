@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Master of Science in Civil Engineering",
+    "_id": "5c88fa8cf4afda39709c295a",
+    "department": "5c88fa8cf4afda39709c2957"
+  },
+  {
+    "name": "Master of Science in Telecommunication Engineering",
+    "_id": "5c8a21d02f8fb814b56fa189",
+    "department": "5c88fa8cf4afda39709c2956"
+  },
+  {
+    "name": "Master of Science in Power Systems Engineering",
+    "_id": "5c88fa8cf4afda39709c2965",
+    "department": "5c88fa8cf4afda39709c2956"
+  },
+  {
+    "name": "Master of Science in Technology Innovation and Industrial Development",
+    "_id": "5c8a23412f8fb814b56fa18c",
+    "department": "5c88fa8cf4afda39709c2954"
+  },
+  {
+    "name": "Master of Science in Renewable Energy",
+    "_id": "5c88fa8cf4afda39709c2964",
+    "department": "5c88fa8cf4afda39709c2954"
+  },
+  {
+    "name": "Master of Science in Mechanical Engineering",
+    "_id": "5c88fa8cf4afda39709c2963",
+    "department": "5c88fa8cf4afda39709c2954"
+  },
+  {
+    "name": "Master of Architecture",
+    "_id": "5c8a1f4e2f8fb814b56fa185",
+    "department": "5c8a21d02f8fb814b56fa189"
+  },
+  {
+    "name": "Master of Science in Urban Planning and Design",
+    "_id": "5c88fa8cf4afda39709c2962",
+    "department": "5c8a21d02f8fb814b56fa189"
+  },
+  {
+    "name": "Post Graduate Diploma in Urban Planning and Design",
+    "_id": "5c88fa8cf4afda39709c295d",
+    "department": "5c8a21d02f8fb814b56fa189"
+  },
+  {
+    "name": "Master of Science in Construction Management",
+    "_id": "5c88fa8cf4afda39709c295c",
+    "department": "5c8a201e2f8fb814b56fa186"
+  },
+  {
+    "name": "Postgraduate Diploma in Construction & Project Management",
+    "_id": "5c88fa8cf4afda39709c2960",
+    "department": "5c8a201e2f8fb814b56fa186"
+  },
+  {
+    "name": "Master of Science in Geo-Information Science and Technology",
+    "_id": "5c88fa8cf4afda39709c295b",
+    "department": "5c8a1f292f8fb814b56fa184"
+  },
+  {
+    "name": "Master of Arts in Fine Art",
+    "_id": "5c88fa8cf4afda39709c2961",
+    "department": "5c88fa8cf4afda39709c2953"
+  }
+]
