@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "5d31c76d91dfe220a4b3438c",
+    "bioData": {
+      "firstName": "Test",
+      "lastName": "admin1",
+      "email": "student1@cedat.mak.ac.ug",
+      "phoneNumber": "+256772115222"
+    },
+    "password": "12345678",
+    "role": "admin"
+  }
+]

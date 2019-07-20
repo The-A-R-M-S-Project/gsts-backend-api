@@ -6,11 +6,13 @@ const Departments = require('../models/departments');
 const Programs = require('../models/programs');
 const Students = require('../models/students');
 const Lecturers = require('../models/lecturers');
+const Admin = require('../models/admin');
 
 dotenv.config();
 
 // const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
-const DB = process.env.DATABASE_LOCAL;
+// const DB = process.env.DATABASE_LOCAL;
+const DB = 'mongodb://localhost:27017/test_gsts';
 
 mongoose
   .connect(DB, {
@@ -34,6 +36,7 @@ let departments = getDataPromise(`${__dirname}/departments.json`, 'utf-8');
 let programs = getDataPromise(`${__dirname}/programs.json`, 'utf-8');
 let students = getDataPromise(`${__dirname}/students.json`, 'utf-8');
 let lecturers = getDataPromise(`${__dirname}/lecturers.json`, 'utf-8');
+let admin = getDataPromise(`${__dirname}/admins.json`, 'utf-8');
 
 const importDataFromModel = async (Model, data) => {
   try {
@@ -52,12 +55,13 @@ const deleteDataFromModel = async Model => {
 
 // IMPORT DATA INTO DB
 const importData = async () => {
-  [schools, departments, programs, students, lecturers] = await Promise.all([
+  [schools, departments, programs, students, lecturers, admin] = await Promise.all([
     schools,
     departments,
     programs,
     students,
-    lecturers
+    lecturers,
+    admin
   ]);
 
   await importDataFromModel(Schools, JSON.parse(schools));
@@ -65,6 +69,7 @@ const importData = async () => {
   await importDataFromModel(Programs, JSON.parse(programs));
   await importDataFromModel(Students, JSON.parse(students));
   await importDataFromModel(Lecturers, JSON.parse(lecturers));
+  await importDataFromModel(Admin, JSON.parse(admin));
   console.log('Data successfully imported!');
   process.exit();
 };
