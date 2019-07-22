@@ -62,7 +62,7 @@ class AuthController {
         return next(new AppError('Incorrect email or password', 401));
       }
 
-      createSendToken(user, 201, res);
+      createSendToken(user, 200, res);
     });
   }
 
