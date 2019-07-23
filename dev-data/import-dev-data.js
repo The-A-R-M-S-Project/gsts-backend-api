@@ -5,7 +5,7 @@ const Schools = require('../models/schools');
 const Departments = require('../models/departments');
 const Programs = require('../models/programs');
 const Students = require('../models/students');
-const Examiners = require('../models/examiners');
+const Staffs = require('../models/staff');
 const Admin = require('../models/admin');
 
 dotenv.config({ path: '../.env' });
@@ -35,7 +35,7 @@ let schools = getDataPromise(`${__dirname}/schools.json`, 'utf-8');
 let departments = getDataPromise(`${__dirname}/departments.json`, 'utf-8');
 let programs = getDataPromise(`${__dirname}/programs.json`, 'utf-8');
 let students = getDataPromise(`${__dirname}/students.json`, 'utf-8');
-let examiners = getDataPromise(`${__dirname}/examiners.json`, 'utf-8');
+let staff = getDataPromise(`${__dirname}/staff.json`, 'utf-8');
 let admin = getDataPromise(`${__dirname}/admins.json`, 'utf-8');
 
 const importDataFromModel = async (Model, data) => {
@@ -55,12 +55,12 @@ const deleteDataFromModel = async Model => {
 
 // IMPORT DATA INTO DB
 const importData = async () => {
-  [schools, departments, programs, students, examiners, admin] = await Promise.all([
+  [schools, departments, programs, students, staff, admin] = await Promise.all([
     schools,
     departments,
     programs,
     students,
-    examiners,
+    staff,
     admin
   ]);
 
@@ -68,7 +68,7 @@ const importData = async () => {
   await importDataFromModel(Departments, JSON.parse(departments));
   await importDataFromModel(Programs, JSON.parse(programs));
   await importDataFromModel(Students, JSON.parse(students));
-  await importDataFromModel(Examiners, JSON.parse(examiners));
+  await importDataFromModel(Staffs, JSON.parse(staff));
   await importDataFromModel(Admin, JSON.parse(admin));
   console.log('Data successfully imported!');
   process.exit();
@@ -80,7 +80,7 @@ const deleteData = async () => {
   await deleteDataFromModel(Departments);
   await deleteDataFromModel(Programs);
   await deleteDataFromModel(Students);
-  await deleteDataFromModel(Examiners);
+  await deleteDataFromModel(Staffs);
   await deleteDataFromModel(Admin);
   console.log('Data successfully deleted!');
   process.exit();

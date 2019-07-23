@@ -1,7 +1,7 @@
 const express = require('express');
 const controller = require('../controllers/students');
 const authController = require('../auth/studentAuth');
-const examinerAuth = require('../auth/examinerAuth');
+const staffAuth = require('../auth/staffAuth');
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.patch(
   authController.updatePassword()
 );
 
-router.use(examinerAuth.protect(), examinerAuth.restrictTo('admin', 'principal'));
+router.use(staffAuth.protect(), staffAuth.restrictTo('admin', 'principal'));
 router
   .route('/')
   .get(controller.getAllStudents)

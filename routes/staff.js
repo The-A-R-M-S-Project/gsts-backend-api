@@ -1,6 +1,6 @@
 const express = require('express');
-const controller = require('../controllers/examiners');
-const authController = require('../auth/examinerAuth');
+const controller = require('../controllers/staff');
+const authController = require('../auth/staffAuth');
 
 const router = express.Router();
 
@@ -14,19 +14,16 @@ router.use(authController.protect());
 
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
-router.get('/me', authController.getMe(), controller.getExaminer);
+router.get('/me', authController.getMe(), controller.getStaff);
 router.patch('/updatePassword', authController.updatePassword());
 
 router
   .route('/')
-  .get(
-    authController.restrictTo('admin', 'principal', 'dean'),
-    controller.getAllExaminers
-  )
-  .post(authController.restrictTo('admin'), controller.addExaminer);
+  .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllStaff)
+  .post(authController.restrictTo('admin'), controller.addStaff);
 router
   .route('/:id')
-  .get(authController.restrictTo('admin', 'principal'), controller.getExaminer)
-  .patch(authController.restrictTo('admin', 'principal'), controller.updateExaminer);
+  .get(authController.restrictTo('admin', 'principal'), controller.getStaff)
+  .patch(authController.restrictTo('admin', 'principal'), controller.updateStaff);
 
 module.exports = router;

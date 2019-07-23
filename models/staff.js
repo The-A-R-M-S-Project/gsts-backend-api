@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 
-const ExaminerSchema = new mongoose.Schema({
+const StaffSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, 'Please tell us your first name!']
@@ -65,7 +65,7 @@ const ExaminerSchema = new mongoose.Schema({
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
 });
 
-ExaminerSchema.pre('save', async function(next) {
+StaffSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
 
@@ -78,7 +78,7 @@ ExaminerSchema.pre('save', async function(next) {
 });
 
 // only set Password modified if one modifies thier password
-ExaminerSchema.pre('save', function(next) {
+StaffSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
@@ -86,20 +86,17 @@ ExaminerSchema.pre('save', function(next) {
 });
 
 // Query middleware that only finds documents with active set ot true
-ExaminerSchema.pre(/^find/, function(next) {
+StaffSchema.pre(/^find/, function(next) {
   // 'this' points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-ExaminerSchema.methods.isPasswordCorrect = async function(
-  passwordToCheck,
-  savedPassword
-) {
+StaffSchema.methods.isPasswordCorrect = async function(passwordToCheck, savedPassword) {
   return await bcrypt.compare(passwordToCheck, savedPassword);
 };
 
-ExaminerSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp) {
+StaffSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
@@ -107,7 +104,7 @@ ExaminerSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp
   }
   return false;
 };
-ExaminerSchema.methods.createPasswordResetToken = function() {
+StaffSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
   // saved encrypted reset token
@@ -121,4 +118,4 @@ ExaminerSchema.methods.createPasswordResetToken = function() {
   return resetToken; // return non-encrypted version to send through email
 };
 
-module.exports = mongoose.model('examiner', ExaminerSchema);
+module.exports = mongoose.model('staff', StaffSchema);
