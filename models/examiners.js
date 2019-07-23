@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 
-const LecturerSchema = new mongoose.Schema({
+const ExaminerSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, 'Please tell us your first name!']
@@ -52,8 +52,8 @@ const LecturerSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'principal', 'dean', 'lecturer'],
-    default: 'lecturer'
+    enum: ['admin', 'principal', 'dean', 'examiner'],
+    default: 'examiner'
   },
   active: {
     type: Boolean,
@@ -65,7 +65,7 @@ const LecturerSchema = new mongoose.Schema({
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
 });
 
-LecturerSchema.pre('save', async function(next) {
+ExaminerSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
 
@@ -78,7 +78,7 @@ LecturerSchema.pre('save', async function(next) {
 });
 
 // only set Password modified if one modifies thier password
-LecturerSchema.pre('save', function(next) {
+ExaminerSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
@@ -86,20 +86,20 @@ LecturerSchema.pre('save', function(next) {
 });
 
 // Query middleware that only finds documents with active set ot true
-LecturerSchema.pre(/^find/, function(next) {
+ExaminerSchema.pre(/^find/, function(next) {
   // 'this' points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-LecturerSchema.methods.isPasswordCorrect = async function(
+ExaminerSchema.methods.isPasswordCorrect = async function(
   passwordToCheck,
   savedPassword
 ) {
   return await bcrypt.compare(passwordToCheck, savedPassword);
 };
 
-LecturerSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp) {
+ExaminerSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
@@ -107,7 +107,7 @@ LecturerSchema.methods.isPasswordChangedAfterTokenIssued = function(jwtTimestamp
   }
   return false;
 };
-LecturerSchema.methods.createPasswordResetToken = function() {
+ExaminerSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
   // saved encrypted reset token
@@ -121,4 +121,4 @@ LecturerSchema.methods.createPasswordResetToken = function() {
   return resetToken; // return non-encrypted version to send through email
 };
 
-module.exports = mongoose.model('lecturer', LecturerSchema);
+module.exports = mongoose.model('examiner', ExaminerSchema);

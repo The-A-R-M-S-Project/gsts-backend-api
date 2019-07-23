@@ -115,7 +115,7 @@ class AuthController {
 
   restrictTo(...roles) {
     return (req, res, next) => {
-      // roles ['admin', 'student', 'lecturer', 'dean', 'principal']
+      // roles ['admin', 'student', 'examiner', 'dean', 'principal']
       if (!roles.includes(req.user.role)) {
         return next(
           new AppError('You do not have permission to perform this action', 403)

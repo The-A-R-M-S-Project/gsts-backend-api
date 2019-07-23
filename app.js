@@ -14,7 +14,7 @@ const adminRouter = require('./routes/admin');
 const schoolRouter = require('./routes/schools');
 const programRouter = require('./routes/programs');
 const studentRouter = require('./routes/students');
-const lecturerRouter = require('./routes/lecturers');
+const examinerRouter = require('./routes/examiners');
 const departmentRouter = require('./routes/departments');
 
 const app = express();
@@ -63,7 +63,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/school', schoolRouter);
 app.use('/api/program', programRouter);
 app.use('/api/student', studentRouter);
-app.use('/api/lecturer', lecturerRouter);
+app.use('/api/examiner', examinerRouter);
 app.use('/api/department', departmentRouter);
 
 app.all('*', (req, res, next) => {

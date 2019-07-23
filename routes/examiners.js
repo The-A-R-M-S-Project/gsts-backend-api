@@ -1,6 +1,6 @@
 const express = require('express');
-const controller = require('../controllers/lecturers');
-const authController = require('../auth/lecturerAuth');
+const controller = require('../controllers/examiners');
+const authController = require('../auth/examinerAuth');
 
 const router = express.Router();
 
@@ -14,19 +14,19 @@ router.use(authController.protect());
 
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
-router.get('/me', authController.getMe(), controller.getLecturer);
+router.get('/me', authController.getMe(), controller.getExaminer);
 router.patch('/updatePassword', authController.updatePassword());
 
 router
   .route('/')
   .get(
     authController.restrictTo('admin', 'principal', 'dean'),
-    controller.getAllLecturers
+    controller.getAllExaminers
   )
-  .post(authController.restrictTo('admin'), controller.addLecturer);
+  .post(authController.restrictTo('admin'), controller.addExaminer);
 router
   .route('/:id')
-  .get(authController.restrictTo('admin', 'principal'), controller.getLecturer)
-  .patch(authController.restrictTo('admin', 'principal'), controller.updateLecturer);
+  .get(authController.restrictTo('admin', 'principal'), controller.getExaminer)
+  .patch(authController.restrictTo('admin', 'principal'), controller.updateExaminer);
 
 module.exports = router;
