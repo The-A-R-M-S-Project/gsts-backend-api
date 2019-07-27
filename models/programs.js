@@ -2,12 +2,7 @@ const mongoose = require('mongoose');
 
 const ProgramSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  students: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'student'
-    }
-  ]
+  department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' }
 });
 
 module.exports = mongoose.model('program', ProgramSchema);
