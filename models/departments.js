@@ -2,12 +2,7 @@ const mongoose = require('mongoose');
 
 const DepartmentSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  programs: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'program'
-    }
-  ]
+  school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' }
 });
 
 module.exports = mongoose.model('department', DepartmentSchema);
