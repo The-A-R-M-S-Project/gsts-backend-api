@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.route('/:id').get(controller.getProgram);
 
-router.route('/:id/student').get(controller.getStudentsFromProgram);
+router.route('/:id/student').get(controller.getAllStudentsFromProgram);
 
 module.exports = router;
