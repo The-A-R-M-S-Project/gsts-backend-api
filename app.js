@@ -63,7 +63,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/school', schoolRouter);
 app.use('/api/program', programRouter);
 app.use('/api/student', studentRouter);
-app.use('/api/staff', staffRouter);
+app.use('/api/:staffRole((dean|principal|examiner))', staffRouter);
 app.use('/api/department', departmentRouter);
 
 app.all('*', (req, res, next) => {
