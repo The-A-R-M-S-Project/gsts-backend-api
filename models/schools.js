@@ -6,13 +6,7 @@ const SchoolSchema = new mongoose.Schema({
     required: [true, 'A school must have a name'],
     unique: true,
     trim: true
-  },
-  departments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'department'
-    }
-  ]
+  }
 });
 
 module.exports = mongoose.model('school', SchoolSchema);
