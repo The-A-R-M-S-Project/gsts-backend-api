@@ -1,25 +1,14 @@
 [
   {
     "name": "School of Engineering",
-    "_id": "5c88fa8cf4afda39709c2955",
-    "departments": [
-      "5c88fa8cf4afda39709c2957",
-      "5c88fa8cf4afda39709c2956",
-      "5c88fa8cf4afda39709c2954"
-    ]
+    "_id": "5c88fa8cf4afda39709c2955"
   },
   {
     "name": "School of Built Environment",
-    "_id": "5c88fa8cf4afda39709c2959",
-    "departments": [
-      "5c8a21d02f8fb814b56fa189",
-      "5c8a201e2f8fb814b56fa186",
-      "5c8a1f292f8fb814b56fa184"
-    ]
+    "_id": "5c88fa8cf4afda39709c2959"
   },
   {
     "name": "School of Industrial and Fine Arts",
-    "_id": "5c88fa8cf4afda39709c2958",
-    "departments": ["5c88fa8cf4afda39709c2953"]
+    "_id": "5c88fa8cf4afda39709c2958"
   }
 ]
