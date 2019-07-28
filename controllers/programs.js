@@ -15,6 +15,14 @@ module.exports = {
     res.status(200).send(program);
   }),
 
+  getAllPrograms: catchAsync(async (req, res, next) => {
+    const programs = await Program.find().sort({ name: 1 });
+
+    res.status(200).json({
+      programs
+    });
+  }),
+
   getAllStudentsFromProgram: catchAsync(async (req, res, next) => {
     const students = await Student.find({ program: req.params.id });
 
