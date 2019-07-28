@@ -2,7 +2,7 @@ const express = require('express');
 const controller = require('../controllers/staff');
 const authController = require('../auth/staffAuth');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/signup', authController.signup());
 router.post('/login', authController.login());
