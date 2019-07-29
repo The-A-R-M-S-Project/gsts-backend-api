@@ -62,15 +62,6 @@ class AuthController {
         return next(new AppError('Incorrect email or password', 401));
       }
 
-      if (user.role !== req.params.staffRole) {
-        return next(
-          new AppError(
-            `This user is not a ${req.params.staffRole}, his/her role is ${user.role}`,
-            401
-          )
-        );
-      }
-
       createSendToken(user, 200, res);
     });
   }
@@ -115,6 +106,7 @@ class AuthController {
           new AppError('User recently changed password! Please log in again.', 401)
         );
       }
+      // TODO protect routes basing on the user role
 
       // GRANT ACCESS TO PROTECTED ROUTE
       req.user = currentUser;
