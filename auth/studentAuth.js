@@ -7,7 +7,6 @@ module.exports = {
   signup: () => StudentAuth.signup(),
   login: () => StudentAuth.login(),
   logout: () => StudentAuth.logout(),
-  protect: () => StudentAuth.protect(),
   restrictTo: (...roles) => StudentAuth.restrictTo(...roles),
   forgotPassword: () => StudentAuth.forgotPassword(),
   resetPassword: () => StudentAuth.resetPassword(),

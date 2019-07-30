@@ -1,5 +1,6 @@
 const express = require('express');
 const controller = require('../controllers/staff');
+const AuthProtector = require('../auth/authProtector');
 const authController = require('../auth/staffAuth');
 
 const router = express.Router({ mergeParams: true });
@@ -10,7 +11,7 @@ router.get('/logout', authController.logout());
 router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
-router.use(authController.protect());
+router.use(AuthProtector());
 
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
