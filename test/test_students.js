@@ -3,24 +3,27 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const Student = require('../models/students');
+const Staff = require('../models/staff');
 const Program = require('../models/programs');
 const server = require('../server');
 const generators = require('./generators');
 
-const should = chai.should(); // no need to repeat this line in other tests
+chai.should(); // no need to repeat this line in other tests
 chai.use(chaiHttp);
 const client = chai.request.agent(server);
 
-describe('Students', () => {
+describe.only('Students', () => {
   beforeEach(done => {
     Student.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});
+    Staff.deleteMany({}, () => {});
     done();
   });
 
   afterEach(done => {
     Student.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});
+    Staff.deleteMany({}, () => {});
     done();
   });
 
@@ -29,107 +32,76 @@ describe('Students', () => {
       const program = await Program.create({ name: 'Master of Architecture' });
       const student = await Student.create(generators.newStudent);
       student.program = program._id;
-      program.students.push(student._id);
 
       await program.save();
       await student.save({ validateBeforeSave: false });
 
-      const responsePromise = new Promise((resolve, reject) => {
+      const requestPromise = new Promise((resolve, reject) => {
         client.get(`/api/program/${program._id}/student`).then(res => {
           resolve(res);
         });
       });
-      const res = await responsePromise;
+      const res = await requestPromise;
       res.should.have.status(200);
-      res.body.should.be.a('array');
-      res.body.length.should.not.be.eql(0);
-      res.body[0].should.have.property('_id');
-      res.body[0].should.have.property('firstName').eq('John');
-      res.body[0].should.have.property('lastName').eq('Doe');
-      res.body[0].should.have.property('email').eq('test@cedat.mak.ac.ug');
-      res.body[0].should.have.property('phoneNumber').eq('+256772123456');
-      res.body[0].should.have.property('program').eq(`${program._id}`);
+      res.body.should.be.a('object');
+      res.body.should.not.be.eql(0);
+      res.body.should.have.property('status');
+      res.body.should.have.property('studentSize');
+      res.body.should.have.property('data');
+      res.body.data.students.should.be.an('array');
+      res.body.data.students[0].should.have.property('_id');
+      res.body.data.students[0].should.have.property('firstName').eq('John');
+      res.body.data.students[0].should.have.property('lastName').eq('Doe');
+      res.body.data.students[0].should.have.property('email').eq('test@cedat.mak.ac.ug');
+      res.body.data.students[0].should.have.property('phoneNumber').eq('+256772123456');
+      res.body.data.students[0].should.have.property('program').eq(`${program._id}`);
     });
   });
 
-  // TODO: refactor this test to either pass with the Admin model or fail with the student model
-  // describe('/GET /api/student/:id', () => {
-  //   it('should GET a particular student when logged in', async () => {
-  //     const student = await Student.create(generators.newStudent);
-  //     const { email, password } = generators.newStudent;
+  describe('/GET /api/student/:id', () => {
+    it('should GET a particular student when user with role dean/principal is logged in', async () => {
+      const student = await Student.create(generators.newStudent);
+      await Staff.create(generators.newDean);
+      const { email, password } = generators.newDean;
 
-  //     const loginPromise = new Promise((resolve, reject) => {
-  //       client
-  //         .post(`/api/student/login`)
-  //         .send({
-  //           email,
-  //           password
-  //         })
-  //         .then(res => {
-  //           resolve(res);
-  //         });
-  //     });
-  //     const loginResponse = await loginPromise;
-  //     const { token } = loginResponse.body;
+      const loginPromise = new Promise((resolve, reject) => {
+        client
+          .post(`/api/staff/login`)
+          .send({
+            email,
+            password
+          })
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const loginResponse = await loginPromise;
+      const { token } = loginResponse.body;
 
-  //     const responsePromise = new Promise((resolve, reject) => {
-  //       client
-  //         .get(`/api/student/${student._id}/`)
-  //         .set('Authorization', `Bearer ${token}`)
-  //         .then(res => {
-  //           resolve(res);
-  //         });
-  //     });
-  //     const res = await responsePromise;
-  //     res.should.have.status(200);
-  //     res.body.should.be.a('object');
-  //     res.body.should.have.property('_id').eq(`${student._id}`);
-  //     res.body.should.have.property('role').eq(`${student.role}`);
-  //     res.body.should.have.property('firstName').eq(student.firstName);
-  //     res.body.should.have.property('lastName').eq(student.lastName);
-  //     res.body.should.have.property('email').eq(student.email);
-  //     res.body.should.have.property('phoneNumber').eq(student.phoneNumber);
-  //   });
-  // });
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .get(`/api/student/${student._id}/`)
+          .set('Authorization', `Bearer ${token}`)
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const res = await requestPromise;
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('_id').eq(`${student._id}`);
+      res.body.should.have.property('role').eq(`${student.role}`);
+      res.body.should.have.property('firstName').eq(student.firstName);
+      res.body.should.have.property('lastName').eq(student.lastName);
+      res.body.should.have.property('email').eq(student.email);
+      res.body.should.have.property('phoneNumber').eq(student.phoneNumber);
+    });
 
-  // TODO: Refactor this test to only pass with Admin credentials
-  // describe('/POST /api/student/', () => {
-  //   it('should successfully add a student to the database', done => {
-  //     const student = new Student({
-  //       bioData: {
-  //         firstName: 'Jane',
-  //         lastName: 'Doe',
-  //         email: 'test@cedat.mak.ac.ug',
-  //         phoneNumber: '12345'
-  //       },
-  //       password: 'testPassword'
-  //     });
-  //     chai
-  //       .request(server)
-  //       .post(`/api/student`)
-  //       .send(student)
-  //       .end((err, res) => {
-  //         res.should.have.status(201);
-  //         res.body.should.be.a('object');
-  //         res.body.should.have.property('message').eql('Student successfully added!');
-  //         res.body.student.should.have.property('_id');
-  //         res.body.student.should.have.property('firstName').eq('Jane');
-  //         res.body.student.should.have.property('lastName').eq('Doe');
-  //         res.body.student.should.have
-  //           .property('email')
-  //           .eq('test@cedat.mak.ac.ug');
-  //         res.body.student.bioData.should.have.property('phoneNumber').eq('12345');
-  //         done();
-  //       });
-  //   });
-  // });
-
-  describe('/POST /api/student/login', () => {
-    it('should successfully login with correct credentials', async () => {
+    it('should fail to GET a particular student when student is logged in', async () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
 
-      const responsePromise = new Promise((resolve, reject) => {
+      const loginPromise = new Promise((resolve, reject) => {
         client
           .post(`/api/student/login`)
           .send({
@@ -140,7 +112,81 @@ describe('Students', () => {
             resolve(res);
           });
       });
-      const res = await responsePromise;
+      const loginResponse = await loginPromise;
+      const { token } = loginResponse.body;
+
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .get(`/api/student/${student._id}/`)
+          .set('Authorization', `Bearer ${token}`)
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const res = await requestPromise;
+      res.should.have.status(403);
+      res.body.should.be.a('object');
+      res.body.should.have
+        .property('message')
+        .eq('You do not have permission to perform this action');
+      res.body.should.have.property('status').eq('fail');
+    });
+  });
+
+  describe('/POST /api/student/', () => {
+    it('should successfully add a student to the database if user role is principal/dean', async () => {
+      await Staff.create(generators.newDean);
+      const { email, password } = generators.newDean;
+
+      const loginPromise = new Promise((resolve, reject) => {
+        client
+          .post('/api/staff/login')
+          .send({ email, password })
+          .then(res => {
+            resolve(res);
+          });
+      });
+
+      const loginResponse = await loginPromise;
+      const { token } = loginResponse.body;
+
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .post('/api/student')
+          .set('Authorization', `Bearer ${token}`)
+          .send(generators.newStudent)
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const res = await requestPromise;
+      res.body.should.be.an('object');
+      res.body.should.have.a.property('student');
+      res.body.student.should.have.a.property('role').eql('student');
+      res.body.student.should.have.a.property('firstName').eql('John');
+      res.body.student.should.have.a.property('lastName').eql('Doe');
+      res.body.student.should.have.a.property('email').eql('test@cedat.mak.ac.ug');
+      res.body.student.should.have.a.property('phoneNumber').eql('+256772123456');
+    });
+  });
+
+  describe('/POST /api/student/login', () => {
+    it('should successfully login with correct credentials', async () => {
+      const student = await Student.create(generators.newStudent);
+      const { email, password } = generators.newStudent;
+
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .post(`/api/student/login`)
+          .send({
+            email,
+            password
+          })
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const res = await requestPromise;
       res.should.have.status(200);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('success');
@@ -155,7 +201,7 @@ describe('Students', () => {
       await Student.create(generators.newStudent);
       const { email } = generators.newStudent;
 
-      const responsePromise = new Promise((resolve, reject) => {
+      const requestPromise = new Promise((resolve, reject) => {
         client
           .post(`/api/student/login`)
           .send({
@@ -166,7 +212,7 @@ describe('Students', () => {
             resolve(res);
           });
       });
-      const res = await responsePromise;
+      const res = await requestPromise;
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('fail');
       res.body.should.have.property('message').eql('Incorrect email or password');
@@ -192,7 +238,7 @@ describe('Students', () => {
       const loginResponse = await loginPromise;
       const { token } = loginResponse.body;
 
-      const responsePromise = new Promise((resolve, reject) => {
+      const requestPromise = new Promise((resolve, reject) => {
         client
           .patch(`/api/student/updateMe/`)
           .set('Authorization', `Bearer ${token}`)
@@ -202,7 +248,7 @@ describe('Students', () => {
           });
       });
 
-      const res = await responsePromise;
+      const res = await requestPromise;
       res.should.have.status(200);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('success');

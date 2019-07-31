@@ -25,3 +25,13 @@ exports.newPrincipal = {
   phoneNumber: '+256772123456',
   role: 'principal'
 };
+
+exports.newDean = {
+  firstName: 'Dean',
+  lastName: 'Mr/Mrs.',
+  email: 'dean@cedat.mak.ac.ug',
+  password: '12345678',
+  passwordConfirm: '12345678',
+  phoneNumber: '+256772121856',
+  role: 'dean'
+};
