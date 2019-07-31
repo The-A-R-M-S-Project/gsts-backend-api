@@ -12,12 +12,14 @@ router.get('/logout', authController.logout());
 router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
-router.patch('/updateMe', AuthProtector(), controller.updateMe);
-router.delete('/deactivateMe', AuthProtector(), controller.deactivateMe);
-router.get('/me', AuthProtector(), authController.getMe(), controller.getStudent);
-router.patch('/updatePassword', AuthProtector(), authController.updatePassword());
+router.use(AuthProtector());
 
-router.use(AuthProtector(), staffAuth.restrictTo('admin', 'principal', 'dean'));
+router.patch('/updateMe', controller.updateMe);
+router.delete('/deactivateMe', controller.deactivateMe);
+router.get('/me', authController.getMe(), controller.getStudent);
+router.patch('/updatePassword', authController.updatePassword());
+
+router.use(staffAuth.restrictTo('admin', 'principal', 'dean'));
 router
   .route('/')
   .get(controller.getAllStudents)
