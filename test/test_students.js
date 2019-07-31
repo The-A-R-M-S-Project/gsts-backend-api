@@ -12,7 +12,7 @@ chai.should(); // no need to repeat this line in other tests
 chai.use(chaiHttp);
 const client = chai.request.agent(server);
 
-describe.only('Students', () => {
+describe('Students', () => {
   beforeEach(done => {
     Student.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});
