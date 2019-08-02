@@ -1,4 +1,5 @@
 const School = require('../models/schools');
+const Department = require('../models/departments');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -13,9 +14,7 @@ module.exports = {
   }),
 
   getSchool: catchAsync(async (req, res, next) => {
-    const school = await School.findById(req.params.id)
-      .populate({ path: 'departments', select: 'name _id' })
-      .sort({ name: 1 });
+    const school = await School.findById(req.params.id);
 
     if (!school) {
       return next(new AppError('No school found with that ID', 404));
@@ -25,25 +24,19 @@ module.exports = {
   }),
 
   getAllDepartmentsFromSchool: catchAsync(async (req, res, next) => {
-    const school = await School.findOne({ _id: req.params.id }).populate({
-      path: 'departments',
-      select: 'name _id'
-    });
+    const departments = await Department.find({ school: req.params.id });
 
-    if (!school) {
-      return next(new AppError('No school found with that ID', 404));
+    if (!departments) {
+      return next(new AppError('No departments found under school with that id', 404));
     }
 
     res.status(200).json({
-      school: school,
-      departments: school.departments
+      departments: departments
     });
   }),
 
   getAllSchools: catchAsync(async (req, res, next) => {
-    const schools = await School.find({})
-      .populate({ path: 'departments', select: 'name -_id' })
-      .sort({ name: 1 });
+    const schools = await School.find({}).sort({ name: 1 });
 
     res.status(200).json(schools);
   }),
