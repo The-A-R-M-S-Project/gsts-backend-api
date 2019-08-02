@@ -5,9 +5,10 @@ const Department = require('../models/departments');
 const Program = require('../models/programs');
 const server = require('../server');
 
+const client = chai.request.agent(server);
 chai.use(chaiHttp);
 
-describe('Programs', () => {
+describe.only('Programs', () => {
   beforeEach(done => {
     Department.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});
@@ -19,26 +20,41 @@ describe('Programs', () => {
     done();
   });
 
-  describe('/GET /api/program/:id ', () => {
-    it('it should GET a program by the given id', done => {
-      const program = new Program({
+  describe('/GET /api/program/:id ', async () => {
+    it('it should GET a program by the given id', async () => {
+      const program = await Program.create({
         name: 'Master of Science in Civil Engineering'
       });
-      program.save(() => {
-        chai
-          .request(server)
-          .get(`/api/program/${program.id}`)
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have
-              .property('name')
-              .eq('Master of Science in Civil Engineering');
-            res.body.should.have.property('students');
-            res.body.should.have.property('_id').eql(program.id);
-            done();
-          });
+      const requestPromise = new Promise((resolve, reject) => {
+        client.get(`/api/program/${program._id}`).then(res => {
+          resolve(res);
+        });
       });
+      const res = await requestPromise;
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('name').eq('Master of Science in Civil Engineering');
+      res.body.should.have.property('_id').eql(program.id);
+    });
+  });
+
+  describe('/GET /api/program/ ', async () => {
+    it('it should GET all programs', async () => {
+      const program = await Program.create({
+        name: 'Master of Science in Civil Engineering'
+      });
+      const requestPromise = new Promise((resolve, reject) => {
+        client.get(`/api/program`).then(res => {
+          resolve(res);
+        });
+      });
+      const res = await requestPromise;
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.programs[0].should.have
+        .property('name')
+        .eq('Master of Science in Civil Engineering');
+      res.body.programs[0].should.have.property('_id').eql(program.id);
     });
   });
 });

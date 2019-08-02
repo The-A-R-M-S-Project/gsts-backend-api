@@ -5,9 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 
 module.exports = {
   getProgram: catchAsync(async (req, res, next) => {
-    const program = await Program.findById({ _id: req.params.id })
-      .populate({ path: 'students', select: 'bioData.name bioData.email -_id' })
-      .sort({ name: 1 });
+    const program = await Program.findById({ _id: req.params.id });
 
     if (!program) {
       return next(new AppError('No program found with that id', 404));
