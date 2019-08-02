@@ -13,8 +13,6 @@ router
   .patch(schoolController.updateSchool)
   .delete(schoolController.deleteSchool);
 
-router
-  .route('/:id/department')
-  .get(schoolController.getAllDepartmentsFromSchool);
+router.route('/:id/department').get(schoolController.getAllDepartmentsFromSchool);
 
 module.exports = router;
