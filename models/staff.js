@@ -61,6 +61,7 @@ const StaffSchema = new mongoose.Schema({
     select: false
   },
   department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
+  school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
   photo: String,
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
 });
