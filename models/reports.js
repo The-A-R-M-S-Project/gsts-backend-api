@@ -4,14 +4,15 @@ const ReportSchema = new mongoose.Schema({
   reportUrl: String,
   reportStatus: {
     type: String,
-    enum: ['submitted', 'With examiner', 'cleared']
+    enum: ['submitted', 'With examiner', 'cleared'],
+    default: 'submitted'
   },
   dateSubmitted: {
     type: Date,
     default: Date.now
   },
   dateWithExaminer: Date,
-  dateCleared: Date.now,
+  dateCleared: Date,
   student: { type: mongoose.Schema.Types.ObjectId, ref: 'student' }
 });
 

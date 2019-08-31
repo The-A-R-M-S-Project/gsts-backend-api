@@ -5,7 +5,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(controller.getAllreports)
+  .get(controller.getAllReports)
   .post(controller.addReport);
 router
   .route('/:id')
