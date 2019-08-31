@@ -11,7 +11,8 @@ const ReportSchema = new mongoose.Schema({
     default: Date.now
   },
   dateWithExaminer: Date,
-  dateCleared: Date
+  dateCleared: Date.now,
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'student' }
 });
 
 ReportSchema.methods.isReviewDeadlineExceeded = function() {
