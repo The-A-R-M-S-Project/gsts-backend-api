@@ -35,3 +35,8 @@ exports.newDean = {
   phoneNumber: '+256772121856',
   role: 'dean'
 };
+
+exports.newReport = {
+  reportStatus: 'submitted',
+  dateSubmitted: '03/09/2019'
+};
