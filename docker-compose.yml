@@ -6,6 +6,8 @@ services:
     restart: always
     build: .
     # command: bash -c "node dev-data/import-dev-data.js --import"
+    depends_on:
+      - mongo
     ports:
       - '8080:8080'
     links:
@@ -13,5 +15,7 @@ services:
   mongo:
     container_name: quickstarter-mongo-test
     image: mongo
+    logging:
+      driver: none
     ports:
       - '27017:27017'

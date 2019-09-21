@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 8080
 
 # # # This starts the Docker application
-CMD [ "npm", "start" ]
+CMD [ "npm", "test" ]

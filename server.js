@@ -19,11 +19,14 @@ let DB =
     : process.env.DATABASE_LOCAL;
 if (process.env.NODE_ENV === 'test') DB = process.env.DATABASE_TEST;
 
+console.log(`\n----> DATABASE: ${DB}\n`);
+
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    useUnifiedTopology: true
   })
   .then(() => console.log('DB connection successful!'));
 
