@@ -219,10 +219,12 @@ describe.only('Students', () => {
     });
   });
 
-  describe('/PATCH /api/student/:id', () => {
+  describe.only('/PATCH /api/student/:id', () => {
     it('should update student information given the id', async () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
+      console.log(`\n---> new student: ${student}`);
+      console.log(`\n---> new student cred: ${email}, ${password}`);
 
       const loginPromise = new Promise((resolve, reject) => {
         client
@@ -232,11 +234,13 @@ describe.only('Students', () => {
             password
           })
           .then(res => {
+            console.log(`\n ---> login response: ${JSON.stringify(res.body, null, 2)}`);
             resolve(res);
           });
       });
       const loginResponse = await loginPromise;
       const { token } = loginResponse.body;
+      console.log(`--->\ntoken: ${token}`);
 
       const requestPromise = new Promise((resolve, reject) => {
         client
@@ -244,6 +248,9 @@ describe.only('Students', () => {
           .set('Authorization', `Bearer ${token}`)
           .send({ phoneNumber: '+256783123456' })
           .then(res => {
+            console.log(
+              `----> \nresponse on update patch: ${JSON.stringify(res.body, null, 2)}`
+            );
             resolve(res);
           });
       });
