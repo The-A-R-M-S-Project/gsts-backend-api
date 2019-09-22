@@ -15,7 +15,7 @@ before_script:
   - docker-compose up --build -d
 
 script:
-  - ./unit-test.sh
+  - ./scripts/unit-test.sh
 
 after_script:
   - docker-compose down
