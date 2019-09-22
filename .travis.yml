@@ -11,12 +11,9 @@ install:
 
 before_script:
   - pwd
-  - ls
-  - npm install
-  - docker-compose up --build -d
 
 script:
-  - ./scripts/unit-test.sh
+  - docker-compose up --build
 
 after_script:
   - docker-compose down
