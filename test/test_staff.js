@@ -10,7 +10,7 @@ const generators = require('./generators');
 chai.use(chaiHttp);
 const client = chai.request.agent(server);
 
-describe('Staff', () => {
+describe.only('Staff', () => {
   beforeEach(done => {
     Staff.deleteMany({}, () => {});
     done();
