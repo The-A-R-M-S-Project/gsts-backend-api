@@ -10,6 +10,8 @@ install:
   - docker-compose version
 
 before_script:
+  - pwd
+  - ls
   - docker-compose up --build -d
 
 script:
