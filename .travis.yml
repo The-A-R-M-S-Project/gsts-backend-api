@@ -13,7 +13,7 @@ before_script:
   - pwd
 
 script:
-  - docker-compose up --build
+  - docker-compose up --build -d
 
 after_script:
   - docker-compose down
