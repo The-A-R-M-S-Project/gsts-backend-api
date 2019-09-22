@@ -3,7 +3,6 @@ version: '3'
 services:
   app:
     container_name: quickstarter-server
-    restart: always
     build: .
     # command: bash -c "node dev-data/import-dev-data.js --import"
     depends_on:
