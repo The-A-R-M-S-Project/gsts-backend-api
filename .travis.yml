@@ -5,19 +5,8 @@ dist: trusty
 
 install:
   # Update docker-engine using Ubuntu 'trusty' apt repo
-  - >
-    curl -sSL "https://get.docker.com/gpg" |
-     sudo -E apt-key add -
-  - >
-    echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" |
-     sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update
-  - >
-    sudo apt-get -o Dpkg::Options::="--force-confdef" \
-     -o Dpkg::Options::="--force-confold" --assume-yes install docker-engine
-  - docker version
-  # Update docker-compose via pip
-  - sudo pip install docker-compose
+  - sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
   - docker-compose version
 
 before_script:
