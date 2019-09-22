@@ -17,7 +17,8 @@ let DB =
   process.env.NODE_ENV === 'production'
     ? process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
     : process.env.DATABASE_LOCAL;
-if (process.env.NODE_ENV === 'test') DB = process.env.DATABASE_TEST;
+if (process.env.NODE_ENV === 'test')
+  DB = process.env.DATABASE_TEST || 'mongodb://mongo:27017/quickstarter-mongo-test';
 
 console.log(`\n----> DATABASE: ${DB}\n`);
 
