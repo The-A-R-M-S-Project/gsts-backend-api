@@ -11,6 +11,11 @@ install:
 
 before_script:
   - pwd
+  - echo $DATABASE_LOCAL >> .env
+  - echo $DATABASE_TEST >> .env
+  - echo $NODE_ENV >> .env
+  - echo $PORT >> .env
+  - cat .env
 
 script:
   - docker-compose up --build
