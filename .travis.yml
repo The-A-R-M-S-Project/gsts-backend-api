@@ -12,6 +12,7 @@ install:
 before_script:
   - pwd
   - ls
+  - npm install
   - docker-compose up --build -d
 
 script:
