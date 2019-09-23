@@ -6,7 +6,6 @@ const sendEmail = require('./../utils/email');
 const catchAsync = require('../utils/catchAsync');
 
 const signToken = id => {
-  console.log(`----> \nJWT_SEC: ${process.env.JWT_SECRET}\n`);
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
     issuer: process.env.JWT_ISSUER
