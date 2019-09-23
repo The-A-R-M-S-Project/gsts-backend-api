@@ -17,7 +17,7 @@ before_script:
   - echo $JWT_EXPIRES_IN >> .env
   - echo $JWT_COOKIE_EXPIRES_IN >> .env
   - echo $JWT_ISSUER >> .env
-  - cat env
+  - cat .env
   - pwd
 
 script:
