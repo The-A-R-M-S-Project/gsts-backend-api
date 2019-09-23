@@ -243,7 +243,7 @@ describe.only('Students', () => {
         `\n ---> login response Prom: ${JSON.stringify(loginResponse, null, 2)}\n`
       );
       const { token } = loginResponse.body;
-      console.log(`--->\ntoken: ${token}`);
+      console.log(`--->\nresponse token: ${token}`);
 
       const requestPromise = new Promise((resolve, reject) => {
         client
