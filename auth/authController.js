@@ -50,6 +50,7 @@ class AuthController {
   login() {
     return catchAsync(async (req, res, next) => {
       const { email, password } = req.body;
+      console.log(`\n---> log in cred: ${email}, ${password}\n`);
 
       // 1) Check if email and password exist
       if (!email || !password) {
