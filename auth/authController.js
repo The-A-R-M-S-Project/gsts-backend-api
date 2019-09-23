@@ -17,8 +17,8 @@ const createSendToken = (user, statusCode, res) => {
   console.log(`--->\n token: ${token}\n`);
   //send Token via HttpOnly cookie
   const cookieOptions = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000),
-    httpOnly: true
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000)
+    // httpOnly: true
   };
 
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true; // only for SSL in production
@@ -52,8 +52,6 @@ class AuthController {
   login() {
     return catchAsync(async (req, res, next) => {
       const { email, password } = req.body;
-      console.log(`\n---> log in cred: ${email}, ${password}\n`);
-
       // 1) Check if email and password exist
       if (!email || !password) {
         return next(new AppError('Please provide email and password!', 400));
