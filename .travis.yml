@@ -1,3 +1,7 @@
+language: node_js
+node_js:
+  - '10'
+
 # Use Ubuntu 'trusty' distribution
 sudo: required
 dist: trusty
@@ -9,10 +13,6 @@ install:
   - docker-compose version
 
 before_script:
-  - sudo apt-get update
-  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-  - sudo apt install nodejs
-  - node --version
   - pwd
 
 script:
