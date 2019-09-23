@@ -12,7 +12,7 @@ chai.should(); // no need to repeat this line in other tests
 chai.use(chaiHttp);
 const client = chai.request.agent(server);
 
-describe.only('Students', () => {
+describe('Students', () => {
   beforeEach(done => {
     Student.deleteMany({}, () => {});
     Program.deleteMany({}, () => {});
@@ -219,7 +219,7 @@ describe.only('Students', () => {
     });
   });
 
-  describe.only('/PATCH /api/student/:id', () => {
+  describe('/PATCH /api/student/:id', () => {
     it('should update student information given the id', async () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
