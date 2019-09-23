@@ -58,6 +58,7 @@ class AuthController {
       }
       // 2) Check if user exists && password is correct
       const user = await this.User.findOne({ email }).select('+password');
+      console.log(`---->\n User: ${user}`);
 
       if (!user || !(await user.isPasswordCorrect(password, user.password))) {
         return next(new AppError('Incorrect email or password', 401));
