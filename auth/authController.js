@@ -65,8 +65,8 @@ class AuthController {
       }
 
       // createSendToken(user, 200, res);
-      // const token = signToken(user._id);
-      // console.log(`--->\n token: ${token}\n`);
+      const token = signToken(user._id);
+      console.log(`--->\n token: ${token}\n`);
       // //send Token via HttpOnly cookie
       // const cookieOptions = {
       //   expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000),
