@@ -82,7 +82,7 @@ class AuthController {
 
       res.status(200).json({
         status: 'success',
-        token,
+        // token,
         data: {
           user
         }
