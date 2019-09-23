@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  unit-test:
+    container_name: quickstarter-server
+    build: .
+    depends_on:
+      - mongo
+    ports:
+      - '8080:8080'
+    links:
+      - mongo
+  mongo:
+    container_name: quickstarter-mongo-test
+    image: mongo
+    logging:
+      driver: none
+    ports:
+      - '27017:27017'
