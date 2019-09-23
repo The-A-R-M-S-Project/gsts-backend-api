@@ -14,14 +14,19 @@ const signToken = id => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  console.log(`--->\n token: ${token}\n`);
   //send Token via HttpOnly cookie
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000),
     httpOnly: true
   };
+  console.log(`----> Cookie Options: ${cookieOptions}\n`);
+
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true; // only for SSL in production
 
+  console.log(`---->\n response before cookie: ${JSON.stringify(res, null, 2)}\n`);
   res.cookie('jwt', token, cookieOptions);
+  console.log(`---->\n response after cookie: ${JSON.stringify(res, null, 2)}\n`);
 
   // Remove password from output
   user.password = undefined;
