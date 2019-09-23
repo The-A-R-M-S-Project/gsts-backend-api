@@ -7,8 +7,6 @@ WORKDIR /usr/src/app
 # This copies significant package.json files to the current directory
 COPY package.json ./
 
-RUN node --version
-
 # Install essential Node.js dependencies
 RUN npm install
 
