@@ -13,10 +13,10 @@ install:
   - docker-compose version
 
 before_script:
-  - echo $JWT_SECRET >> .env
-  - echo $JWT_EXPIRES_IN >> .env
-  - echo $JWT_COOKIE_EXPIRES_IN >> .env
-  - echo $JWT_ISSUER >> .env
+  - echo JWT_SECRET=$JWT_SECRET >> .env
+  - echo JWT_EXPIRES_IN=$JWT_EXPIRES_IN >> .env
+  - echo JWT_COOKIE_EXPIRES_IN=$JWT_COOKIE_EXPIRES_IN >> .env
+  - echo JWT_ISSUER=$JWT_ISSUER >> .env
   - cat .env
   - pwd
 

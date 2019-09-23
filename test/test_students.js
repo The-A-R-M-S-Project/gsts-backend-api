@@ -219,7 +219,7 @@ describe.only('Students', () => {
     });
   });
 
-  describe('/PATCH /api/student/:id', () => {
+  describe.only('/PATCH /api/student/:id', () => {
     it('should update student information given the id', async () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
