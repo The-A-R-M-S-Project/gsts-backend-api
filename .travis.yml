@@ -10,6 +10,7 @@ install:
 
 before_script:
   - pwd
+  - node --version
 
 script:
   - docker-compose up --build --abort-on-container-exit
