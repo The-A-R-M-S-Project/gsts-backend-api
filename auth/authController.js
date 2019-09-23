@@ -58,7 +58,7 @@ class AuthController {
       }
       // 2) Check if user exists && password is correct
       const user = await this.User.findOne({ email }).select('+password');
-      console.log(`---->\n User: ${user}`);
+      // console.log(`---->\n User: ${user}`);
 
       if (!user || !(await user.isPasswordCorrect(password, user.password))) {
         return next(new AppError('Incorrect email or password', 401));
@@ -69,8 +69,8 @@ class AuthController {
       console.log(`--->\n token: ${token}\n`);
       //send Token via HttpOnly cookie
       const cookieOptions = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000)
-        // httpOnly: true
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60000),
+        httpOnly: true
       };
 
       if (process.env.NODE_ENV === 'production') cookieOptions.secure = true; // only for SSL in production
