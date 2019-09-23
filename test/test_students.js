@@ -224,7 +224,7 @@ describe.only('Students', () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
       console.log(`\n---> new student: ${student}`);
-      console.log(`\n---> new student cred: ${email}, ${password}`);
+      console.log(`\n---> new student cred: ${email}, ${password}\n`);
 
       const loginPromise = new Promise((resolve, reject) => {
         client
@@ -234,11 +234,14 @@ describe.only('Students', () => {
             password
           })
           .then(res => {
-            console.log(`\n ---> login response: ${JSON.stringify(res.body, null, 2)}`);
+            console.log(`\n ---> login response 1: ${JSON.stringify(res.body, null, 2)}`);
             resolve(res);
           });
       });
       const loginResponse = await loginPromise;
+      console.log(
+        `\n ---> login response Prom: ${JSON.stringify(loginResponse, null, 2)}\n`
+      );
       const { token } = loginResponse.body;
       console.log(`--->\ntoken: ${token}`);
 
