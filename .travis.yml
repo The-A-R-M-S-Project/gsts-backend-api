@@ -13,6 +13,11 @@ install:
   - docker-compose version
 
 before_script:
+  - echo $JWT_SECRET >> .env
+  - echo $JWT_EXPIRES_IN >> .env
+  - echo $JWT_COOKIE_EXPIRES_IN >> .env
+  - echo $JWT_ISSUER >> .env
+  - cat env
   - pwd
 
 script:
