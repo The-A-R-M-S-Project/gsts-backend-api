@@ -14,6 +14,7 @@ install:
 
 before_script:
   # add environment variables to .env file
+  - docker system prune -f
   - echo PORT=$PORT >> .env
   - echo DATABASE=$DATABASE >> .env
   - echo DATABASE_PASSWORD=$DATABASE_PASSWORD >> .env
@@ -33,3 +34,4 @@ script:
 
 after_script:
   - docker-compose down
+  - docker system prune -f
