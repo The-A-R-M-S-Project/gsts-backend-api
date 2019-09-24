@@ -7,6 +7,9 @@ WORKDIR /usr/src/app
 # This copies significant package.json files to the current directory
 COPY package.json ./
 
+# Install request
+RUN npm install --save request
+
 # Install essential Node.js dependencies
 RUN npm install
 
