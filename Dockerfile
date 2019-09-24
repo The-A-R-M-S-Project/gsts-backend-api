@@ -1,14 +1,14 @@
 # An official Docker image for Node.js
-FROM node:10
+FROM mhart/alpine-node:10.16.0
 
 # Working directory for the containerised application
 WORKDIR /usr/src/app
 
 # This copies significant package.json files to the current directory
-COPY package.json ./
+COPY package*.json ./
 
-# Install request
-RUN npm install --save request
+# install the compiler and build dependencies in order to build bcrypt in alpine linux image
+RUN apk --no-cache add --virtual builds-deps build-base python
 
 # Install essential Node.js dependencies
 RUN npm install
