@@ -11,17 +11,21 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+const guaranteeNoPasswordInfo = (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'This route is not for password updates. Please use /updatePassword.',
+        400
+      )
+    );
+  }
+};
+
 module.exports = {
   updateMe: catchAsync(async (req, res, next) => {
     // 1) Create error if student POSTs password data
-    if (req.body.password || req.body.passwordConfirm) {
-      return next(
-        new AppError(
-          'This route is not for password updates. Please use /updatePassword.',
-          400
-        )
-      );
-    }
+    guaranteeNoPasswordInfo(req, res, next);
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated like role and only allow the following
     const filteredBody = filterObj(
@@ -132,14 +136,8 @@ module.exports = {
     await report.save();
 
     // make sure you do not have password info on this route so that you can update the student document safely
-    if (req.body.password || req.body.passwordConfirm) {
-      return next(
-        new AppError(
-          'This route is not for password updates. Please use /updatePassword.',
-          400
-        )
-      );
-    }
+    guaranteeNoPasswordInfo(req, res, next);
+
     // Update Student document
     await Student.findByIdAndUpdate(
       req.params.id,
