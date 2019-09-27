@@ -130,6 +130,10 @@ module.exports = {
       return next(new AppError('No student exists with that id', 404));
     }
 
+    if (student.report) {
+      return next(new AppError('You already have a report, update it instead', 403));
+    }
+
     // TODO: Include file uploads with multer
     const report = new Report(req.body);
     report.student = req.params.id;
