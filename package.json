@@ -4,8 +4,8 @@
   "description": "Repository for Graduate Students tracking System",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "start:prod": "NODE_ENV=production node server.js",
+    "start": "nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
     "test": "mocha --timeout 10000 --exit"
   },

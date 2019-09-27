@@ -7,6 +7,7 @@ const Programs = require('../models/programs');
 const Students = require('../models/students');
 const Staffs = require('../models/staff');
 const Admin = require('../models/admin');
+const Report = require('../models/reports');
 
 dotenv.config({ path: '../.env' });
 
@@ -37,6 +38,7 @@ let programs = getDataPromise(`${__dirname}/programs.json`, 'utf-8');
 let students = getDataPromise(`${__dirname}/students.json`, 'utf-8');
 let staff = getDataPromise(`${__dirname}/staff.json`, 'utf-8');
 let admin = getDataPromise(`${__dirname}/admins.json`, 'utf-8');
+let reports = getDataPromise(`${__dirname}/reports.json`, 'utf-8');
 
 const importDataFromModel = async (Model, data) => {
   try {
@@ -55,13 +57,14 @@ const deleteDataFromModel = async Model => {
 
 // IMPORT DATA INTO DB
 const importData = async () => {
-  [schools, departments, programs, students, staff, admin] = await Promise.all([
+  [schools, departments, programs, students, staff, admin, reports] = await Promise.all([
     schools,
     departments,
     programs,
     students,
     staff,
-    admin
+    admin,
+    reports
   ]);
 
   await importDataFromModel(Schools, JSON.parse(schools));
@@ -70,6 +73,7 @@ const importData = async () => {
   await importDataFromModel(Students, JSON.parse(students));
   await importDataFromModel(Staffs, JSON.parse(staff));
   await importDataFromModel(Admin, JSON.parse(admin));
+  await importDataFromModel(Report, JSON.parse(reports));
   console.log('Data successfully imported!');
   process.exit();
 };
@@ -82,6 +86,7 @@ const deleteData = async () => {
   await deleteDataFromModel(Students);
   await deleteDataFromModel(Staffs);
   await deleteDataFromModel(Admin);
+  await deleteDataFromModel(Report);
   console.log('Data successfully deleted!');
   process.exit();
 };

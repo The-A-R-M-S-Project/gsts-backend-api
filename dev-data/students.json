@@ -8,7 +8,8 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772111222",
     "program": "5c88fa8cf4afda39709c295a",
-    "yearOfStudy": 2
+    "yearOfStudy": 2,
+    "report": "5c88fa8cf4afda39709c2956"
   },
   {
     "_id": "5c8a1dfa2f8fb814b56fa181",
@@ -19,7 +20,8 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772222333",
     "program": "5c88fa8cf4afda39709c295a",
-    "yearOfStudy": 1
+    "yearOfStudy": 1,
+    "report": "5c88fa8cf4afda39709c2956"
   },
   {
     "_id": "5c8a1d5b0190b214360dc059",
