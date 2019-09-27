@@ -1,4 +1,5 @@
 const Student = require('../models/students');
+const Report = require('../models/reports');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -73,10 +74,15 @@ module.exports = {
   }),
 
   getStudent: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate({
-      path: 'program',
-      select: 'name -_id'
-    });
+    const student = await Student.findById(req.params.id)
+      .populate({
+        path: 'program',
+        select: 'name -_id'
+      })
+      .populate({
+        path: 'report',
+        select: '-student'
+      });
     if (!student) {
       return next(new AppError('No student exists with that id', 404));
     }
@@ -93,5 +99,81 @@ module.exports = {
       return next(new AppError('No student found with that id', 404));
     }
     res.json({ message: 'Student information updated!', student });
+  }),
+
+  // ----- student report controllers
+
+  getReport: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+
+    const report = await Report.find({ student }).populate({
+      path: 'student',
+      select: 'firstName lastName -_id'
+    });
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+
+    res.status(200).json(report);
+  }),
+
+  addReport: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id).populate('report');
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+
+    // TODO: Include file uploads with multer
+    const report = new Report(req.body);
+    report.student = req.params.id;
+    await report.save();
+
+    // make sure you do not have password info on this route so that you can update the student document safely
+    if (req.body.password || req.body.passwordConfirm) {
+      return next(
+        new AppError(
+          'This route is not for password updates. Please use /updatePassword.',
+          400
+        )
+      );
+    }
+    // Update Student document
+    await Student.findByIdAndUpdate(
+      req.params.id,
+      { report: report._id },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    res.status(201).json({
+      message: 'Report successfully added',
+      report
+    });
+  }),
+
+  updateReport: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id).populate({
+      path: 'report',
+      select: '_id'
+    });
+
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+
+    // TODO: Include file uploads with multer
+    const report = await Report.findByIdAndUpdate(student.report._id, req.body, {
+      new: true
+    });
+
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+    res.status(200).json({ message: 'Report Updated', report });
   })
 };
