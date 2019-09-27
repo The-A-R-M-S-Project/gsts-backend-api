@@ -38,5 +38,5 @@ exports.newDean = {
 
 exports.newReport = {
   reportStatus: 'submitted',
-  dateSubmitted: '03/09/2019'
+  submittedAt: '03/09/2019'
 };

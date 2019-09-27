@@ -4,21 +4,22 @@ const ReportSchema = new mongoose.Schema({
   reportUrl: String,
   reportStatus: {
     type: String,
-    enum: ['submitted', 'With examiner', 'cleared'],
-    default: 'submitted'
+    enum: ['notSubmitted', 'submitted', 'withExaminer', 'cleared'],
+    default: 'notSubmitted'
   },
-  dateSubmitted: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
-  dateWithExaminer: Date,
-  dateCleared: Date,
+  submittedAt: Date,
+  receivedAt: Date, // date when examiner acknowledges receipt of the report
+  clearedAt: Date,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
 ReportSchema.methods.isReviewDeadlineExceeded = function() {
-  if (this.dateWithExaminer && this.reportStatus === 'With examiner') {
-    return Math.abs((Date.now - this.dateSubmmited) / (1000 * 3600 * 24)) > 30;
+  if (this.receivedAt && this.reportStatus === 'withExaminer') {
+    return Math.abs((Date.now - this.submittedAt) / (1000 * 3600 * 24)) > 30;
   }
 
   return false;

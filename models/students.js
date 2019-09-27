@@ -63,7 +63,8 @@ const StudentSchema = new mongoose.Schema({
   },
   photo: String,
   program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
-  yearOfStudy: Number
+  yearOfStudy: Number,
+  report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' }
 });
 
 StudentSchema.pre('save', async function(next) {
