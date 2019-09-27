@@ -19,9 +19,11 @@ router.delete('/deactivateMe', controller.deactivateMe);
 router.get('/me', authController.getMe(), controller.getStudent);
 router.patch('/updatePassword', authController.updatePassword());
 
-router.get('/report', authController.getMe(), controller.getReport);
-router.post('/report', authController.getMe(), controller.addReport);
-router.patch('/report', authController.getMe(), controller.updateReport);
+router
+  .route('/report')
+  .get(authController.getMe(), controller.getReport)
+  .post(authController.getMe(), controller.addReport)
+  .patch(authController.getMe(), controller.updateReport);
 
 router.use(staffAuth.restrictTo('admin', 'principal', 'dean'));
 router
