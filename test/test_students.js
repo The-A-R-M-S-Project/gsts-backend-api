@@ -31,13 +31,13 @@ describe('Students', () => {
     it('Should GET all the students in a particular program', async () => {
       const program = await Program.create({ name: 'Master of Architecture' });
       const student = await Student.create(generators.newStudent);
-      student.program = program._id;
+      student.program = program.id;
 
       await program.save();
       await student.save({ validateBeforeSave: false });
 
       const requestPromise = new Promise((resolve, reject) => {
-        client.get(`/api/program/${program._id}/student`).then(res => {
+        client.get(`/api/program/${program.id}/student`).then(res => {
           resolve(res);
         });
       });
@@ -54,7 +54,7 @@ describe('Students', () => {
       res.body.data.students[0].should.have.property('lastName').eq('Doe');
       res.body.data.students[0].should.have.property('email').eq('test@cedat.mak.ac.ug');
       res.body.data.students[0].should.have.property('phoneNumber').eq('+256772123456');
-      res.body.data.students[0].should.have.property('program').eq(`${program._id}`);
+      res.body.data.students[0].should.have.property('program').eq(`${program.id}`);
     });
   });
 
@@ -80,7 +80,7 @@ describe('Students', () => {
 
       const requestPromise = new Promise((resolve, reject) => {
         client
-          .get(`/api/student/${student._id}/`)
+          .get(`/api/student/${student.id}/`)
           .set('Authorization', `Bearer ${token}`)
           .then(res => {
             resolve(res);
@@ -89,7 +89,7 @@ describe('Students', () => {
       const res = await requestPromise;
       res.should.have.status(200);
       res.body.should.be.a('object');
-      res.body.should.have.property('_id').eq(`${student._id}`);
+      res.body.should.have.property('_id').eq(`${student.id}`);
       res.body.should.have.property('role').eq(`${student.role}`);
       res.body.should.have.property('firstName').eq(student.firstName);
       res.body.should.have.property('lastName').eq(student.lastName);

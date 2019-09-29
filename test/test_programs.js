@@ -26,7 +26,7 @@ describe('Programs', () => {
         name: 'Master of Science in Civil Engineering'
       });
       const requestPromise = new Promise((resolve, reject) => {
-        client.get(`/api/program/${program._id}`).then(res => {
+        client.get(`/api/program/${program.id}`).then(res => {
           resolve(res);
         });
       });

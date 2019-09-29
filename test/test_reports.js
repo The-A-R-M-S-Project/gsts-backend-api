@@ -91,7 +91,7 @@ describe('Reports', () => {
       res.body.should.be.a('object');
       res.body.report.should.have.property('reportStatus').eq('notSubmitted');
       res.body.report.should.have.property('reportUrl').eq('New Report Over here');
-      res.body.report.should.have.property('student').eq(`${student._id}`);
+      res.body.report.should.have.property('student').eq(`${student.id}`);
     });
   });
 });

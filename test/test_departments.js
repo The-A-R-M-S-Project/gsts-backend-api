@@ -41,10 +41,10 @@ describe('Departments', () => {
         name: 'Architecture and Physical planning'
       });
       const program = await Program.create({ name: 'Master of Architecture' });
-      program.department = department._id;
+      program.department = department.id;
       await program.save();
       const requestPromise = new Promise((resolve, reject) => {
-        client.get(`/api/department/${department._id}/program`).then(res => {
+        client.get(`/api/department/${department.id}/program`).then(res => {
           resolve(res);
         });
       });
