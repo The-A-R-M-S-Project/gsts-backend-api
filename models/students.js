@@ -3,68 +3,83 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 
-const StudentSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, 'Please tell us your first name!']
+const StudentSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, 'Please tell us your first name!']
+    },
+    lastName: {
+      type: String,
+      required: [true, 'Please tell us your last name!']
+    },
+    email: {
+      type: String,
+      required: [true, 'Please provide your email'],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Please provide a valid email']
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      minlength: 8,
+      select: false
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'],
+      validate: {
+        // This only works on CREATE and SAVE!!!
+        validator: function(el) {
+          return el === this.password;
+        },
+        message: 'Passwords are not the same!'
+      }
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date, // will expire after a certain amount of time
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      validate: {
+        validator: function(number) {
+          return validator.isMobilePhone(number, 'en-UG');
+        },
+        message: 'Please enter a valid Phone Number (en-UG)'
+      }
+    },
+    role: {
+      type: String,
+      enum: ['student'],
+      default: 'student'
+    },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false
+    },
+    photo: String,
+    program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
+    yearOfStudy: Number,
+    report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' }
   },
-  lastName: {
-    type: String,
-    required: [true, 'Please tell us your last name!']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: 8,
-    select: false
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function(el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!'
+  {
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+      transform: function(doc, ret) {
+        delete ret.id;
+      }
     }
-  },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date, // will expire after a certain amount of time
-  phoneNumber: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-    validate: {
-      validator: function(number) {
-        return validator.isMobilePhone(number, 'en-UG');
-      },
-      message: 'Please enter a valid Phone Number (en-UG)'
-    }
-  },
-  role: {
-    type: String,
-    enum: ['student'],
-    default: 'student'
-  },
-  active: {
-    type: Boolean,
-    default: true,
-    select: false
-  },
-  photo: String,
-  program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
-  yearOfStudy: Number,
-  report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' }
+  }
+);
+
+StudentSchema.virtual('name').get(function() {
+  return `${this.firstName} ${this.lastName}`;
 });
 
 StudentSchema.pre('save', async function(next) {
