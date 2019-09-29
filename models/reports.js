@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ReportSchema = new mongoose.Schema({
-  reportUrl: String,
+  title: String,
   reportStatus: {
     type: String,
     enum: ['notSubmitted', 'submitted', 'withExaminer', 'cleared'],

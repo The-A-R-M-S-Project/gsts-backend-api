@@ -80,7 +80,7 @@ describe('Reports', () => {
         client
           .post(`/api/student/report`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ reportUrl: 'New Report Over here' })
+          .send({ title: 'New Report Over here' })
           .then(res => {
             resolve(res);
           });
@@ -90,7 +90,7 @@ describe('Reports', () => {
       res.should.have.status(201);
       res.body.should.be.a('object');
       res.body.report.should.have.property('reportStatus').eq('notSubmitted');
-      res.body.report.should.have.property('reportUrl').eq('New Report Over here');
+      res.body.report.should.have.property('title').eq('New Report Over here');
       res.body.report.should.have.property('student').eq(`${student.id}`);
     });
   });
