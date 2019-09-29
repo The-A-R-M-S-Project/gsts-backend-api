@@ -40,11 +40,11 @@ describe('Schools', () => {
       const department = await Department.create({
         name: 'Architecture and Physical planning'
       });
-      department.school = school._id;
+      department.school = school.id;
       await department.save();
 
       const requestPromise = new Promise((resolve, reject) => {
-        client.get(`/api/school/${school._id}/department`).then(res => {
+        client.get(`/api/school/${school.id}/department`).then(res => {
           resolve(res);
         });
       });
@@ -102,7 +102,7 @@ describe('Schools', () => {
       const school = await School.create({ name: 'School of Built Environment' });
 
       const requestPromise = new Promise((resolve, reject) => {
-        client.get(`/api/school/${school._id}`).then(res => {
+        client.get(`/api/school/${school.id}`).then(res => {
           resolve(res);
         });
       });
