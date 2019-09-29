@@ -37,6 +37,6 @@ exports.newDean = {
 };
 
 exports.newReport = {
-  reportStatus: 'submitted',
+  status: 'submitted',
   submittedAt: '03/09/2019'
 };

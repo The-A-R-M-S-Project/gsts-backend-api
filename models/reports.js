@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ReportSchema = new mongoose.Schema({
   title: String,
-  reportStatus: {
+  status: {
     type: String,
     enum: ['notSubmitted', 'submitted', 'withExaminer', 'cleared'],
     default: 'notSubmitted'
@@ -18,7 +18,7 @@ const ReportSchema = new mongoose.Schema({
 });
 
 ReportSchema.methods.isReviewDeadlineExceeded = function() {
-  if (this.receivedAt && this.reportStatus === 'withExaminer') {
+  if (this.receivedAt && this.status === 'withExaminer') {
     return Math.abs((Date.now - this.submittedAt) / (1000 * 3600 * 24)) > 30;
   }
 

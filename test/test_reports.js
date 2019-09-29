@@ -89,7 +89,7 @@ describe('Reports', () => {
       const res = await requestPromise;
       res.should.have.status(201);
       res.body.should.be.a('object');
-      res.body.report.should.have.property('reportStatus').eq('notSubmitted');
+      res.body.report.should.have.property('status').eq('notSubmitted');
       res.body.report.should.have.property('title').eq('New Report Over here');
       res.body.report.should.have.property('student').eq(`${student.id}`);
     });

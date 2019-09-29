@@ -2,13 +2,13 @@
   {
     "_id": "5c88fa8cf4afda39709c2956",
     "title": "",
-    "reportStatus": "notSubmitted",
+    "status": "notSubmitted",
     "student": "5c8a1d5b0190b214360dc057"
   },
   {
     "_id": "5c88fa8cf4afda39709c2954",
     "title": "",
-    "reportStatus": "notSubmitted",
+    "status": "notSubmitted",
     "student": "5c8a1dfa2f8fb814b56fa181"
   }
 ]
