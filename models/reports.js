@@ -4,9 +4,23 @@ const ReportSchema = new mongoose.Schema({
   title: String,
   status: {
     type: String,
-    enum: ['notSubmitted', 'submitted', 'withExaminer', 'cleared'],
+    enum: [
+      'notSubmitted',
+      'submitted',
+      'withExaminer',
+      'clearedByExaminer',
+      'vivaDateSet',
+      'vivaComplete',
+      'pendingRevision',
+      'complete'
+    ],
     default: 'notSubmitted'
   },
+  examinerScore: Number,
+  examinerScoreDate: Date,
+  vivaDate: Date,
+  vivaScore: Number,
+  vivaScoreDate: Date,
   createdAt: {
     type: Date,
     default: Date.now
