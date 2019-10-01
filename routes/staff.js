@@ -20,6 +20,7 @@ router.patch('/updatePassword', authController.updatePassword());
 
 router.get('/report', authController.getMe(), controller.getReport);
 router.patch('/report/receive/:id', controller.receiveReport);
+router.patch('/report/clear/:id', controller.clearReport);
 
 router
   .route('/')

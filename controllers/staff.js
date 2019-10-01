@@ -92,7 +92,7 @@ module.exports = {
   getReport: catchAsync(async (req, res, next) => {
     const reports = await Report.find({
       examiner: req.params.id,
-      status: 'submitted'
+      status: { $ne: 'notSubmitted' }
     }).populate({
       path: 'student'
     });
@@ -112,18 +112,55 @@ module.exports = {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (report.status !== 'notSubmitted') {
+    if (report.status !== 'submitted') {
       return next(new AppError('report already received', 400));
     }
 
     report = await Report.findByIdAndUpdate(
       req.params.id,
-      { status: 'submitted' },
+      { status: 'withExaminer' },
       {
         new: true,
         runValidators: true
       }
     );
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  clearReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status');
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (report.status === 'submitted') {
+      return next(new AppError('acknowledge receipt of report first', 400));
+    }
+
+    if (report.status === 'clearedByExaminer') {
+      return next(new AppError('report already cleared', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'examinerScore');
+
+    if (!Object.prototype.hasOwnProperty.call(filteredBody, 'examinerScore')) {
+      return next(
+        new AppError('please provide a score for the report before clearing it', 400)
+      );
+    }
+
+    filteredBody.status = 'clearedByExaminer';
+    filteredBody.examinerScoreDate = Date.now();
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
 
     res.status(200).json({
       status: 'success',
