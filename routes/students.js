@@ -24,6 +24,7 @@ router
   .get(authController.getMe(), controller.getReport)
   .post(authController.getMe(), controller.addReport)
   .patch(authController.getMe(), controller.updateReport);
+router.patch('/report/submit', authController.getMe(), controller.submitReport);
 
 router.use(staffAuth.restrictTo('admin', 'principal', 'dean'));
 router

@@ -186,5 +186,34 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
     res.status(200).json({ message: 'Report Updated', report });
+  }),
+
+  submitReport: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id).populate({
+      path: 'report',
+      select: '_id status'
+    });
+
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+
+    if (student.report.status !== 'notSubmitted') {
+      return next(new AppError('Already submitted report', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'title');
+    filteredBody.status = 'submitted';
+
+    // TODO: Include file uploads with multer
+    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
+      new: true
+    });
+
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+
+    res.status(200).json({ message: 'Report Submitted', report });
   })
 };
