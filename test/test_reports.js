@@ -93,5 +93,53 @@ describe('Reports', () => {
       res.body.report.should.have.property('title').eq('New Report Over here');
       res.body.report.should.have.property('student').eq(`${student.id}`);
     });
+
+    it('Should allow student to only edit specific fields in report', async () => {
+      const student = await Student.create(generators.newStudent);
+      const { email, password } = generators.newStudent;
+
+      const loginPromise = new Promise((resolve, reject) => {
+        client
+          .post(`/api/student/login`)
+          .send({
+            email,
+            password
+          })
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const loginResponse = await loginPromise;
+      const { token } = loginResponse.body;
+
+      const reportPromise = new Promise((resolve, reject) => {
+        client
+          .post(`/api/student/report`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ title: 'New Report Over here' })
+          .then(res => {
+            resolve(res);
+          });
+      });
+
+      await reportPromise;
+
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .patch(`/api/student/report`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ title: 'Edited Report Over here', status: 'submitted' })
+          .then(res => {
+            resolve(res);
+          });
+      });
+
+      const res = await requestPromise;
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.report.should.have.property('status').eq('notSubmitted');
+      res.body.report.should.have.property('title').eq('Edited Report Over here');
+      res.body.report.should.have.property('student').eq(`${student.id}`);
+    });
   });
 });

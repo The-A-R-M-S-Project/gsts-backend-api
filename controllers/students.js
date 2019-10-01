@@ -161,15 +161,17 @@ module.exports = {
   updateReport: catchAsync(async (req, res, next) => {
     const student = await Student.findById(req.params.id).populate({
       path: 'report',
-      select: '_id'
+      select: '_id status'
     });
 
     if (!student) {
       return next(new AppError('No student exists with that id', 404));
     }
 
+    const filteredBody = filterObj(req.body, 'title');
+
     // TODO: Include file uploads with multer
-    const report = await Report.findByIdAndUpdate(student.report._id, req.body, {
+    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
       new: true
     });
 
