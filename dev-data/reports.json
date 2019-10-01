@@ -1,14 +1,16 @@
 [
   {
     "_id": "5c88fa8cf4afda39709c2956",
-    "title": "",
+    "title": "Test report 1",
     "status": "notSubmitted",
-    "student": "5c8a1d5b0190b214360dc057"
+    "student": "5c8a1d5b0190b214360dc057",
+    "examiner": "5c8a211f2f8fb814b56fa191"
   },
   {
     "_id": "5c88fa8cf4afda39709c2954",
-    "title": "",
+    "title": "Test report 2",
     "status": "notSubmitted",
-    "student": "5c8a1dfa2f8fb814b56fa181"
+    "student": "5c8a1dfa2f8fb814b56fa181",
+    "examiner": "5c8a211f2f8fb814b56fa191"
   }
 ]

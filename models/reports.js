@@ -28,7 +28,8 @@ const ReportSchema = new mongoose.Schema({
   submittedAt: Date,
   receivedAt: Date, // date when examiner acknowledges receipt of the report
   clearedAt: Date,
-  student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
+  student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' },
+  examiner: { type: mongoose.Schema.Types.ObjectId, ref: 'staff' }
 });
 
 ReportSchema.methods.isReviewDeadlineExceeded = function() {

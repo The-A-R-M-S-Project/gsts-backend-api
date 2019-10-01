@@ -1,4 +1,5 @@
 const Staff = require('../models/staff');
+const Report = require('../models/reports');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -83,6 +84,50 @@ module.exports = {
     res.status(204).json({
       status: 'success',
       data: null
+    });
+  }),
+
+  // Staff Report controllers
+
+  getReport: catchAsync(async (req, res, next) => {
+    const reports = await Report.find({
+      examiner: req.params.id,
+      status: 'submitted'
+    }).populate({
+      path: 'student'
+    });
+
+    //TODO: Implement sorts and filters for this query
+
+    res.status(200).json({
+      status: 'success',
+      reports
+    });
+  }),
+
+  receiveReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status');
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (report.status !== 'notSubmitted') {
+      return next(new AppError('report already received', 400));
+    }
+
+    report = await Report.findByIdAndUpdate(
+      req.params.id,
+      { status: 'submitted' },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    res.status(200).json({
+      status: 'success',
+      report: report
     });
   })
 };

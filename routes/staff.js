@@ -18,6 +18,9 @@ router.delete('/deactivateMe', controller.deactivateMe);
 router.get('/me', authController.getMe(), controller.getStaff);
 router.patch('/updatePassword', authController.updatePassword());
 
+router.get('/report', authController.getMe(), controller.getReport);
+router.patch('/report/receive/:id', controller.receiveReport);
+
 router
   .route('/')
   .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllStaff)
