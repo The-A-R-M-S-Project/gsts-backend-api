@@ -4,7 +4,19 @@ exports.newStudent = {
   email: 'test@cedat.mak.ac.ug',
   password: '12345678',
   passwordConfirm: '12345678',
-  phoneNumber: '+256772123456'
+  phoneNumber: '+256772123456',
+  _id: '5c8a1dfa2f8fb814b56fa185'
+};
+
+exports.newStudentWithReport = {
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'test@cedat.mak.ac.ug',
+  password: '12345678',
+  passwordConfirm: '12345678',
+  phoneNumber: '+256772123456',
+  report: '5c88fa8cf4afda39709c2956',
+  _id: '5c8a1dfa2f8fb814b56fa185'
 };
 
 exports.newStaff = {
@@ -38,5 +50,7 @@ exports.newDean = {
 
 exports.newReport = {
   status: 'submitted',
-  submittedAt: '03/09/2019'
+  submittedAt: '03/09/2019',
+  student: '5c8a1dfa2f8fb814b56fa185',
+  _id: '5c88fa8cf4afda39709c2956'
 };

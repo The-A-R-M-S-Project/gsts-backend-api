@@ -168,6 +168,13 @@ module.exports = {
       return next(new AppError('No student exists with that id', 404));
     }
 
+    if (
+      student.report.status !== 'notSubmitted' &&
+      student.report.status !== 'pendingRevision'
+    ) {
+      return next(new AppError('Cannot edit already submitted report', 400));
+    }
+
     const filteredBody = filterObj(req.body, 'title');
 
     // TODO: Include file uploads with multer

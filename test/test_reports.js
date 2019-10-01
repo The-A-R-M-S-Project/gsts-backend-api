@@ -141,5 +141,41 @@ describe('Reports', () => {
       res.body.report.should.have.property('title').eq('Edited Report Over here');
       res.body.report.should.have.property('student').eq(`${student.id}`);
     });
+
+    it('should not allow student to edit already submitted report unless it is pending revision', async () => {
+      await Report.create(generators.newReport);
+      await Student.create(generators.newStudentWithReport);
+      const { email, password } = generators.newStudent;
+
+      const loginPromise = new Promise((resolve, reject) => {
+        client
+          .post(`/api/student/login`)
+          .send({
+            email,
+            password
+          })
+          .then(res => {
+            resolve(res);
+          });
+      });
+      const loginResponse = await loginPromise;
+      const { token } = loginResponse.body;
+
+      const requestPromise = new Promise((resolve, reject) => {
+        client
+          .patch(`/api/student/report`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ title: 'Edited Report Over here' })
+          .then(res => {
+            resolve(res);
+          });
+      });
+
+      const res = await requestPromise;
+      res.should.have.status(400);
+      res.body.should.be.a('object');
+      res.body.should.have.property('status').eq('fail');
+      res.body.should.have.property('message').eq('Cannot edit already submitted report');
+    });
   });
 });
