@@ -166,5 +166,26 @@ module.exports = {
       status: 'success',
       report: report
     });
+  }),
+
+  assignExaminer: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status examiner');
+
+    // only assign examiner for report that has been submitted
+    if (report.status === 'notSubmitted') {
+      return next(new AppError('cannot assign examiner to unsubmitted report', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'examiner');
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
   })
 };
