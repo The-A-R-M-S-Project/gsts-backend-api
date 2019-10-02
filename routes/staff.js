@@ -22,9 +22,14 @@ router.get('/report', authController.getMe(), controller.getReport);
 router.patch('/report/receive/:id', controller.receiveReport);
 router.patch('/report/clear/:id', controller.clearReport);
 router.patch(
-  '/report/viva/:id',
+  '/report/vivadate/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
   controller.setVivaDate
+);
+router.patch(
+  '/report/vivascore/:id',
+  authController.restrictTo('admin', 'principal', 'dean'),
+  controller.setVivaScore
 );
 router.patch(
   '/report/examiner/assign/:id',

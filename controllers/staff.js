@@ -213,6 +213,34 @@ module.exports = {
     }
 
     const filteredBody = filterObj(req.body, 'vivaDate');
+    filteredBody.status = 'vivaDateSet';
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  setVivaScore: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status vivaDate');
+
+    if (report.status !== 'vivaDateSet') {
+      return next(
+        new AppError(
+          'Cannot set viva score for report without viva date. Please set a viva date and update score',
+          400
+        )
+      );
+    }
+
+    const filteredBody = filterObj(req.body, 'vivaScore');
+    filteredBody.vivaScoreDate = Date.now();
+    filteredBody.status = 'complete';
 
     report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,
