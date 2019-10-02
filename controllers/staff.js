@@ -187,5 +187,41 @@ module.exports = {
       status: 'success',
       report: report
     });
+  }),
+
+  setVivaDate: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select(
+      'status examinerScore examinerScoreDate'
+    );
+
+    if (report.status !== 'clearedByExaminer') {
+      return next(
+        new AppError(
+          'Cannot set viva date for uncleared report. Please clear with examiner first',
+          400
+        )
+      );
+    }
+
+    if (!report.examinerScore && !report.examinerScoreDate) {
+      return next(
+        new AppError(
+          'Cannot set viva date for ungraded report. Please ensure that report has been graded',
+          400
+        )
+      );
+    }
+
+    const filteredBody = filterObj(req.body, 'vivaDate');
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
   })
 };
