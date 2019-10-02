@@ -142,7 +142,13 @@ module.exports = {
       return next(new AppError('acknowledge receipt of report first', 400));
     }
 
-    if (report.status === 'clearedByExaminer') {
+    if (
+      report.status === 'clearedByExaminer' ||
+      report.status === 'vivaDateSet' ||
+      report.status === 'vivaComplete' ||
+      report.status === 'pendingRevision' ||
+      report.status === 'complete'
+    ) {
       return next(new AppError('report already cleared', 400));
     }
 
