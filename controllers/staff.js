@@ -118,7 +118,7 @@ module.exports = {
 
     report = await Report.findByIdAndUpdate(
       req.params.id,
-      { status: 'withExaminer' },
+      { status: 'withExaminer', receivedAt: Date.now() },
       {
         new: true,
         runValidators: true

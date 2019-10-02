@@ -204,6 +204,7 @@ module.exports = {
 
     const filteredBody = filterObj(req.body, 'title');
     filteredBody.status = 'submitted';
+    filteredBody.submittedAt = Date.now();
 
     // TODO: Include file uploads with multer
     const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
