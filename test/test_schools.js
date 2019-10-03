@@ -5,7 +5,7 @@ const School = require('../models/schools');
 const Department = require('../models/departments');
 const server = require('../server');
 
-let client = chai.request.agent(server);
+const client = chai.request.agent(server);
 chai.use(chaiHttp);
 
 describe('Schools', () => {
