@@ -1,4 +1,4 @@
-# Minimal Node.js built on Alpine Linux
+# An official Docker image for Node.js
 FROM mhart/alpine-node:10.16.0
 
 # Working directory for the containerised application

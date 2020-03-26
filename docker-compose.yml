@@ -4,6 +4,7 @@ services:
   unit-test:
     container_name: quickstarter-server
     build: .
+    # command: bash -c "node dev-data/import-dev-data.js --import"
     depends_on:
       - mongo
     ports:
