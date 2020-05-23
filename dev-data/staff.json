@@ -17,7 +17,19 @@
     "email": "dean@cedat.mak.ac.ug",
     "password": "12345678",
     "passwordConfirm": "12345678",
-    "phoneNumber": "+256772222332"
+    "phoneNumber": "+256772222332",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2956",
+    "role": "dean",
+    "firstName": "Dean2",
+    "lastName": "Mr",
+    "email": "dean2@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256772222333",
+    "school": "5c88fa8cf4afda39709c2955"
   },
   {
     "_id": "5c8a211f2f8fb814b56fa191",

@@ -12,6 +12,7 @@ router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
 router.use(AuthProtector());
+router.get('/dashboard-stats/:school', controller.dashboardStats);
 
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);

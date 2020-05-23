@@ -1,5 +1,7 @@
 const Staff = require('../models/staff');
 const Report = require('../models/reports');
+const Student = require('../models/students');
+const Department = require('../models/departments');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -9,6 +11,126 @@ const filterObj = (obj, ...allowedFields) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
+};
+
+// helper function that takes in a department ID and returns the report status of that department
+const reportStatus = async departmentId => {
+  const departmentName = await Department.findById(departmentId);
+  const studentIds = await Student.find({ department: departmentId }).distinct('_id');
+  const submitted = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'submitted' }
+      }
+    }
+  ]);
+  const withExaminer = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'withExaminer' }
+      }
+    }
+  ]);
+  const cleared = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'cleared' }
+      }
+    }
+  ]);
+  return {
+    [departmentName.name]: {
+      submitted: submitted.length,
+      withExaminer: withExaminer.length,
+      cleared: cleared.length
+    }
+  };
+};
+
+// helper function that takes in a department ID and returns the performance of that department
+const performance = async departmentId => {
+  const departmentName = await Department.findById(departmentId);
+  const studentIds = await Student.find({ department: departmentId }).distinct('_id');
+  const numA = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'A' }
+      }
+    }
+  ]);
+  const numB = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'B' }
+      }
+    }
+  ]);
+  const numC = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'C' }
+      }
+    }
+  ]);
+  const numD = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'D' }
+      }
+    }
+  ]);
+  const numE = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'E' }
+      }
+    }
+  ]);
+  const numF = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        examinerGrade: { $eq: 'F' }
+      }
+    }
+  ]);
+
+  return {
+    [departmentName.name]: [
+      numA.length,
+      numB.length,
+      numC.length,
+      numD.length,
+      numE.length,
+      numF.length
+    ]
+  };
 };
 
 module.exports = {
@@ -43,6 +165,73 @@ module.exports = {
       return next(new AppError('No staff found with that id', 404));
     }
     res.json({ message: 'Staff information updated!', staff });
+  }),
+
+  dashboardStats: catchAsync(async (req, res, next) => {
+    // aggregation pipeline for dashboard
+
+    // find students within that particular school
+    const studentIds = await Student.find({ school: req.params.school }).distinct('_id');
+    const departmentIds = await Department.find({
+      school: req.params.school
+    }).distinct('_id');
+
+    const done = await Report.aggregate([
+      {
+        $match: { student: { $in: studentIds } }
+      },
+      {
+        $match: {
+          $or: [
+            { status: { $eq: 'vivaComplete' } },
+            { status: { $eq: 'pendingRevision' } },
+            { status: { $eq: 'complete' } }
+          ]
+        }
+      }
+    ]);
+
+    const pending = await Report.aggregate([
+      {
+        $match: { student: { $in: studentIds } }
+      },
+      {
+        $match: {
+          $or: [
+            { status: { $eq: 'notSubmitted' } },
+            { status: { $eq: 'submitted' } },
+            { status: { $eq: 'withExaminer' } },
+            { status: { $eq: 'clearedByExaminer' } },
+            { status: { $eq: 'vivaDateSet' } }
+          ]
+        }
+      }
+    ]);
+
+    const rprtStatus = [];
+    const reportPromises = departmentIds.map(async id => {
+      rprtStatus.push(await reportStatus(id));
+    });
+
+    const perform = [];
+    const performancePromises = departmentIds.map(async id => {
+      perform.push(await performance(id));
+    });
+
+    await Promise.all(reportPromises);
+    await Promise.all(performancePromises);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        vivaStatus: {
+          done: done.length,
+          pending: pending.length
+        },
+        reportStatus: rprtStatus,
+        performance: perform
+      }
+    });
   }),
 
   updateMe: catchAsync(async (req, res, next) => {
@@ -162,6 +351,7 @@ module.exports = {
 
     filteredBody.status = 'clearedByExaminer';
     filteredBody.examinerScoreDate = Date.now();
+    // TODO: Add examinerGrade based on Standard Grading System
 
     report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,

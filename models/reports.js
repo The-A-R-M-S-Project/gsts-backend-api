@@ -18,6 +18,7 @@ const ReportSchema = new mongoose.Schema({
   },
   examinerScore: Number,
   examinerScoreDate: Date,
+  examinerGrade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
   vivaDate: Date,
   vivaScore: Number,
   vivaScoreDate: Date,

@@ -1,6 +1,6 @@
 [
   {
-    "_id": "5c88fa8cf4afda39709c2956",
+    "_id": "5c87204720f17e0d6774b118",
     "title": "Test report 1",
     "status": "notSubmitted",
     "student": "5c8a1d5b0190b214360dc057",
@@ -12,5 +12,53 @@
     "status": "notSubmitted",
     "student": "5c8a1dfa2f8fb814b56fa181",
     "examiner": "5c8a211f2f8fb814b56fa191"
+  },
+  {
+    "_id": "5c87204720f17e0d6774b117",
+    "student": "5c8a1d5b0190b214360dc059",
+    "examiner": "5c8a211f2f8fb814b56fa191",
+    "createdAt": "2019-07-01T18:28:46.757+00:00",
+    "title": "Test report 3",
+    "status": "vivaComplete",
+    "submittedAt": "2019-08-01T18:28:46.757+00:00",
+    "receivedAt": "2019-08-03T18:28:46.757+00:00",
+    "examinerScore": 92,
+    "examinerGrade": "A",
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
+    "vivaDate": "2020-02-15T18:28:46.757+00:00",
+    "vivaScore": 90,
+    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
+  },
+  {
+    "_id": "5c87204720f17e0d6774b115",
+    "student": "5c8a1d5b0190b214360dc059",
+    "examiner": "5c8a211f2f8fb814b56fa191",
+    "createdAt": "2019-07-01T18:28:46.757+00:00",
+    "title": "Test report 4",
+    "status": "vivaComplete",
+    "submittedAt": "2019-08-01T18:28:46.757+00:00",
+    "receivedAt": "2019-08-03T18:28:46.757+00:00",
+    "examinerScore": 75,
+    "examinerGrade": "B",
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
+    "vivaDate": "2020-02-15T18:28:46.757+00:00",
+    "vivaScore": 82,
+    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
+  },
+  {
+    "_id": "5c87204720f17e0d6774b116",
+    "student": "5c8a1dfa2f8fb814b56fa183",
+    "examiner": "5c8a211f2f8fb814b56fa191",
+    "createdAt": "2019-07-01T18:28:46.757+00:00",
+    "title": "Test report 5",
+    "status": "vivaComplete",
+    "submittedAt": "2019-08-01T18:28:46.757+00:00",
+    "receivedAt": "2019-08-03T18:28:46.757+00:00",
+    "examinerScore": 88,
+    "examinerGrade": "A",
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
+    "vivaDate": "2020-02-15T18:28:46.757+00:00",
+    "vivaScore": 85,
+    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
   }
 ]

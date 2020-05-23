@@ -8,8 +8,10 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772111222",
     "program": "5c88fa8cf4afda39709c295a",
+    "department": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 2,
-    "report": "5c88fa8cf4afda39709c2956"
+    "report": "5c87204720f17e0d6774b118"
   },
   {
     "_id": "5c8a1dfa2f8fb814b56fa181",
@@ -20,8 +22,10 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772222333",
     "program": "5c88fa8cf4afda39709c295a",
+    "department": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 1,
-    "report": "5c88fa8cf4afda39709c2956"
+    "report": "5c88fa8cf4afda39709c2954"
   },
   {
     "_id": "5c8a1d5b0190b214360dc059",
@@ -32,7 +36,10 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772111221",
     "program": "5c88fa8cf4afda39709c295a",
-    "yearOfStudy": 1
+    "department": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955",
+    "yearOfStudy": 1,
+    "report": "5c87204720f17e0d6774b115"
   },
   {
     "_id": "5c8a1dfa2f8fb814b56fa183",
@@ -43,7 +50,10 @@
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772222331",
     "program": "5c88fa8cf4afda39709c295a",
-    "yearOfStudy": 1
+    "department": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955",
+    "yearOfStudy": 1,
+    "report": "5c87204720f17e0d6774b116"
   },
   {
     "_id": "5c8a1d5b0190b214360dc056",
@@ -53,7 +63,9 @@
     "password": "12345678",
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772111223",
-    "program": "5c88fa8cf4afda39709c295a",
+    "program": "5c88fa8cf4afda39709c2965",
+    "department": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 2
   },
   {
@@ -64,7 +76,9 @@
     "password": "12345678",
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772222334",
-    "program": "5c88fa8cf4afda39709c295a",
+    "program": "5c88fa8cf4afda39709c2963",
+    "department": "5c88fa8cf4afda39709c2954",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 2
   },
   {
@@ -75,7 +89,9 @@
     "password": "12345678",
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772111224",
-    "program": "5c88fa8cf4afda39709c295a",
+    "program": "5c88fa8cf4afda39709c2965",
+    "department": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 2
   },
   {
@@ -86,7 +102,9 @@
     "password": "12345678",
     "passwordConfirm": "12345678",
     "phoneNumber": "+256772222338",
-    "program": "5c88fa8cf4afda39709c295a",
+    "program": "5c88fa8cf4afda39709c2965",
+    "department": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955",
     "yearOfStudy": 1
   }
 ]
