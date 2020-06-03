@@ -99,9 +99,7 @@ class AuthController {
       await user.save({ validateBeforeSave: false }); // persist it db without validation
 
       // 3) Send it to user's email
-      const resetURL = `${req.protocol}://${req.get('host')}/api/${
-        user.role
-      }/resetPassword/${resetToken}`;
+      const resetURL = `https://gsts-v2.herokuapp.com/${user.role}/secret/edit?reset_password_token=${resetToken}`;
 
       const message = `Forgot your password? click here to reset it: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 

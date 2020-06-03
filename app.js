@@ -57,7 +57,7 @@ app.use(xss());
 
 // ---------------ROUTES ---------------------
 app.get('/', (req, res) =>
-  res.json({ message: 'Welcome to the Graduate Students Tracking System!' })
+  res.json({ message: 'Welcome to the Graduate Students Tracking System API!' })
 );
 
 app.use('/api/admin', adminRouter);
