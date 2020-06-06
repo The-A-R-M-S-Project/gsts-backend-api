@@ -169,13 +169,20 @@ module.exports = {
 
   dashboardStats: catchAsync(async (req, res, next) => {
     // aggregation pipeline for dashboard
-    const { school } = req.params;
+    let school;
+    const { role } = req.user;
+
+    if (role === 'principal' || role === 'admin') {
+      // eslint-disable-next-line prefer-destructuring
+      school = req.params.school;
+    } else {
+      // eslint-disable-next-line prefer-destructuring
+      school = req.user.school;
+    }
 
     // find students within that particular school
     const studentIds = await Student.findById(school).distinct('_id');
-    const departmentIds = await Department.find({
-      school: req.params.school
-    }).distinct('_id');
+    const departmentIds = await Department.find({ school }).distinct('_id');
 
     const done = await Report.aggregate([
       {
