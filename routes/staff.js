@@ -12,7 +12,18 @@ router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
 router.use(AuthProtector());
-router.get('/dashboard-stats/:school', controller.dashboardStats);
+router.get(
+  '/dashboard-stats/:school',
+  authController.restrictTo('admin', 'principal', 'dean'),
+  controller.dashboardStats
+);
+
+// dean should only see stats for their school
+router.get(
+  '/dashboard-stats/',
+  authController.restrictTo('dean'),
+  controller.dashboardStats
+);
 
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
