@@ -169,9 +169,10 @@ module.exports = {
 
   dashboardStats: catchAsync(async (req, res, next) => {
     // aggregation pipeline for dashboard
+    const { school } = req.params;
 
     // find students within that particular school
-    const studentIds = await Student.find({ school: req.params.school }).distinct('_id');
+    const studentIds = await Student.findById(school).distinct('_id');
     const departmentIds = await Department.find({
       school: req.params.school
     }).distinct('_id');
