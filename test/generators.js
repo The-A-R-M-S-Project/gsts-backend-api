@@ -54,3 +54,21 @@ exports.newReport = {
   student: '5c8a1dfa2f8fb814b56fa185',
   _id: '5c88fa8cf4afda39709c2956'
 };
+
+exports.newAdmin = {
+  firstName: 'Admin',
+  lastName: 'GSTS',
+  email: 'admin@cedat.mak.ac.ug',
+  password: '12345678',
+  passwordConfirm: '12345678',
+  phoneNumber: '+256702112201'
+};
+
+exports.defaultAdmin = {
+  firstName: 'Admin1',
+  lastName: 'GSTS',
+  email: 'admin1@cedat.mak.ac.ug',
+  password: '12345678',
+  passwordConfirm: '12345678',
+  phoneNumber: '+256702111200'
+};

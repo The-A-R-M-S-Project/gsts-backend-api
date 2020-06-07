@@ -1,8 +1,6 @@
 process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const Student = require('../models/students');
-const Department = require('../models/departments');
 const Staff = require('../models/staff');
 const server = require('../server');
 const generators = require('./generators');

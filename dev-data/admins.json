@@ -1,13 +1,20 @@
 [
   {
     "_id": "5d31c76d91dfe220a4b3438c",
-    "bioData": {
-      "firstName": "Test",
-      "lastName": "admin1",
-      "email": "student1@cedat.mak.ac.ug",
-      "phoneNumber": "+256772115222"
-    },
+    "firstName": "Admin1",
+    "lastName": "GSTS",
+    "email": "admin1@cedat.mak.ac.ug",
     "password": "12345678",
-    "role": "admin"
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256702111201"
+  },
+  {
+    "_id": "5d31c76d91dfe220a4b3439d",
+    "firstName": "Admin2",
+    "lastName": "GSTS",
+    "email": "admin2@cedat.mak.ac.ug",
+    "password": "12345678",
+    "passwordConfirm": "12345678",
+    "phoneNumber": "+256782222302"
   }
 ]

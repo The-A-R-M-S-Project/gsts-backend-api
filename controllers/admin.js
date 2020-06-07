@@ -1,96 +1,87 @@
-const mongoose = require('mongoose');
 const Admin = require('../models/admin');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
 
 module.exports = {
-  add: (req, res) => {
-    let result = {};
-    let status = 200;
-    let admin = Admin(req.body);
-    admin.save((err, admin) => {
-      if (!err) {
-        result.message = 'Admin successfully added!';
-        result.admin = admin;
-      } else {
-        status = 500;
-        result = err;
-      }
-      res.status(status).send(result);
-    });
-  },
-  login: (req, res) => {
-    const { bioData, password } = req.body;
+  getAllAdmins: catchAsync(async (req, res, next) => {
+    const admin = await Admin.find({});
 
-    let result = {};
-    let status = 200;
-    Admin.findOne({ 'bioData.email': bioData.email }, (err, admin) => {
-      if (!err && admin) {
-        bcrypt
-          .compare(password, admin.password)
-          .then(match => {
-            if (match) {
-              status = 200;
-              const payload = {
-                user: `${admin.bioData.firstName} ${admin.bioData.lastName}`
-              };
-              const options = {
-                expiresIn: '30m',
-                issuer: 'gsts.cedat.mak.ac.ug'
-              };
-              const secret = process.env.JWT_SECRET;
-              result.success = true;
-              result.token = jwt.sign(payload, secret, options);
-              result.user = {
-                name: `${admin.bioData.firstName} ${admin.bioData.lastName}`,
-                id: `${admin._id}`
-              };
-            } else {
-              status = 401;
-              result.success = false;
-              result.error = 'Authentication error';
-            }
-            res.status(status).send(result);
-          })
-          .catch(err => {
-            result = {};
-            status = 500;
-            result.status = status;
-            result.error = err;
-            res.status(status).send(result);
-          });
-      } else {
-        status = 404;
-        result.status = status;
-        result.error = 'User not found';
-        res.status(status).send(result);
-      }
-    });
-  },
-  getById: (req, res) => {
-    let result = {};
-    let status = 200;
+    res.status(200).send(admin);
+  }),
 
-    Admin.findById(req.params.id).exec((err, admin) => {
-      if (!err) {
-        result = admin;
-      } else {
-        status = 500;
-        result = err;
-      }
-      res.status(status).send(result);
+  getAdmin: catchAsync(async (req, res, next) => {
+    const admin = await Admin.findById(req.params.id).populate('students');
+
+    if (!admin) {
+      return next(new AppError('No admin found with that id', 404));
+    }
+    res.status(200).send(admin);
+  }),
+
+  addAdmin: catchAsync(async (req, res, next) => {
+    const admin = await Admin.create(req.body);
+
+    res.status(201).json({ admin, message: 'admin successfully added!' });
+  }),
+
+  updateAdmin: catchAsync(async (req, res, next) => {
+    const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
     });
-  },
-  update: (req, res) => {
-    Admin.findById(req.params.id, (err, admin) => {
-      if (err) res.send(err);
-      Object.assign(admin, req.body).save((err, admin) => {
-        if (err) res.send(err);
-        res.json({
-          message: 'Admin information updated!',
-          admin: admin
-        });
-      });
+
+    if (!admin) {
+      return next(new AppError('No admin found with that id', 404));
+    }
+    res.json({ message: 'admin information updated!', admin });
+  }),
+
+  updateMe: catchAsync(async (req, res, next) => {
+    // 1) Create error if admin POSTs password data (there is already a route-controller to handle this)
+    if (req.body.password || req.body.passwordConfirm) {
+      return next(
+        new AppError(
+          'This route is not for password updates. Please use /updatePassword.',
+          400
+        )
+      );
+    }
+
+    // 2) Filtered out unwanted fields names that are not allowed to be updated like role and only allow the following
+    const filteredBody = filterObj(
+      req.body,
+      'firstName',
+      'lastName',
+      'email',
+      'phoneNumber'
+    );
+
+    // 3) Update admin document
+    const admin = await Admin.findByIdAndUpdate(req.user.id, filteredBody, {
+      new: true,
+      runValidators: true
     });
-  }
+
+    res.status(200).json({
+      status: 'success',
+      data: { admin }
+    });
+  }),
+
+  deactivateMe: catchAsync(async (req, res, next) => {
+    await Admin.findByIdAndUpdate(req.user.id, { active: false });
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  })
 };

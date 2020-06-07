@@ -5,6 +5,7 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const Staff = require('../models/staff');
 const Student = require('../models/students');
+const Admin = require('../models/admin');
 
 module.exports = () => {
   return catchAsync(async (req, res, next) => {
@@ -27,11 +28,10 @@ module.exports = () => {
 
     // 3) Check if user still exists
     const currentUser =
-      (await Staff.findById(decoded.id)) || (await Student.findById(decoded.id));
+      (await Staff.findById(decoded.id)) ||
+      ((await Student.findById(decoded.id)) || (await Admin.findById(decoded.id)));
     if (!currentUser) {
-      return next(
-        new AppError('The user belonging to this token does no longer exist.', 401)
-      );
+      return next(new AppError('The user belonging to this token no longer exists', 401));
     }
 
     // 4) Check if user changed password after the token was issued
