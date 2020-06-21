@@ -65,3 +65,4 @@ typings/
 .idea
 *.iml
 .DS_Store
+deploy
