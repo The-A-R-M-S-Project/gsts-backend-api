@@ -23,6 +23,9 @@ before_script:
 - echo EMAIL_PASSWORD=$EMAIL_PASSWORD >> .env
 - echo EMAIL_HOST=$EMAIL_HOST >> .env
 - echo EMAIL_PORT=$EMAIL_PORT >> .env
+- echo REMOTEUSER=$REMOTEUSER >> .env
+- echo REMOTEHOST=$REMOTEHOST >> .env
+- echo REMOTE_APP_DIR=$REMOTE_APP_DIR >> .env
 script:
 - docker-compose up --build --abort-on-container-exit
 after_script:
