@@ -15,5 +15,8 @@ jobs:
     executor: node
     steps:
       - checkout
+      - run:
+        name: Waiting for Mongo
+        command: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run: npm install
       - run: npm run test
