@@ -4,10 +4,9 @@ executors:
     docker:
       - image: circleci/node:10
       - image: mongo:4.0.6
-        port: 27017:27017
 workflows:
   version: 2
-  build_and_test:
+  test:
     jobs:
       - test
 jobs:
@@ -15,8 +14,6 @@ jobs:
     executor: node
     steps:
       - checkout
-      - run:
-        name: Waiting for Mongo
-        command: dockerize -wait tcp://localhost:27017 -timeout 1m
+      - run: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run: npm install
       - run: npm run test
