@@ -33,7 +33,9 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - '1a:af:1b:ca:01:52:30:82:0f:b6:5b:ab:11:5c:80:c1'
+      - checkout
+      - run: sh gsts-backend-api/scripts/copy-env.sh
       - deploy:
           name: Deploying to Digital Ocean
           command: |
-            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && rm -rf gsts-backend-api && git clone https://github.com/The-A-R-M-S-Project/gsts-backend-api.git gsts-backend-api && cd gsts-backend-api && git checkout circleci-project-setup && sh scripts/postDeploy.sh"
+            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && cd gsts-backend-api && git pull && git checkout circleci-project-setup && cp ../.env . && sh scripts/postDeploy.sh"
