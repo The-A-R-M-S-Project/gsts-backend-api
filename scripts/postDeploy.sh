@@ -1,7 +1,7 @@
 #!/bin/bash
 echo 'installing Dependencies ...'
-npm install
+/home/alvin/.nvm/versions/node/v14.4.0/bin/npm install
 echo 'starting server'
-pm2 restart server
+/home/alvin/.nvm/versions/node/v14.4.0/bin/pm2 restart server
 echo 'started server. ending SSH session ...'
 exit
