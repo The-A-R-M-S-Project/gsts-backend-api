@@ -6,7 +6,7 @@ executors:
       - image: mongo:4.0.6
 workflows:
   version: 2
-  test:
+  testAndDeploy:
     jobs:
       - test
       - deploy
@@ -34,4 +34,4 @@ jobs:
       - deploy:
           name: Deploying to Digital Ocean
           command: |
-            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && rm -rf gsts-backend-api && git clone https://github.com/The-A-R-M-S-Project/gsts-backend-api.git gsts-backend-api && cd gsts-backend-api && git circleci-project-setup && sh scripts/postDeploy.sh"
+            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && rm -rf gsts-backend-api && git clone https://github.com/The-A-R-M-S-Project/gsts-backend-api.git gsts-backend-api && cd gsts-backend-api && git checkout circleci-project-setup && sh scripts/postDeploy.sh"
