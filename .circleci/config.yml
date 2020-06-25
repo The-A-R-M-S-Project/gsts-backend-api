@@ -9,11 +9,29 @@ workflows:
   test:
     jobs:
       - test
+      - deploy
 jobs:
   test:
     executor: node
     steps:
       - checkout
-      - run: dockerize -wait tcp://localhost:27017 -timeout 1m
-      - run: npm install
-      - run: npm run test
+      - run:
+          name: Connect To MongoDB image
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run Tests
+          command: npm run test
+  deploy:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "1a:af:1b:ca:01:52:30:82:0f:b6:5b:ab:11:5c:80:c1"
+      - deploy:
+          name: Deploying to Digital Ocean
+          command: |
+            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && pm2 stop server && rm -rf gsts-backend-api && git clone https://github.com/The-A-R-M-S-Project/gsts-backend-api.git gsts-backend-api && cd gsts-backend-api && sh scripts/postDeploy.sh"
