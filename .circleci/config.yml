@@ -38,4 +38,4 @@ jobs:
       - deploy:
           name: Deploying to Digital Ocean
           command: |
-            ssh -o "StrictHostKeyChecking no" alvin@206.189.196.155 "cd ~ && cd gsts-backend-api && git pull && git checkout circleci-project-setup && cp ../.env . && sh scripts/postDeploy.sh"
+            ssh -o "StrictHostKeyChecking no" arms@206.189.196.155 "cd ~ && cd gsts-backend-api && git pull && git checkout circleci-project-setup && cp ../.env . && sh scripts/postDeploy.sh"
