@@ -34,7 +34,7 @@ jobs:
           fingerprints:
             - '1a:af:1b:ca:01:52:30:82:0f:b6:5b:ab:11:5c:80:c1'
       - checkout
-      - run: sh project/scripts/copy-env.sh
+      - run: sh /home/circleci/project/scripts/copy-env.sh
       - deploy:
           name: Deploying to Digital Ocean
           command: |
