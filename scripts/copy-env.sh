@@ -14,4 +14,4 @@ echo EMAIL_HOST=$EMAIL_HOST >> .env
 echo EMAIL_PORT=$EMAIL_PORT >> .env
 
 echo 'securely copy .env file ...'
-scp sshenv alvin@206.189.196.15:~/
+scp sshenv alvin@206.189.196.155:~/
