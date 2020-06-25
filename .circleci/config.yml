@@ -6,10 +6,12 @@ executors:
       - image: mongo:4.0.6
 workflows:
   version: 2
-  testAndDeploy:
+  test_and_deploy:
     jobs:
       - test
-      - deploy
+      - deploy:
+          requires:
+            - test
 jobs:
   test:
     executor: node
@@ -30,7 +32,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "1a:af:1b:ca:01:52:30:82:0f:b6:5b:ab:11:5c:80:c1"
+            - '1a:af:1b:ca:01:52:30:82:0f:b6:5b:ab:11:5c:80:c1'
       - deploy:
           name: Deploying to Digital Ocean
           command: |
