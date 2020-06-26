@@ -1,17 +1,41 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+executors:
+  node:
+    docker:
+      - image: circleci/node:10
+      - image: mongo:4.0.6
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
 jobs:
-  build-and-test:
-    executor:
-      name: node/default
+  test:
+    executor: node
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
-workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+      - run:
+          name: Connect To MongoDB image
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run Tests
+          command: npm run test
+  deploy:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - '01:f5:cb:0e:f0:1b:ef:2b:88:6d:fd:2b:1f:18:a3:93'
+      - checkout
+      - run: sh /home/circleci/project/scripts/copy-env.sh
+      - deploy:
+          name: Deploying to Digital Ocean
+          command: |
+            ssh -o "StrictHostKeyChecking no" arms@206.189.196.155 "cd ~ && cd gsts-backend-api && git pull && git checkout circleci-project-setup && cp ../.env . && sh scripts/postDeploy.sh"
