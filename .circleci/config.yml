@@ -8,10 +8,16 @@ workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              only: master
       - deploy:
           requires:
             - test
+          filters:
+            branches:
+              only: master
 jobs:
   test:
     executor: node
