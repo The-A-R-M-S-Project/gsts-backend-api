@@ -1,5 +1,4 @@
 echo 'creating .env file ...'
-echo NODE_ENV=$NODE_ENV >> .env
 echo PORT=$PORT >> .env
 echo DATABASE=$DATABASE >> .env
 echo DATABASE_PASSWORD=$DATABASE_PASSWORD >> .env
