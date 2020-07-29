@@ -42,7 +42,23 @@ class AuthController {
 
   signup() {
     return catchAsync(async (req, res, next) => {
-      const user = await this.User.create(req.body);
+      let user;
+      try {
+        user = await this.User.create(req.body);
+      } catch (err) {
+        // Catch specifically duplicate fields and send details to front-end
+        if (err.name === 'MongoError' && err.code === 11000) {
+          // extract specific duplicate field
+          const duplicateField = err.message.substring(
+            err.message.lastIndexOf('index: ') + 7,
+            err.message.lastIndexOf('_1')
+          );
+          return res.status(422).send({
+            status: 'fail',
+            message: `This ${duplicateField} belongs to an already existing account!`
+          });
+        }
+      }
       createSendToken(user, 201, res);
     });
   }
