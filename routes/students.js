@@ -26,14 +26,18 @@ router
   .patch(authController.getMe(), controller.updateReport);
 router.patch('/report/submit', authController.getMe(), controller.submitReport);
 
+router
+  .route('/:id')
+  .get(
+    staffAuth.restrictTo('admin', 'principal', 'dean', 'examiner'),
+    controller.getStudent
+  );
+
 router.use(staffAuth.restrictTo('admin', 'principal', 'dean'));
 router
   .route('/')
   .get(controller.getAllStudents)
   .post(controller.addStudent);
-router
-  .route('/:id')
-  .get(controller.getStudent)
-  .patch(controller.updateStudent);
+router.route('/:id').patch(controller.updateStudent);
 
 module.exports = router;
