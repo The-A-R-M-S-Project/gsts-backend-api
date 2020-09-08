@@ -444,7 +444,7 @@ module.exports = {
 
     const filteredBody = filterObj(req.body, 'vivaScore');
     filteredBody.vivaScoreDate = Date.now();
-    filteredBody.status = 'complete';
+    filteredBody.status = 'vivaComplete';
 
     report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,
