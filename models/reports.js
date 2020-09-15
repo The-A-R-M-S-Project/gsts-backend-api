@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ReportSchema = new mongoose.Schema({
   title: String,
+  abstract: String,
   status: {
     type: String,
     enum: [
