@@ -291,7 +291,8 @@ module.exports = {
       examiner: req.params.id,
       status: { $ne: 'notSubmitted' }
     }).populate({
-      path: 'student'
+      path: 'student',
+      populate: [{ path: 'program', select: 'name -_id' }]
     });
 
     //TODO: Implement sorts and filters for this query
