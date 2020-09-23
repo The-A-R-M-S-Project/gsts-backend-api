@@ -1,0 +1,67 @@
+[
+  {
+    "_id": "5c88fa8cf4afda39709c295a",
+    "department": "5c88fa8cf4afda39709c2957",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c8a21d02f8fb814b56fa189",
+    "department": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2965",
+    "department": "5c88fa8cf4afda39709c2956",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c8a23412f8fb814b56fa18c",
+    "department": "5c88fa8cf4afda39709c2954",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2964",
+    "department": "5c88fa8cf4afda39709c2954",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2963",
+    "department": "5c88fa8cf4afda39709c2954",
+    "school": "5c88fa8cf4afda39709c2955"
+  },
+  {
+    "_id": "5c8a1f4e2f8fb814b56fa185",
+    "department": "5c8a21d02f8fb814b56fa189",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2962",
+    "department": "5c8a21d02f8fb814b56fa189",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c295d",
+    "department": "5c8a21d02f8fb814b56fa189",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c295c",
+    "department": "5c8a201e2f8fb814b56fa186",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2960",
+    "department": "5c8a201e2f8fb814b56fa186",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c295b",
+    "department": "5c8a1f292f8fb814b56fa184",
+    "school": "5c88fa8cf4afda39709c2959"
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2961",
+    "department": "5c88fa8cf4afda39709c2953",
+    "school": "5c88fa8cf4afda39709c2958"
+  }
+]

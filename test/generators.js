@@ -5,6 +5,9 @@ exports.newStudent = {
   password: '12345678',
   passwordConfirm: '12345678',
   phoneNumber: '+256772123456',
+  program: '5c8a21d02f8fb814b56fa189',
+  department: '5c88fa8cf4afda39709c2956',
+  school: '5c88fa8cf4afda39709c2955',
   _id: '5c8a1dfa2f8fb814b56fa185'
 };
 
@@ -15,6 +18,9 @@ exports.newStudentWithReport = {
   password: '12345678',
   passwordConfirm: '12345678',
   phoneNumber: '+256772123456',
+  program: '5c8a21d02f8fb814b56fa189',
+  department: '5c88fa8cf4afda39709c2956',
+  school: '5c88fa8cf4afda39709c2955',
   report: '5c88fa8cf4afda39709c2956',
   _id: '5c8a1dfa2f8fb814b56fa185'
 };

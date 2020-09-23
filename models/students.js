@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const fs = require('fs');
+const AppError = require('../utils/appError');
 
 const StudentSchema = new mongoose.Schema(
   {
@@ -82,6 +84,40 @@ const StudentSchema = new mongoose.Schema(
 
 StudentSchema.virtual('name').get(function() {
   return `${this.firstName} ${this.lastName}`;
+});
+
+function getDataPromise(fileName, type) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(fileName, type, (err, data) => {
+      if (err) reject(err);
+      resolve(data);
+    });
+  });
+}
+
+StudentSchema.pre('save', async function(next) {
+  // Only run this function if program was actually modified
+  if (!this.isModified('program')) return next();
+
+  // read the School Organogram Chat
+  let programs = getDataPromise(`./utils/organogram.json`, 'utf-8');
+  programs = await Promise.all([programs]);
+  programs = Object.values(JSON.parse(programs));
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const program of programs) {
+    if (JSON.stringify(program._id) === JSON.stringify(this.program)) {
+      this.department = program.department;
+      this.school = program.school;
+      break;
+    }
+  }
+
+  // check if the program id given is valid by ensuring it belongs to a department & school
+  if (!(this.department && this.school)) {
+    next(new AppError('Invalid Program. Please select a valid Program', 400));
+  }
+  next();
 });
 
 StudentSchema.pre('save', async function(next) {
