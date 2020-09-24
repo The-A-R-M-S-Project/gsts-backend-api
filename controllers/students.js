@@ -175,7 +175,7 @@ module.exports = {
       return next(new AppError('Cannot edit already submitted report', 400));
     }
 
-    const filteredBody = filterObj(req.body, 'title');
+    const filteredBody = filterObj(req.body, 'title', 'abstract');
 
     // TODO: Include file uploads with multer
     const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
@@ -202,7 +202,7 @@ module.exports = {
       return next(new AppError('Already submitted report', 400));
     }
 
-    const filteredBody = filterObj(req.body, 'title');
+    const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.status = 'submitted';
     filteredBody.submittedAt = Date.now();
 
