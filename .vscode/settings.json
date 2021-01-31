@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "files.autoSave": "off",
+  "prettier.singleQuote": true,
+  "editor.cursorBlinking": "expand",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
