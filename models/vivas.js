@@ -6,7 +6,9 @@ const vivaSchema = new mongoose.Schema({
     enum: ['pending', 'done']
   },
   vivaScore: Number,
-  vivaDate: Date
+  vivaScoreDate: Date,
+  report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' },
+  vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' } //includes the viva Date
 });
 
 module.exports = mongoose.model('viva', vivaSchema);
