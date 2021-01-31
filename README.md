@@ -42,7 +42,7 @@ node import-dev-data.js --delete
 Populating the local database
 
 ```bash
-node import-dev-data.js --delete
+node import-dev-data.js --import
 ```
 
 #### Run the application
