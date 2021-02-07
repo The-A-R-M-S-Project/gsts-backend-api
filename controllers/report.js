@@ -99,8 +99,8 @@ module.exports = {
     }
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
+    filteredBody.reportURL = req.file.location;
 
-    // TODO: Include file uploads with multer
     const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
       new: true
     });
