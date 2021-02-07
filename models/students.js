@@ -68,8 +68,7 @@ const StudentSchema = new mongoose.Schema(
     program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
     school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
-    yearOfStudy: Number,
-    report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' }
+    yearOfStudy: Number
   },
   {
     toJSON: {
