@@ -3,6 +3,7 @@ const controller = require('../controllers/students');
 const authController = require('../auth/studentAuth');
 const staffAuth = require('../auth/staffAuth');
 const AuthProtector = require('../auth/authProtector');
+const upload = require('./../utils/multerStorage')('attachment');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.patch('/resetPassword/:token', authController.resetPassword());
 
 router.use(AuthProtector());
 
-router.patch('/updateMe', controller.updateMe);
+router.patch('/updateMe', upload.single('photo'), controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
 router.get('/me', authController.getMe(), controller.getStudent);
 router.patch('/updatePassword', authController.updatePassword());

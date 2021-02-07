@@ -33,9 +33,9 @@ module.exports = {
       'lastName',
       'email',
       'phoneNumber',
-      'photo',
       'program'
     );
+    filteredBody.profilePicture = req.file.location;
 
     // 3) Update Student document
     const student = await Student.findByIdAndUpdate(req.user.id, filteredBody, {
