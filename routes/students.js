@@ -20,13 +20,6 @@ router.get('/me', authController.getMe(), controller.getStudent);
 router.patch('/updatePassword', authController.updatePassword());
 
 router
-  .route('/report')
-  .get(authController.getMe(), controller.getReport)
-  .post(authController.getMe(), controller.addReport)
-  .patch(authController.getMe(), controller.updateReport);
-router.patch('/report/submit', authController.getMe(), controller.submitReport);
-
-router
   .route('/:id')
   .get(
     staffAuth.restrictTo('admin', 'principal', 'dean', 'examiner'),
