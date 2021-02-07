@@ -62,23 +62,18 @@ module.exports = {
       return next(new AppError('You already have a report, update it instead', 403));
     }
 
-    // TODO: Include file uploads with multer
+    // multer middleware adds a file object to the request including the details about where the file is stored
+    if (!req.file) {
+      return next(new AppError('Please upload a file', 400));
+    }
     const report = new Report(req.body);
     report.student = req.params.id;
+    report.reportURL = req.file.location;
+
     await report.save();
 
     // make sure you do not have password info on this route so that you can update the student document safely
     guaranteeNoPasswordInfo(req, res, next);
-
-    // Update Student document
-    await Student.findByIdAndUpdate(
-      req.params.id,
-      { report: report._id },
-      {
-        new: true,
-        runValidators: true
-      }
-    );
 
     res.status(201).json({
       message: 'Report successfully added',
