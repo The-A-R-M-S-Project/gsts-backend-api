@@ -17,6 +17,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme",
   "dependencies": {
+    "aws-sdk": "^2.839.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
@@ -30,6 +31,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.2.1",
     "validator": "^11.1.0",
