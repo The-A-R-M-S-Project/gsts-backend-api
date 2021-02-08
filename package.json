@@ -18,7 +18,7 @@
   "homepage": "https://bitbucket.org/thearmsproject/grad-students-tracker-api#readme",
   "dependencies": {
     "aws-sdk": "^2.839.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
