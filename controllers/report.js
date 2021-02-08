@@ -97,18 +97,17 @@ module.exports = {
     }
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
-    filteredBody.reportURL = req.file.location;
+    if (req.file) {
+      filteredBody.reportURL = req.file.location;
+    }
 
-    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+    report = await Report.findByIdAndUpdate(report._id, filteredBody, {
       new: true
     }).populate({
       path: 'student',
       select: 'firstName lastName _id'
     });
 
-    if (!report) {
-      return next(new AppError('No report found with that id', 404));
-    }
     res.status(200).json({ message: 'Report Updated', report });
   }),
 
