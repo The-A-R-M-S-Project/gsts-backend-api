@@ -1,7 +1,6 @@
 const express = require('express');
 const controller = require('../controllers/report');
 const studentAuth = require('../auth/studentAuth');
-const staffAuth = require('../auth/staffAuth');
 const AuthProtector = require('../auth/authProtector');
 const upload = require('./../utils/multerStorage')('inline');
 
@@ -18,18 +17,20 @@ router
 router.patch(
   '/submit',
   studentAuth.restrictTo('student'),
+  upload.single('report'),
   studentAuth.getMe(),
   controller.submitReport
 );
 
+router.get(
+  '/:id',
+  studentAuth.restrictTo('principal', 'examiner'),
+  controller.getStudentReport
+);
+
 router
   .route('/')
-  .get(staffAuth.restrictTo('admin', 'principal', 'dean'), controller.getAllReports)
-  .post(
-    studentAuth.restrictTo('student'),
-    studentAuth.getMe(),
-    upload.single('report'),
-    controller.addReport
-  );
+  .get(studentAuth.restrictTo('admin', 'principal', 'dean'), controller.getAllReports)
+  .post(studentAuth.restrictTo('student'), studentAuth.getMe(), controller.addReport);
 
 module.exports = router;

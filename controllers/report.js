@@ -41,9 +41,26 @@ module.exports = {
       return next(new AppError('No student exists with that id', 404));
     }
 
-    const report = await Report.find({ student }).populate({
+    const report = await Report.findOne({ student }).populate({
       path: 'student',
-      select: 'firstName lastName -_id'
+      select: 'firstName lastName _id'
+    });
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+
+    res.status(200).json(report);
+  }),
+
+  getStudentReport: catchAsync(async (req, res, next) => {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return next(new AppError('No student exists with that id', 404));
+    }
+
+    const report = await Report.findOne({ student }).populate({
+      path: 'student',
+      select: 'firstName lastName _id'
     });
     if (!report) {
       return next(new AppError('No report found with that id', 404));
@@ -53,22 +70,14 @@ module.exports = {
   }),
 
   addReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate('report');
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    if (student.report) {
+    let report = await Report.findOne({ student: req.params.id });
+    if (report) {
       return next(new AppError('You already have a report, update it instead', 403));
     }
 
-    // multer middleware adds a file object to the request including the details about where the file is stored
-    if (!req.file) {
-      return next(new AppError('Please upload a file', 400));
-    }
-    const report = new Report(req.body);
-    report.student = req.params.id;
-    report.reportURL = req.file.location;
+    const filteredBody = filterObj(req.body, 'title', 'abstract');
+    filteredBody.student = req.params.id;
+    report = new Report(filteredBody);
 
     await report.save();
 
@@ -82,10 +91,7 @@ module.exports = {
   }),
 
   updateReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate({
-      path: 'report',
-      select: '_id status'
-    });
+    const student = await Student.findById(req.params.id);
 
     if (!student) {
       return next(new AppError('No student exists with that id', 404));
@@ -101,7 +107,7 @@ module.exports = {
     const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.reportURL = req.file.location;
 
-    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
+    const report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true
     });
 
@@ -125,11 +131,16 @@ module.exports = {
       return next(new AppError('Already submitted report', 400));
     }
 
+    // multer middleware adds a file object to the request including the details about where the file is stored
+    if (!req.file) {
+      return next(new AppError('Please upload a file', 400));
+    }
+
     const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.status = 'submitted';
     filteredBody.submittedAt = Date.now();
+    filteredBody.reportURL = req.file.location;
 
-    // TODO: Include file uploads with multer
     const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
       new: true
     });
