@@ -36,17 +36,12 @@ module.exports = {
     res.status(200).json(reports);
   }),
   getReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id);
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    const report = await Report.findOne({ student }).populate({
+    const report = await Report.findOne({ student: req.params.id }).populate({
       path: 'student',
       select: 'firstName lastName _id'
     });
     if (!report) {
-      return next(new AppError('No report found with that id', 404));
+      return next(new AppError('No report found with that for that student', 404));
     }
 
     res.status(200).json(report);
@@ -91,24 +86,24 @@ module.exports = {
   }),
 
   updateReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id);
+    let report = await Report.findOne({ student: req.params.id });
 
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
     }
 
-    if (
-      student.report.status !== 'notSubmitted' &&
-      student.report.status !== 'pendingRevision'
-    ) {
+    if (report.status !== 'notSubmitted' && report.status !== 'pendingRevision') {
       return next(new AppError('Cannot edit already submitted report', 400));
     }
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.reportURL = req.file.location;
 
-    const report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true
+    }).populate({
+      path: 'student',
+      select: 'firstName lastName _id'
     });
 
     if (!report) {
@@ -118,16 +113,13 @@ module.exports = {
   }),
 
   submitReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate({
-      path: 'report',
-      select: '_id status'
-    });
+    let report = await Report.findOne({ student: req.params.id });
 
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
     }
 
-    if (student.report.status !== 'notSubmitted') {
+    if (report.status !== 'notSubmitted') {
       return next(new AppError('Already submitted report', 400));
     }
 
@@ -141,13 +133,12 @@ module.exports = {
     filteredBody.submittedAt = Date.now();
     filteredBody.reportURL = req.file.location;
 
-    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
+    report = await Report.findByIdAndUpdate(report._id, filteredBody, {
       new: true
+    }).populate({
+      path: 'student',
+      select: 'firstName lastName _id'
     });
-
-    if (!report) {
-      return next(new AppError('No report found with that id', 404));
-    }
 
     res.status(200).json({ message: 'Report Submitted', report });
   })
