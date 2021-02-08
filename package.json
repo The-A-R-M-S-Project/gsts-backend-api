@@ -4,7 +4,7 @@
   "description": "Repository for Graduate Students tracking System",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production node server.js",
     "debug": "ndb server.js",
     "test": "mocha --timeout 10000 --exit"
@@ -35,6 +35,7 @@
     "multer-s3": "^2.9.0",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.2.1",
+    "nodemon": "^2.0.7",
     "validator": "^11.1.0",
     "xss-clean": "^0.1.1"
   },
