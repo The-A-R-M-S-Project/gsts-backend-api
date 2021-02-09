@@ -6,9 +6,9 @@ const CommentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  reportID: { type: mongoose.Schema.Types.ObjectId, ref: 'report' },
-  studentID: { type: mongoose.Schema.Types.ObjectId, ref: 'student' },
-  staffID: { type: mongoose.Schema.Types.ObjectId, ref: 'staff' }
+  report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'student' },
+  staff: { type: mongoose.Schema.Types.ObjectId, ref: 'staff' }
 });
 
-module.exports = mongoose.model('event', CommentSchema);
+module.exports = mongoose.model('comment', CommentSchema);
