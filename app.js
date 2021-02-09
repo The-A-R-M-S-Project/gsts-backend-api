@@ -17,6 +17,8 @@ const studentRouter = require('./routes/students');
 const staffRouter = require('./routes/staff');
 const departmentRouter = require('./routes/departments');
 const reportRouter = require('./routes/report');
+const commentRouter = require('./routes/comments');
+const vivaRouter = require('./routes/viva');
 
 const app = express();
 
@@ -67,6 +69,8 @@ app.use('/api/student', studentRouter);
 app.use('/api/staff', staffRouter);
 app.use('/api/department', departmentRouter);
 app.use('/api/report', reportRouter);
+app.use('/api/comment', commentRouter);
+app.use('/api/viva', vivaRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
