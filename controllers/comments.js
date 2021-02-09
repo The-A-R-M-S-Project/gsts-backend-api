@@ -13,15 +13,20 @@ const filterObj = (obj, ...allowedFields) => {
 
 module.exports = {
   getALlReportComments: catchAsync(async (req, res, next) => {
-    const report = await Report.findById(req.params.id);
+    const report = await Report.findById(req.params.reportId);
     if (!report) {
       return next(new AppError('No report with that id exists', 404));
     }
 
-    const comments = await Comment.find({ report: req.params.id }).populate({
-      path: 'staff',
-      select: 'firstName lastName role _id'
-    });
+    const comments = await Comment.find({ report: req.params.reportId })
+      .populate({
+        path: 'staff',
+        select: 'firstName lastName role _id'
+      })
+      .populate({
+        path: 'report',
+        select: 'title status'
+      });
 
     if (comments.length === 0) {
       return next(new AppError('No comments have been made on this report', 404));
