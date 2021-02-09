@@ -35,7 +35,9 @@ module.exports = {
       'phoneNumber',
       'program'
     );
-    filteredBody.profilePicture = req.file.location;
+    if (req.file) {
+      filteredBody.profilePicture = req.file.location;
+    }
 
     // 3) Update Student document
     const student = await Student.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -103,6 +105,4 @@ module.exports = {
     }
     res.json({ message: 'Student information updated!', student });
   })
-
-  // ----- student report controllers
 };
