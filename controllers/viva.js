@@ -108,9 +108,13 @@ module.exports = {
     const viva = await Viva.findOneAndUpdate({ report: req.params.id }, filteredBody, {
       new: true,
       runValidators: true
-    }).populate({
-      path: 'report'
-    });
+    })
+      .populate({
+        path: 'report'
+      })
+      .populate({
+        path: 'vivaEvent'
+      });
     res.status(200).json({
       status: 'success',
       viva
