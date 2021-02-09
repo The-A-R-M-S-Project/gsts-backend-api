@@ -1,5 +1,6 @@
 const Report = require('../models/reports');
 const Student = require('../models/students');
+const Department = require('../models/departments');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -22,6 +23,49 @@ const guaranteeNoPasswordInfo = (req, res, next) => {
   }
 };
 
+// helper function that takes in a department ID and returns the report status of that department
+const reportStatus = async departmentId => {
+  const departmentName = await Department.findById(departmentId);
+  const studentIds = await Student.find({ department: departmentId }).distinct('_id');
+  const submitted = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'submitted' }
+      }
+    }
+  ]);
+  const withExaminer = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'withExaminer' }
+      }
+    }
+  ]);
+  const cleared = await Report.aggregate([
+    {
+      $match: { student: { $in: studentIds } }
+    },
+    {
+      $match: {
+        status: { $eq: 'cleared' }
+      }
+    }
+  ]);
+  return {
+    [departmentName.name]: {
+      submitted: submitted.length,
+      withExaminer: withExaminer.length,
+      cleared: cleared.length
+    }
+  };
+};
+
 module.exports = {
   getAllReports: catchAsync(async (req, res, next) => {
     const reports = await Report.find({}).populate({
@@ -35,7 +79,7 @@ module.exports = {
 
     res.status(200).json(reports);
   }),
-  getReport: catchAsync(async (req, res, next) => {
+  getMyReport: catchAsync(async (req, res, next) => {
     const report = await Report.findOne({ student: req.params.id }).populate({
       path: 'student',
       select: 'firstName lastName _id'
@@ -85,7 +129,7 @@ module.exports = {
     });
   }),
 
-  updateReport: catchAsync(async (req, res, next) => {
+  updateMyReport: catchAsync(async (req, res, next) => {
     let report = await Report.findOne({ student: req.params.id });
 
     if (!report) {
@@ -140,5 +184,188 @@ module.exports = {
     });
 
     res.status(200).json({ message: 'Report Submitted', report });
+  }),
+
+  // Staff Report controllers
+
+  getExaminerReports: catchAsync(async (req, res, next) => {
+    const reports = await Report.find({
+      examiner: req.params.id,
+      status: { $ne: 'notSubmitted' }
+    }).populate({
+      path: 'student',
+      populate: [{ path: 'program', select: 'name -_id' }]
+    });
+
+    //TODO: Implement sorts and filters for this query
+
+    res.status(200).json({
+      status: 'success',
+      reports
+    });
+  }),
+
+  receiveReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status');
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (report.status === 'notSubmitted') {
+      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
+    }
+
+    if (report.status !== 'submitted') {
+      return next(new AppError('report already received', 400));
+    }
+
+    report = await Report.findByIdAndUpdate(
+      req.params.id,
+      { status: 'withExaminer', receivedAt: Date.now() },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  clearReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status');
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (report.status === 'submitted') {
+      return next(new AppError('acknowledge receipt of report first', 400));
+    }
+
+    if (
+      report.status === 'clearedByExaminer' ||
+      report.status === 'vivaDateSet' ||
+      report.status === 'vivaComplete' ||
+      report.status === 'pendingRevision' ||
+      report.status === 'complete'
+    ) {
+      return next(new AppError('report already cleared', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'examinerScore');
+
+    if (!Object.prototype.hasOwnProperty.call(filteredBody, 'examinerScore')) {
+      return next(
+        new AppError('please provide a score for the report before clearing it', 400)
+      );
+    }
+
+    filteredBody.status = 'clearedByExaminer';
+    filteredBody.examinerScoreDate = Date.now();
+    filteredBody.examinerGrade = 'C';
+    // TODO: Add examinerGrade based on Standard Grading System
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  assignExaminer: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status examiner');
+
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+
+    // only assign examiner for report that has been submitted
+    if (report.status === 'notSubmitted') {
+      return next(new AppError('cannot assign examiner to unsubmitted report', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'examiner');
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  setVivaDate: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select(
+      'status examinerScore examinerScoreDate'
+    );
+
+    if (report.status !== 'clearedByExaminer') {
+      return next(
+        new AppError(
+          'Cannot set viva date for uncleared report. Please clear with examiner first',
+          400
+        )
+      );
+    }
+
+    if (!report.examinerScore && !report.examinerScoreDate) {
+      return next(
+        new AppError(
+          'Cannot set viva date for ungraded report. Please ensure that report has been graded',
+          400
+        )
+      );
+    }
+
+    const filteredBody = filterObj(req.body, 'vivaDate');
+    filteredBody.status = 'vivaDateSet';
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  setVivaScore: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id).select('status vivaDate');
+
+    if (report.status !== 'vivaDateSet') {
+      return next(
+        new AppError(
+          'Cannot set viva score for report without viva date. Please set a viva date and update score',
+          400
+        )
+      );
+    }
+
+    const filteredBody = filterObj(req.body, 'vivaScore');
+    filteredBody.vivaScoreDate = Date.now();
+    filteredBody.status = 'vivaComplete';
+
+    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
   })
 };
