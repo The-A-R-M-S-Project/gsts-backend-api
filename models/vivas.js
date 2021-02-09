@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const vivaSchema = new mongoose.Schema({
   vivaStatus: {
     type: String,
-    enum: ['pending', 'done']
+    enum: ['pending', 'done'],
+    default: 'pending'
   },
   vivaScore: Number,
   vivaScoreDate: Date,

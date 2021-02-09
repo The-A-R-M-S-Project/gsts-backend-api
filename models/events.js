@@ -2,12 +2,11 @@ const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
   title: {
-    type: String,
-    required: [true, 'Please tell us your first name!']
+    type: String
   },
   description: String,
   eventDate: Date,
-  eventtype: {
+  eventType: {
     type: String,
     enum: ['global', 'viva'],
     default: 'global'
