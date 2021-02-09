@@ -24,19 +24,23 @@ router.patch(
 );
 
 //Staff report endpoints
-router.get('/staff', authController.getMe(), controller.getExaminerReports);
-router.patch('/staff/receive/:id', controller.receiveReport);
-router.patch('/staff/clear/:id', controller.clearReport);
-router.patch(
-  '/staff/vivadate/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.setVivaDate
+router.get(
+  '/staff',
+  authController.restrictTo('admin', 'principal', 'dean', 'examiner'),
+  authController.getMe(),
+  controller.getExaminerReports
 );
 router.patch(
-  '/staff/vivascore/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.setVivaScore
+  '/staff/receive/:id',
+  authController.restrictTo('examiner'),
+  controller.receiveReport
 );
+router.patch(
+  '/staff/clear/:id',
+  authController.restrictTo('examiner'),
+  controller.clearReport
+);
+
 router.patch(
   '/staff/examiner/assign/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
