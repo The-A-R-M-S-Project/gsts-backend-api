@@ -20,10 +20,11 @@ const ReportSchema = new mongoose.Schema({
   examinerScore: Number,
   examinerScoreDate: Date,
   examinerGrade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
-  submittedAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
+  submittedAt: Date,
   receivedAt: Date, // date when examiner acknowledges receipt of the report
   clearedAt: Date,
   resubmission: Boolean, //student is only allowed to resubmit after their examiners comments on report
