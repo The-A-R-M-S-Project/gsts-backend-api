@@ -68,7 +68,7 @@ module.exports = {
 
     filteredBody.report = req.params.id;
     filteredBody.vivaEvent = event;
-    const viva = await (await Viva.create(filteredBody)).populate({ path: 'vivaEvent' });
+    const viva = await Viva.create(filteredBody).populate({ path: 'vivaEvent' });
 
     res.status(200).json({
       status: 'success',
