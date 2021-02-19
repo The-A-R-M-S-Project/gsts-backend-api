@@ -12,6 +12,12 @@ router.post('/forgotPassword', authController.forgotPassword());
 router.patch('/resetPassword/:token', authController.resetPassword());
 
 router.use(AuthProtector());
+
+router.patch('/updateMe', controller.updateMe);
+router.delete('/deactivateMe', controller.deactivateMe);
+router.get('/me', authController.getMe(), controller.getStaff);
+router.patch('/updatePassword', authController.updatePassword());
+
 router.get(
   '/dashboard-stats/:school',
   authController.restrictTo('admin', 'principal', 'dean'),
@@ -23,30 +29,6 @@ router.get(
   '/dashboard-stats/',
   authController.restrictTo('dean'),
   controller.dashboardStats
-);
-
-router.patch('/updateMe', controller.updateMe);
-router.delete('/deactivateMe', controller.deactivateMe);
-router.get('/me', authController.getMe(), controller.getStaff);
-router.patch('/updatePassword', authController.updatePassword());
-
-router.get('/report', authController.getMe(), controller.getReport);
-router.patch('/report/receive/:id', controller.receiveReport);
-router.patch('/report/clear/:id', controller.clearReport);
-router.patch(
-  '/report/vivadate/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.setVivaDate
-);
-router.patch(
-  '/report/vivascore/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.setVivaScore
-);
-router.patch(
-  '/report/examiner/assign/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.assignExaminer
 );
 
 router

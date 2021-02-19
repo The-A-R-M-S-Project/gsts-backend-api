@@ -24,10 +24,7 @@
     "receivedAt": "2019-08-03T18:28:46.757+00:00",
     "examinerScore": 92,
     "examinerGrade": "A",
-    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
-    "vivaDate": "2020-02-15T18:28:46.757+00:00",
-    "vivaScore": 90,
-    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00"
   },
   {
     "_id": "5c87204720f17e0d6774b115",
@@ -40,10 +37,7 @@
     "receivedAt": "2019-08-03T18:28:46.757+00:00",
     "examinerScore": 75,
     "examinerGrade": "B",
-    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
-    "vivaDate": "2020-02-15T18:28:46.757+00:00",
-    "vivaScore": 82,
-    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00"
   },
   {
     "_id": "5c87204720f17e0d6774b116",
@@ -56,9 +50,6 @@
     "receivedAt": "2019-08-03T18:28:46.757+00:00",
     "examinerScore": 88,
     "examinerGrade": "A",
-    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00",
-    "vivaDate": "2020-02-15T18:28:46.757+00:00",
-    "vivaScore": 85,
-    "vivaScoreDate": "2020-02-16T18:28:46.757+00:00"
+    "examinerScoreDate": "2019-10-01T18:28:46.757+00:00"
   }
 ]

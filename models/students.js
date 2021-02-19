@@ -64,12 +64,11 @@ const StudentSchema = new mongoose.Schema(
       default: true,
       select: false
     },
-    photo: String,
+    yearOfStudy: Number,
+    profilePicture: String,
     program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
-    school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
-    yearOfStudy: Number,
-    report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' }
+    school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' }
   },
   {
     toJSON: {

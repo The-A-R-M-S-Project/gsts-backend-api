@@ -57,7 +57,7 @@ describe('Reports', () => {
     });
   });
 
-  describe('/api/student/report', () => {
+  describe('/api/report', () => {
     it('only student should be able to add a report', async () => {
       const student = await Student.create(generators.newStudent);
       const { email, password } = generators.newStudent;
@@ -78,7 +78,7 @@ describe('Reports', () => {
 
       const requestPromise = new Promise((resolve, reject) => {
         client
-          .post(`/api/student/report`)
+          .post(`/api/report`)
           .set('Authorization', `Bearer ${token}`)
           .send({ title: 'New Report Over here' })
           .then(res => {
@@ -114,7 +114,7 @@ describe('Reports', () => {
 
       const reportPromise = new Promise((resolve, reject) => {
         client
-          .post(`/api/student/report`)
+          .post(`/api/report`)
           .set('Authorization', `Bearer ${token}`)
           .send({ title: 'New Report Over here' })
           .then(res => {
@@ -126,7 +126,7 @@ describe('Reports', () => {
 
       const requestPromise = new Promise((resolve, reject) => {
         client
-          .patch(`/api/student/report`)
+          .patch(`/api/report/student`)
           .set('Authorization', `Bearer ${token}`)
           .send({ title: 'Edited Report Over here', status: 'submitted' })
           .then(res => {
@@ -135,11 +135,12 @@ describe('Reports', () => {
       });
 
       const res = await requestPromise;
+      // console.log(res.body.report);
       res.should.have.status(200);
       res.body.should.be.a('object');
       res.body.report.should.have.property('status').eq('notSubmitted');
       res.body.report.should.have.property('title').eq('Edited Report Over here');
-      res.body.report.should.have.property('student').eq(`${student.id}`);
+      res.body.report.student.should.have.property('_id').eq(`${student.id}`);
     });
 
     it('should not allow student to edit already submitted report unless it is pending revision', async () => {
@@ -163,7 +164,7 @@ describe('Reports', () => {
 
       const requestPromise = new Promise((resolve, reject) => {
         client
-          .patch(`/api/student/report`)
+          .patch(`/api/report/student`)
           .set('Authorization', `Bearer ${token}`)
           .send({ title: 'Edited Report Over here' })
           .then(res => {

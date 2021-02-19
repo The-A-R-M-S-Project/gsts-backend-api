@@ -1,5 +1,4 @@
 const Student = require('../models/students');
-const Report = require('../models/reports');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -34,9 +33,11 @@ module.exports = {
       'lastName',
       'email',
       'phoneNumber',
-      'photo',
       'program'
     );
+    if (req.file) {
+      filteredBody.profilePicture = req.file.location;
+    }
 
     // 3) Update Student document
     const student = await Student.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -103,118 +104,5 @@ module.exports = {
       return next(new AppError('No student found with that id', 404));
     }
     res.json({ message: 'Student information updated!', student });
-  }),
-
-  // ----- student report controllers
-
-  getReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id);
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    const report = await Report.find({ student }).populate({
-      path: 'student',
-      select: 'firstName lastName -_id'
-    });
-    if (!report) {
-      return next(new AppError('No report found with that id', 404));
-    }
-
-    res.status(200).json(report);
-  }),
-
-  addReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate('report');
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    if (student.report) {
-      return next(new AppError('You already have a report, update it instead', 403));
-    }
-
-    // TODO: Include file uploads with multer
-    const report = new Report(req.body);
-    report.student = req.params.id;
-    await report.save();
-
-    // make sure you do not have password info on this route so that you can update the student document safely
-    guaranteeNoPasswordInfo(req, res, next);
-
-    // Update Student document
-    await Student.findByIdAndUpdate(
-      req.params.id,
-      { report: report._id },
-      {
-        new: true,
-        runValidators: true
-      }
-    );
-
-    res.status(201).json({
-      message: 'Report successfully added',
-      report
-    });
-  }),
-
-  updateReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate({
-      path: 'report',
-      select: '_id status'
-    });
-
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    if (
-      student.report.status !== 'notSubmitted' &&
-      student.report.status !== 'pendingRevision'
-    ) {
-      return next(new AppError('Cannot edit already submitted report', 400));
-    }
-
-    const filteredBody = filterObj(req.body, 'title', 'abstract');
-
-    // TODO: Include file uploads with multer
-    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
-      new: true
-    });
-
-    if (!report) {
-      return next(new AppError('No report found with that id', 404));
-    }
-    res.status(200).json({ message: 'Report Updated', report });
-  }),
-
-  submitReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id).populate({
-      path: 'report',
-      select: '_id status'
-    });
-
-    if (!student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
-
-    if (student.report.status !== 'notSubmitted') {
-      return next(new AppError('Already submitted report', 400));
-    }
-
-    const filteredBody = filterObj(req.body, 'title', 'abstract');
-    filteredBody.status = 'submitted';
-    filteredBody.submittedAt = Date.now();
-
-    // TODO: Include file uploads with multer
-    const report = await Report.findByIdAndUpdate(student.report._id, filteredBody, {
-      new: true
-    });
-
-    if (!report) {
-      return next(new AppError('No report found with that id', 404));
-    }
-
-    res.status(200).json({ message: 'Report Submitted', report });
   })
 };
