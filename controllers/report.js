@@ -1,6 +1,6 @@
 const Report = require('../models/reports');
 const Student = require('../models/students');
-const Department = require('../models/departments');
+const Staff = require('../models/staff');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -21,49 +21,6 @@ const guaranteeNoPasswordInfo = (req, res, next) => {
       )
     );
   }
-};
-
-// helper function that takes in a department ID and returns the report status of that department
-const reportStatus = async departmentId => {
-  const departmentName = await Department.findById(departmentId);
-  const studentIds = await Student.find({ department: departmentId }).distinct('_id');
-  const submitted = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        status: { $eq: 'submitted' }
-      }
-    }
-  ]);
-  const withExaminer = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        status: { $eq: 'withExaminer' }
-      }
-    }
-  ]);
-  const cleared = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        status: { $eq: 'cleared' }
-      }
-    }
-  ]);
-  return {
-    [departmentName.name]: {
-      submitted: submitted.length,
-      withExaminer: withExaminer.length,
-      cleared: cleared.length
-    }
-  };
 };
 
 module.exports = {
@@ -101,8 +58,25 @@ module.exports = {
       path: 'student',
       select: 'firstName lastName _id'
     });
+
     if (!report) {
       return next(new AppError('No report found with that id', 404));
+    }
+
+    //Ensure Dean doesn't make operations to objects belonging to other schools
+    if (req.user.role === 'dean') {
+      if (req.user.school !== report.student.school) {
+        return next(
+          new AppError('Dean Cannot get Report belonging to other schools', 400)
+        );
+      }
+    }
+    if (req.user.role === 'examiner') {
+      if (req.user._id !== report.examiner) {
+        return next(
+          new AppError('Examiner cannot get report that is not assigned to them', 400)
+        );
+      }
     }
 
     res.status(200).json(report);
@@ -206,10 +180,20 @@ module.exports = {
   }),
 
   receiveReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status');
+    let report = await Report.findById(req.params.id)
+      .select('status examiner student')
+      .populate({
+        path: 'student'
+      });
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (!req.user._id.equals(report.examiner)) {
+      return next(
+        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
+      );
     }
 
     if (report.status === 'notSubmitted') {
@@ -236,10 +220,16 @@ module.exports = {
   }),
 
   clearReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status');
+    let report = await Report.findById(req.params.id).select('status examiner');
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (!req.user._id.equals(report.examiner)) {
+      return next(
+        new AppError('examiner cannot clear Report that isnt assigned to them', 400)
+      );
     }
 
     if (report.status === 'submitted') {
@@ -281,10 +271,23 @@ module.exports = {
   }),
 
   assignExaminer: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status examiner');
+    let report = await Report.findById(req.params.id)
+      .select('status examiner student')
+      .populate({
+        path: 'student'
+      });
 
     if (!report) {
       return next(new AppError('No report found with that id', 404));
+    }
+
+    //Ensure Dean doesn't make operations to students belonging to other schools
+    if (req.user.role === 'dean') {
+      if (!req.user.school.equals(report.student.school)) {
+        return next(
+          new AppError('Dean cant assign Student report belonging to other schools', 400)
+        );
+      }
     }
 
     // only assign examiner for report that has been submitted

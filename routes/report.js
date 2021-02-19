@@ -18,8 +18,8 @@ router
 router.patch(
   '/submit',
   authController.restrictTo('student'),
-  upload.single('report'),
   authController.getMe(),
+  upload.single('report'),
   controller.submitReport
 );
 
@@ -50,13 +50,13 @@ router.patch(
 // General report endpoints
 router.get(
   '/:id',
-  authController.restrictTo('principal', 'examiner'),
+  authController.restrictTo('principal', 'dean', 'examiner'),
   controller.getStudentReport
 );
 
 router
   .route('/')
-  .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllReports)
+  .get(authController.restrictTo('admin', 'principal'), controller.getAllReports)
   .post(
     authController.restrictTo('student'),
     authController.getMe(),
