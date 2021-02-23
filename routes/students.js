@@ -1,9 +1,12 @@
 const express = require('express');
+const multer = require('multer');
 const controller = require('../controllers/students');
 const authController = require('../auth/studentAuth');
 const staffAuth = require('../auth/staffAuth');
 const AuthProtector = require('../auth/authProtector');
-const upload = require('./../utils/multerStorage')('attachment');
+const storageEngines = require('./../utils/multerStorage')('inline');
+
+const upload = multer({ storage: storageEngines.localProfilePictureStorage });
 
 const router = express.Router();
 

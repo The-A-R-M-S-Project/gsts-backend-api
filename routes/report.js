@@ -1,8 +1,11 @@
 const express = require('express');
+const multer = require('multer');
 const controller = require('../controllers/report');
 const authController = require('../auth/studentAuth');
 const AuthProtector = require('../auth/authProtector');
-const upload = require('./../utils/multerStorage')('inline');
+const storageEngines = require('./../utils/multerStorage')('inline');
+
+const upload = multer({ storage: storageEngines.localReportStorage });
 
 const router = express.Router();
 
