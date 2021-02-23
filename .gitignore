@@ -57,6 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+#Static assests
+assets/*
+
 # next.js build output
 .next
 
