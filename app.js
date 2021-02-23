@@ -62,6 +62,9 @@ app.get('/', (req, res) =>
   res.json({ message: 'Welcome to the Graduate Students Tracking System API!' })
 );
 
+// Serving static assets
+app.use('/static', express.static('../GSTS-Static-Assets/public'));
+
 app.use('/api/admin', adminRouter);
 app.use('/api/school', schoolRouter);
 app.use('/api/program', programRouter);
