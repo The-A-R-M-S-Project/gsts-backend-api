@@ -63,7 +63,7 @@ app.get('/', (req, res) =>
 );
 
 // Serving static assets
-app.use('/static', express.static('../GSTS-Static-Assets/public'));
+app.use('/static', express.static('./assets/public'));
 
 app.use('/api/admin', adminRouter);
 app.use('/api/school', schoolRouter);

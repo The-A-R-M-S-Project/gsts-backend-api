@@ -11,17 +11,17 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 // Helper function to setup any missing directories
 const createMissingDirectories = finalDirectory => {
   if (
-    !fs.existsSync('../GSTS-Static-Assets') ||
-    !fs.existsSync('../GSTS-Static-Assets/public') ||
-    !fs.existsSync('../GSTS-Static-Assets/public/uploads') ||
-    !fs.existsSync(`../GSTS-Static-Assets/public/uploads/${finalDirectory}`)
+    !fs.existsSync('./assets') ||
+    !fs.existsSync('./assets/public') ||
+    !fs.existsSync('./assets/public/uploads') ||
+    !fs.existsSync(`./assets/public/uploads/${finalDirectory}`)
   ) {
-    fs.mkdirSync(`../GSTS-Static-Assets/public/uploads/${finalDirectory}`, {
+    fs.mkdirSync(`./assets/public/uploads/${finalDirectory}`, {
       recursive: true
     });
-    return `../GSTS-Static-Assets/public/uploads/${finalDirectory}`;
+    return `./assets/public/uploads/${finalDirectory}`;
   }
-  return `../GSTS-Static-Assets/public/uploads/${finalDirectory}`;
+  return `./assets/public/uploads/${finalDirectory}`;
 };
 
 module.exports = contentDisposition => {
