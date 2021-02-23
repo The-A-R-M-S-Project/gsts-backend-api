@@ -12,6 +12,11 @@ echo EMAIL_USERNAME=$EMAIL_USERNAME >> .env
 echo EMAIL_PASSWORD=$EMAIL_PASSWORD >> .env
 echo EMAIL_HOST=$EMAIL_HOST >> .env
 echo EMAIL_PORT=$EMAIL_PORT >> .env
+echo DO_ENDPOINT=$DO_ENDPOINT >> .env
+echo DO_BUCKET=$DO_BUCKET >> .env
+echo DO_ACCESS_KEY=$DO_ACCESS_KEY >> .env
+echo DO_SECRET_ACCESS_KEY=$DO_SECRET_ACCESS_KEY >> .env
+echo DO_S3REGION=$DO_S3REGION >> .env
 
 echo 'securely copy .env file ...'
 scp .env arms-test@161.35.252.183:~/
