@@ -33,11 +33,19 @@ router.get(
   authController.getMe(),
   controller.getExaminerReports
 );
+
 router.patch(
   '/staff/receive/:id',
   authController.restrictTo('examiner'),
   controller.receiveReport
 );
+
+router.patch(
+  '/staff/reject/:id',
+  authController.restrictTo('examiner'),
+  controller.rejectReport
+);
+
 router.patch(
   '/staff/clear/:id',
   authController.restrictTo('examiner'),

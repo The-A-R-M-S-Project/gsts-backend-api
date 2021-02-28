@@ -1,6 +1,5 @@
 const Report = require('../models/reports');
 const Student = require('../models/students');
-const Staff = require('../models/staff');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -157,7 +156,7 @@ module.exports = {
       select: 'firstName lastName _id'
     });
 
-    res.status(200).json({ message: 'Report Submitted', report });
+    res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
 
   // Staff Report controllers
@@ -207,6 +206,49 @@ module.exports = {
     report = await Report.findByIdAndUpdate(
       req.params.id,
       { status: 'withExaminer', receivedAt: Date.now() },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    res.status(200).json({
+      status: 'success',
+      report: report
+    });
+  }),
+
+  rejectReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id)
+      .select('status examiner student')
+      .populate({
+        path: 'student'
+      });
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (!req.user._id.equals(report.examiner)) {
+      return next(
+        new AppError('examiner cannot reject Report that isnt assigned to them', 400)
+      );
+    }
+
+    if (report.status === 'notSubmitted') {
+      return next(new AppError(`Can't reject a report that is not submitted`, 400));
+    }
+    if (report.status === 'rejectedByExaminer') {
+      return next(new AppError('report already rejected, cannot reject twice', 400));
+    }
+
+    if (report.status !== 'submitted') {
+      return next(new AppError('report already received, cannot reject it now', 400));
+    }
+
+    report = await Report.findByIdAndUpdate(
+      req.params.id,
+      { status: 'rejectedByExaminer' },
       {
         new: true,
         runValidators: true

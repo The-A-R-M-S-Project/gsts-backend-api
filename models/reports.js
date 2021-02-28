@@ -9,6 +9,7 @@ const ReportSchema = new mongoose.Schema({
       'notSubmitted',
       'submitted',
       'withExaminer',
+      'rejectedByExaminer',
       'clearedByExaminer',
       'vivaDateSet',
       'vivaComplete',

@@ -29,7 +29,8 @@ module.exports = () => {
     // 3) Check if user still exists
     const currentUser =
       (await Staff.findById(decoded.id)) ||
-      ((await Student.findById(decoded.id)) || (await Admin.findById(decoded.id)));
+      (await Student.findById(decoded.id)) ||
+      (await Admin.findById(decoded.id));
     if (!currentUser) {
       return next(new AppError('The user belonging to this token no longer exists', 401));
     }

@@ -39,10 +39,11 @@ module.exports = contentDisposition => {
         cb(null, file.originalname);
       }
     }),
-    LocalReportStorage: multer.diskStorage({
+    localReportStorage: multer.diskStorage({
       destination: function(req, file, cb) {
         const finalDirectory = 'reports';
         const storagelocation = createMissingDirectories(finalDirectory);
+        console.log('Why are you running');
         file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
         cb(null, storagelocation);
       },
