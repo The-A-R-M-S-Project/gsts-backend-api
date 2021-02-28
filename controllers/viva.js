@@ -12,21 +12,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-const guaranteeNoPasswordInfo = (req, res, next) => {
-  if (req.body.password || req.body.passwordConfirm) {
-    return next(
-      new AppError(
-        'This route is not for password updates. Please use /updatePassword.',
-        400
-      )
-    );
-  }
-};
-
 module.exports = {
   setVivaDate: catchAsync(async (req, res, next) => {
     let report = await Report.findById(req.params.id).select(
-      'status examinerScore examinerScoreDate'
+      'title status examinerScore examinerScoreDate'
     );
 
     if (!report) {
@@ -51,7 +40,7 @@ module.exports = {
       );
     }
 
-    const filteredBody = filterObj(req.body, 'vivaDate');
+    const filteredBody = filterObj(req.body, 'vivaDate', 'location');
 
     report = await Report.findByIdAndUpdate(
       req.params.id,
@@ -61,14 +50,16 @@ module.exports = {
         runValidators: true
       }
     );
-    const event = await Event.create({
-      eventDate: req.body.vivaDate,
-      eventType: 'viva'
-    });
+
+    filteredBody.eventDate = new Date(req.body.vivaDate);
+    filteredBody.eventType = 'viva';
+    filteredBody.title = `${report.title}'s viva`;
+    const event = await Event.create(filteredBody);
 
     filteredBody.report = req.params.id;
     filteredBody.vivaEvent = event;
-    const viva = await Viva.create(filteredBody).populate({ path: 'vivaEvent' });
+    // create function only saves fields that were defined in the schema
+    const viva = await Viva.create(filteredBody);
 
     res.status(200).json({
       status: 'success',
@@ -77,7 +68,7 @@ module.exports = {
   }),
 
   setVivaScore: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status vivaDate');
+    let report = await Report.findById(req.params.id).select('status');
 
     if (!report) {
       return next(new AppError('No report found with that id', 404));
