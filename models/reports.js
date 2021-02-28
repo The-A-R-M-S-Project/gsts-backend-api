@@ -8,9 +8,9 @@ const ReportSchema = new mongoose.Schema({
     enum: [
       'notSubmitted',
       'submitted',
-      'withExaminer',
-      'rejectedByExaminer',
-      'clearedByExaminer',
+      'assignedToExaminers', //Implies report has been assigned to both internal and external examiners
+      'recievedByExaminers', //Implies report has been recieved to both internal and external examiners
+      'clearedByExaminers', //Implies report has been cleared to both internal and external examiners
       'vivaDateSet',
       'vivaComplete',
       'pendingRevision',
@@ -18,28 +18,15 @@ const ReportSchema = new mongoose.Schema({
     ],
     default: 'notSubmitted'
   },
-  examinerScore: Number,
-  examinerScoreDate: Date,
-  examinerGrade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
+  finalScore: Number,
   createdAt: {
     type: Date,
     default: Date.now
   },
   submittedAt: Date,
-  receivedAt: Date, // date when examiner acknowledges receipt of the report
-  clearedAt: Date,
   resubmission: Boolean, //student is only allowed to resubmit after their examiners comments on report
   reportURL: String, // The physical report is stored on digital ocean spaces
-  student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' },
-  examiner: { type: mongoose.Schema.Types.ObjectId, ref: 'staff' }
+  student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
-
-ReportSchema.methods.isReviewDeadlineExceeded = function() {
-  if (this.receivedAt && this.status === 'withExaminer') {
-    return Math.abs((Date.now - this.submittedAt) / (1000 * 3600 * 24)) > 30;
-  }
-
-  return false;
-};
 
 module.exports = mongoose.model('report', ReportSchema);

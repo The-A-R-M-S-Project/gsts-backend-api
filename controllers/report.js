@@ -1,4 +1,5 @@
 const Report = require('../models/reports');
+const ExaminerReport = require('../models/examiner_report');
 const Student = require('../models/students');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -180,7 +181,7 @@ module.exports = {
 
   receiveReport: catchAsync(async (req, res, next) => {
     let report = await Report.findById(req.params.id)
-      .select('status examiner student')
+      .select('status examinerInternal student')
       .populate({
         path: 'student'
       });
@@ -189,7 +190,7 @@ module.exports = {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (!req.user._id.equals(report.examiner)) {
+    if (!req.user._id.equals(report.examinerInternal)) {
       return next(
         new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
       );
@@ -262,13 +263,13 @@ module.exports = {
   }),
 
   clearReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status examiner');
+    let report = await Report.findById(req.params.id).select('status examinerInternal');
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (!req.user._id.equals(report.examiner)) {
+    if (!req.user._id.equals(report.examinerInternal)) {
       return next(
         new AppError('examiner cannot clear Report that isnt assigned to them', 400)
       );
@@ -337,16 +338,60 @@ module.exports = {
       return next(new AppError('cannot assign examiner to unsubmitted report', 400));
     }
 
-    const filteredBody = filterObj(req.body, 'examiner');
-
-    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
-      new: true,
-      runValidators: true
+    const numberOfInternalExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      examinerType: 'internal',
+      status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
+
+    const numberOfExternalExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      examinerType: 'external',
+      status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
+    });
+
+    if (numberOfInternalExaminers > 0) {
+      return next(
+        new AppError(
+          'report already accepted by internal examiner, cannot assign more than one internal examiner',
+          400
+        )
+      );
+    }
+
+    if (numberOfExternalExaminers > 0) {
+      return next(
+        new AppError(
+          'report already accepted by external examiner, cannot assign more than one external examiner',
+          400
+        )
+      );
+    }
+
+    const filteredBody = filterObj(req.body, 'examinerType', 'examiner');
+    filteredBody.report = req.params.id;
+    filteredBody.status = 'assignedToExaminer';
+    filteredBody.assignedAt = Date.now();
+
+    const examinerReport = await ExaminerReport.findOneAndUpdate(
+      { examiner: filteredBody.examiner, report: filteredBody.report },
+      { $set: filteredBody },
+      { upsert: true, new: true }
+    );
+
+    const numberOfExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      status: 'assignedToExaminer'
+    });
+
+    if (numberOfExaminers === 2) {
+      report.status = 'assignedToExaminers';
+      await report.save();
+    }
 
     res.status(200).json({
       status: 'success',
-      report: report
+      report: examinerReport
     });
   })
 };
