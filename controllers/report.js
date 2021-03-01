@@ -1,5 +1,6 @@
 const Report = require('../models/reports');
 const ExaminerReport = require('../models/examiner_report');
+const ReportAssessment = require('../models/report_assessment');
 const Student = require('../models/students');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -190,38 +191,58 @@ module.exports = {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (!req.user._id.equals(report.examinerInternal)) {
+    if (report.status === 'notSubmitted') {
+      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
+    }
+
+    let examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    });
+
+    if (!examinerReport) {
       return next(
         new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
       );
     }
 
-    if (report.status === 'notSubmitted') {
-      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
-    }
-
-    if (report.status !== 'submitted') {
+    if (examinerReport.status !== 'assignedToExaminer') {
       return next(new AppError('report already received', 400));
     }
 
-    report = await Report.findByIdAndUpdate(
-      req.params.id,
-      { status: 'withExaminer', receivedAt: Date.now() },
-      {
-        new: true,
-        runValidators: true
-      }
-    );
+    examinerReport.status = 'withExaminer';
+    examinerReport.save();
+
+    const numberOfExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      status: 'withExaminer'
+    });
+
+    if (numberOfExaminers === 2) {
+      report = await Report.findByIdAndUpdate(
+        req.params.id,
+        { status: 'recievedByExaminers' },
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+    }
+
+    examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    }).populate({ path: 'report', select: 'status _id title' });
 
     res.status(200).json({
       status: 'success',
-      report: report
+      examinerReport: examinerReport
     });
   }),
 
   rejectReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id)
-      .select('status examiner student')
+    const report = await Report.findById(req.params.id)
+      .select('status examinerInternal student')
       .populate({
         path: 'student'
       });
@@ -230,66 +251,84 @@ module.exports = {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (!req.user._id.equals(report.examiner)) {
+    if (report.status === 'notSubmitted') {
+      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
+    }
+
+    let examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    });
+
+    if (!examinerReport) {
       return next(
-        new AppError('examiner cannot reject Report that isnt assigned to them', 400)
+        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
       );
     }
 
-    if (report.status === 'notSubmitted') {
-      return next(new AppError(`Can't reject a report that is not submitted`, 400));
-    }
-    if (report.status === 'rejectedByExaminer') {
+    if (examinerReport.status === 'rejectedByExaminer') {
       return next(new AppError('report already rejected, cannot reject twice', 400));
     }
 
-    if (report.status !== 'submitted') {
-      return next(new AppError('report already received, cannot reject it now', 400));
+    if (examinerReport.status !== 'assignedToExaminer') {
+      return next(new AppError('report already received', 400));
     }
 
-    report = await Report.findByIdAndUpdate(
-      req.params.id,
-      { status: 'rejectedByExaminer' },
-      {
-        new: true,
-        runValidators: true
-      }
-    );
+    examinerReport.status = 'rejectedByExaminer';
+    examinerReport.save();
+
+    examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    }).populate({ path: 'report', select: 'status _id title' });
 
     res.status(200).json({
       status: 'success',
-      report: report
+      examinerReport: examinerReport
     });
   }),
 
   clearReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status examinerInternal');
+    let report = await Report.findById(req.params.id).select('status');
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
     }
 
-    if (!req.user._id.equals(report.examinerInternal)) {
+    let examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    });
+
+    if (!examinerReport) {
       return next(
-        new AppError('examiner cannot clear Report that isnt assigned to them', 400)
+        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
       );
     }
 
-    if (report.status === 'submitted') {
+    if (examinerReport.status === 'assignedToExaminer') {
       return next(new AppError('acknowledge receipt of report first', 400));
     }
 
-    if (
-      report.status === 'clearedByExaminer' ||
-      report.status === 'vivaDateSet' ||
-      report.status === 'vivaComplete' ||
-      report.status === 'pendingRevision' ||
-      report.status === 'complete'
-    ) {
+    if (examinerReport.status === 'clearedByExaminer') {
       return next(new AppError('report already cleared', 400));
     }
 
     const filteredBody = filterObj(req.body, 'examinerScore');
+    const assessment = filterObj(
+      req.body,
+      'background',
+      'problemStatement',
+      'researchMethods',
+      'results',
+      'discussions',
+      'conclusions',
+      'recommendations',
+      'originality_of_Contribution',
+      'literature_Citation',
+      'overall_Presentation',
+      'corrections'
+    );
 
     if (!Object.prototype.hasOwnProperty.call(filteredBody, 'examinerScore')) {
       return next(
@@ -297,24 +336,55 @@ module.exports = {
       );
     }
 
+    let reportAssessment;
+    if (!req.file) {
+      reportAssessment = await ReportAssessment.create({ assessment: assessment });
+    } else {
+      reportAssessment = await ReportAssessment.create({
+        scannedAsssesmentform: req.file.location
+      });
+    }
+
+    filteredBody.reportAssessment = reportAssessment;
     filteredBody.status = 'clearedByExaminer';
     filteredBody.examinerScoreDate = Date.now();
     filteredBody.examinerGrade = 'C';
     // TODO: Add examinerGrade based on Standard Grading System
 
-    report = await Report.findByIdAndUpdate(req.params.id, filteredBody, {
-      new: true,
-      runValidators: true
+    examinerReport = await ExaminerReport.findOneAndUpdate(
+      { examiner: req.user._id, report: req.params.id },
+      filteredBody,
+      {
+        new: true
+      }
+    )
+      .populate({ path: 'report', select: 'status _id title' })
+      .populate({ path: 'reportAssessment' });
+
+    const numberOfExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      status: 'clearedByExaminer'
     });
+
+    if (numberOfExaminers === 2) {
+      report = await Report.findByIdAndUpdate(
+        req.params.id,
+        { status: 'clearedByExaminers' },
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+    }
 
     res.status(200).json({
       status: 'success',
-      report: report
+      examinerReport: examinerReport
     });
   }),
 
   assignExaminer: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id)
+    const report = await Report.findById(req.params.id)
       .select('status examiner student')
       .populate({
         path: 'student'
@@ -377,7 +447,7 @@ module.exports = {
       { examiner: filteredBody.examiner, report: filteredBody.report },
       { $set: filteredBody },
       { upsert: true, new: true }
-    );
+    ).populate({ path: 'report', select: 'status _id title' });
 
     const numberOfExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
@@ -391,7 +461,17 @@ module.exports = {
 
     res.status(200).json({
       status: 'success',
-      report: examinerReport
+      examinerReport: examinerReport
+    });
+  }),
+  getExaminerReportstatus: catchAsync(async (req, res, next) => {
+    const examinerReports = await ExaminerReport.find({ examiner: req.user._id })
+      .populate({ path: 'report', select: 'status _id title' })
+      .populate({ path: 'examiner', select: 'firstName lastName school' });
+
+    res.status(200).json({
+      status: 'success',
+      examinerReports: examinerReports
     });
   })
 };

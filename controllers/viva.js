@@ -22,23 +22,23 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
 
-    if (report.status !== 'clearedByExaminer') {
+    if (report.status !== 'clearedByExaminers') {
       return next(
         new AppError(
-          'Cannot set viva date for uncleared report. Please clear with examiner first',
+          'Cannot set viva date for uncleared report. Please clear with examiners first',
           400
         )
       );
     }
 
-    if (!report.examinerScore && !report.examinerScoreDate) {
-      return next(
-        new AppError(
-          'Cannot set viva date for ungraded report. Please ensure that report has been graded',
-          400
-        )
-      );
-    }
+    // if (!report.finalScore) {
+    //   return next(
+    //     new AppError(
+    //       'Cannot set viva date for ungraded report. Please ensure that report has been graded',
+    //       400
+    //     )
+    //   );
+    // }
 
     const filteredBody = filterObj(req.body, 'vivaDate', 'location');
 

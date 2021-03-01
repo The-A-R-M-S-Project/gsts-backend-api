@@ -5,7 +5,10 @@ const authController = require('../auth/studentAuth');
 const AuthProtector = require('../auth/authProtector');
 const storageEngines = require('./../utils/multerStorage')('inline');
 
-const upload = multer({ storage: storageEngines.localReportStorage });
+const reportUpload = multer({ storage: storageEngines.localReportStorage });
+const assessmentFormUpload = multer({
+  storage: storageEngines.localAssessmentFormStorage
+});
 
 const router = express.Router();
 
@@ -16,13 +19,17 @@ router
   .route('/student')
   .all(authController.restrictTo('student'))
   .get(authController.getMe(), controller.getMyReport)
-  .patch(authController.getMe(), upload.single('report'), controller.updateMyReport);
+  .patch(
+    authController.getMe(),
+    reportUpload.single('report'),
+    controller.updateMyReport
+  );
 
 router.patch(
   '/submit',
   authController.restrictTo('student'),
   authController.getMe(),
-  upload.single('report'),
+  reportUpload.single('report'),
   controller.submitReport
 );
 
@@ -49,6 +56,7 @@ router.patch(
 router.patch(
   '/staff/clear/:id',
   authController.restrictTo('examiner'),
+  assessmentFormUpload.single('scannedAsssesmentform'),
   controller.clearReport
 );
 
@@ -56,6 +64,12 @@ router.patch(
   '/staff/examiner/assign/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
   controller.assignExaminer
+);
+
+router.get(
+  '/staff/examiner/status',
+  authController.restrictTo('examiner'),
+  controller.getExaminerReportstatus
 );
 
 // General report endpoints
