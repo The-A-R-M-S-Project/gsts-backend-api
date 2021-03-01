@@ -61,6 +61,17 @@ module.exports = contentDisposition => {
       filename: function(req, file, cb) {
         cb(null, file.originalname);
       }
+    }),
+    localAssessmentFormStorage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        const finalDirectory = 'report_assessments';
+        const storagelocation = createMissingDirectories(finalDirectory);
+        file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
+        cb(null, storagelocation);
+      },
+      filename: function(req, file, cb) {
+        cb(null, file.originalname);
+      }
     })
   };
   return storage;
