@@ -40,7 +40,9 @@ module.exports = {
     // eslint-disable-next-line no-restricted-syntax
     for (const report of reports) {
       // eslint-disable-next-line no-await-in-loop
-      const examiners = await ExaminerReport.find({ report: report._id });
+      const examiners = await ExaminerReport.find({ report: report._id })
+        .select('-_id status examiner examinerType')
+        .populate({ path: 'examiner', select: '-_id firstName lastName school' });
       report.examiners = examiners;
     }
 
