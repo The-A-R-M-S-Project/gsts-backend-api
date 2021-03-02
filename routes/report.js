@@ -69,6 +69,12 @@ router.patch(
 router.get(
   '/staff/examiner/status',
   authController.restrictTo('examiner'),
+  controller.examinerGetReportstatus
+);
+
+router.get(
+  '/staff/examiner/status/:id',
+  authController.restrictTo('admin', 'principal', 'dean'),
   controller.getExaminerReportstatus
 );
 

@@ -26,14 +26,23 @@ const guaranteeNoPasswordInfo = (req, res, next) => {
 
 module.exports = {
   getAllReports: catchAsync(async (req, res, next) => {
-    const reports = await Report.find({}).populate({
-      path: 'student',
-      select: 'firstName lastName',
-      populate: [
-        { path: 'program', select: 'name -_id' },
-        { path: 'department', select: '-name -__v' }
-      ]
-    });
+    const reports = await Report.find({})
+      .populate({
+        path: 'student',
+        select: 'firstName lastName',
+        populate: [
+          { path: 'program', select: 'name -_id' },
+          { path: 'department', select: '-name -__v' }
+        ]
+      })
+      .lean();
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const report of reports) {
+      // eslint-disable-next-line no-await-in-loop
+      const examiners = await ExaminerReport.find({ report: report._id });
+      report.examiners = examiners;
+    }
 
     res.status(200).json(reports);
   }),
@@ -232,7 +241,9 @@ module.exports = {
     examinerReport = await ExaminerReport.findOne({
       report: req.params.id,
       examiner: req.user._id
-    }).populate({ path: 'report', select: 'status _id title' });
+    })
+      .populate({ path: 'report', select: 'status _id title' })
+      .populate({ path: 'examiner', select: 'firstName LastName _id' });
 
     res.status(200).json({
       status: 'success',
@@ -464,8 +475,20 @@ module.exports = {
       examinerReport: examinerReport
     });
   }),
-  getExaminerReportstatus: catchAsync(async (req, res, next) => {
+
+  examinerGetReportstatus: catchAsync(async (req, res, next) => {
     const examinerReports = await ExaminerReport.find({ examiner: req.user._id })
+      .populate({ path: 'report', select: 'status _id title' })
+      .populate({ path: 'examiner', select: 'firstName lastName school' });
+
+    res.status(200).json({
+      status: 'success',
+      examinerReports: examinerReports
+    });
+  }),
+
+  getExaminerReportstatus: catchAsync(async (req, res, next) => {
+    const examinerReports = await ExaminerReport.find({ report: req.params.id })
       .populate({ path: 'report', select: 'status _id title' })
       .populate({ path: 'examiner', select: 'firstName lastName school' });
 
