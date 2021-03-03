@@ -1,4 +1,5 @@
 const Report = require('../models/reports');
+const Comment = require('../models/comments');
 const ExaminerReport = require('../models/examiner_report');
 const ReportAssessment = require('../models/report_assessment');
 const Student = require('../models/students');
@@ -188,6 +189,46 @@ module.exports = {
     res.status(200).json({
       status: 'success',
       reports
+    });
+  }),
+
+  resubmitReport: catchAsync(async (req, res, next) => {
+    const report = await Report.findById(req.params.id).select('student status');
+
+    if (!report) {
+      return next(new AppError('could not find a report with that ID', 404));
+    }
+
+    if (report.status === 'notSubmitted') {
+      return next(
+        new AppError('report hasnot yet been submitted, cannot complete this action', 400)
+      );
+    }
+
+    if (
+      report.status === 'assignedToExaminers' ||
+      report.status === 'recievedByExaminers'
+    ) {
+      return next(
+        new AppError(
+          'report is being assessed by examiners, cannot complete this action ',
+          400
+        )
+      );
+    }
+
+    report.status = 'notSubmitted';
+    const filteredBody = filterObj(req.body, 'text');
+    filteredBody.reason = `The ${req.user.role} has requested for this report to be resubmitted`;
+    filteredBody.staff = req.user._id;
+    filteredBody.student = report.student;
+    filteredBody.report = req.params.id;
+
+    const comment = await Comment.create(filteredBody);
+
+    res.status(201).json({
+      status: 'success',
+      examinerReport: comment
     });
   }),
 

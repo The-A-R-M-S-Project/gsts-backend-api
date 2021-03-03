@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
+  reason: String,
   text: String,
   createdAt: {
     type: Date,

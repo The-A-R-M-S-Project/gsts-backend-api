@@ -1,5 +1,6 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
+const path = require('path');
 const dotenv = require('dotenv');
 const Schools = require('../models/schools');
 const Departments = require('../models/departments');
@@ -9,7 +10,7 @@ const Staffs = require('../models/staff');
 const Admin = require('../models/admin');
 const Report = require('../models/reports');
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
 const DB = process.env.DATABASE_LOCAL;

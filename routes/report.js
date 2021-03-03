@@ -61,6 +61,12 @@ router.patch(
 );
 
 router.patch(
+  '/staff/student/resubmit/:id',
+  authController.restrictTo('admin', 'principal', 'dean'),
+  controller.resubmitReport
+);
+
+router.patch(
   '/staff/examiner/assign/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
   controller.assignExaminer
