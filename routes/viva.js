@@ -12,10 +12,17 @@ router.patch(
   authController.restrictTo('admin', 'principal', 'dean'),
   controller.setVivaDate
 );
+
 router.patch(
   '/staff/vivascore/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
   controller.setVivaScore
+);
+
+router.patch(
+  '/staff/addVivaCommitteeMember/:id',
+  authController.restrictTo('admin', 'principal', 'dean'),
+  controller.addVivaCommitteeMember
 );
 
 module.exports = router;

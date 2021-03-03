@@ -13,6 +13,29 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 module.exports = {
+  addVivaCommitteeMember: catchAsync(async (req, res, next) => {
+    let viva = await Viva.findOne({ report: req.params.id }).populate({
+      path: 'report',
+      select: 'title abstract status'
+    });
+
+    if (viva.report.status !== 'vivaDateSet') {
+      return next(
+        new AppError('cannot add a viva member before setting a viva Date', 400)
+      );
+    }
+
+    if (!viva.vivaCommittee.includes(req.body.vivaCommitteeMemberEmail)) {
+      viva.vivaCommittee.push(req.body.vivaCommitteeMemberEmail);
+    }
+
+    viva = await viva.save();
+
+    res.status(200).json({
+      viva
+    });
+  }),
+
   setVivaDate: catchAsync(async (req, res, next) => {
     let report = await Report.findById(req.params.id).select(
       'title status examinerScore examinerScoreDate'

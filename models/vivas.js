@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const vivaSchema = new mongoose.Schema({
   vivaStatus: {
@@ -9,7 +10,15 @@ const vivaSchema = new mongoose.Schema({
   vivaScore: Number,
   vivaScoreDate: Date,
   report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' },
-  vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' } //includes the viva Date
+  vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' },
+  vivaCommittee: [
+    {
+      type: String,
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Please provide a valid email']
+    }
+  ]
 });
 
 module.exports = mongoose.model('viva', vivaSchema);
