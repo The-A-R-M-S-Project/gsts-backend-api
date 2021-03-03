@@ -232,6 +232,38 @@ module.exports = {
     });
   }),
 
+  uploadVivaCommitterreport: catchAsync(async (req, res, next) => {
+    let report = await Report.findById(req.params.id);
+
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
+    }
+
+    if (report.status !== 'vivaComplete') {
+      return next(
+        new AppError('cannot upload a report for a viva that is not complete', 400)
+      );
+    }
+
+    // multer middleware adds a file object to the request including the details about where the file is stored
+    if (!req.file) {
+      return next(new AppError('Please upload a file', 400));
+    }
+
+    report = await Report.findByIdAndUpdate(
+      report._id,
+      { vivaCommitteeReport: req.file.location },
+      {
+        new: true
+      }
+    ).populate({
+      path: 'student',
+      select: 'firstName lastName name _id'
+    });
+
+    res.status(200).json({ status: 'success', report: report });
+  }),
+
   receiveReport: catchAsync(async (req, res, next) => {
     let report = await Report.findById(req.params.id)
       .select('status examinerInternal student')

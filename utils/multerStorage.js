@@ -43,7 +43,6 @@ module.exports = contentDisposition => {
       destination: function(req, file, cb) {
         const finalDirectory = 'reports';
         const storagelocation = createMissingDirectories(finalDirectory);
-        console.log('Why are you running');
         file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
         cb(null, storagelocation);
       },
@@ -65,6 +64,17 @@ module.exports = contentDisposition => {
     localAssessmentFormStorage: multer.diskStorage({
       destination: function(req, file, cb) {
         const finalDirectory = 'report_assessments';
+        const storagelocation = createMissingDirectories(finalDirectory);
+        file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
+        cb(null, storagelocation);
+      },
+      filename: function(req, file, cb) {
+        cb(null, file.originalname);
+      }
+    }),
+    localVivaCommitteeReportStorage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        const finalDirectory = 'vivaCommitteeReports';
         const storagelocation = createMissingDirectories(finalDirectory);
         file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
         cb(null, storagelocation);

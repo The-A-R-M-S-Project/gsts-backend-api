@@ -10,6 +10,10 @@ const assessmentFormUpload = multer({
   storage: storageEngines.localAssessmentFormStorage
 });
 
+const vivaCommitteeReportUpload = multer({
+  storage: storageEngines.localVivaCommitteeReportStorage
+});
+
 const router = express.Router();
 
 router.use(AuthProtector());
@@ -53,11 +57,18 @@ router.patch(
   controller.rejectReport
 );
 
-router.patch(
+router.post(
   '/staff/clear/:id',
   authController.restrictTo('examiner'),
   assessmentFormUpload.single('scannedAsssesmentform'),
   controller.clearReport
+);
+
+router.post(
+  '/staff/dean/uploadVivaCommitterreport/:id',
+  authController.restrictTo('dean'),
+  vivaCommitteeReportUpload.single('vivaCommitteeReport'),
+  controller.uploadVivaCommitterreport
 );
 
 router.patch(

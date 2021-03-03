@@ -24,8 +24,9 @@ const ReportSchema = new mongoose.Schema({
     default: Date.now
   },
   submittedAt: Date,
-  resubmission: Boolean, //student is only allowed to resubmit after their examiners comments on report
-  reportURL: String, // The physical report is stored on digital ocean spaces
+  vivaCommitteeReport: String,
+  complainceReport: String,
+  reportURL: String,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
