@@ -180,7 +180,6 @@ module.exports = {
       examiner: req.params.id
     }).populate({
       path: 'report',
-      select: 'title abstract',
       populate: [{ path: 'student', select: 'firstName lastName _id' }]
     });
 
