@@ -9,7 +9,7 @@ const ReportSchema = new mongoose.Schema({
       'notSubmitted',
       'submitted',
       'assignedToExaminers', //Implies report has been assigned to both internal and external examiners
-      'recievedByExaminers', //Implies report has been recieved to both internal and external examiners
+      'receivedByExaminers', //Implies report has been recieved to both internal and external examiners
       'clearedByExaminers', //Implies report has been cleared to both internal and external examiners
       'vivaDateSet',
       'vivaComplete',
