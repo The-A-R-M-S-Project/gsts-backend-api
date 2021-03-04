@@ -369,7 +369,7 @@ module.exports = {
     }
 
     examinerReport.status = 'rejectedByExaminer';
-    examinerReport.save();
+    await examinerReport.save();
 
     examinerReport = await ExaminerReport.findOne({
       report: req.params.id,
@@ -517,13 +517,13 @@ module.exports = {
     const numberOfAssignedInternalExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
       examinerType: 'internal',
-      status: { $eq: 'assignedToExaminer' }
+      status: { $in: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
     const numberOfAssignedExternalExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
       examinerType: 'external',
-      status: { $eq: 'assignedToExaminer' }
+      status: { $in: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
     if (numberOfInternalExaminers > 0) {
