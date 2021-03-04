@@ -40,7 +40,7 @@ router.patch(
 //Staff report endpoints
 router.get(
   '/staff',
-  authController.restrictTo('admin', 'principal', 'dean', 'examiner'),
+  authController.restrictTo('examiner'),
   authController.getMe(),
   controller.getExaminerReports
 );

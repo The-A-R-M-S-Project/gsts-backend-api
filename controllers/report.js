@@ -176,12 +176,11 @@ module.exports = {
   // Staff Report controllers
 
   getExaminerReports: catchAsync(async (req, res, next) => {
-    const reports = await Report.find({
-      examiner: req.params.id,
-      status: { $ne: 'notSubmitted' }
+    const reports = await ExaminerReport.find({
+      examiner: req.params.id
     }).populate({
-      path: 'student',
-      populate: [{ path: 'program', select: 'name -_id' }]
+      path: 'report',
+      select: 'title abstract'
     });
 
     //TODO: Implement sorts and filters for this query
