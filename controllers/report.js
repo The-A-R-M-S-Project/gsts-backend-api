@@ -514,6 +514,18 @@ module.exports = {
       status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
+    const numberOfAssignedInternalExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      examinerType: 'internal',
+      status: { $eq: 'assignedToExaminer' }
+    });
+
+    const numberOfAssignedExternalExaminers = await ExaminerReport.countDocuments({
+      report: req.params.id,
+      examinerType: 'external',
+      status: { $eq: 'assignedToExaminer' }
+    });
+
     if (numberOfInternalExaminers > 0) {
       return next(
         new AppError(
@@ -537,11 +549,26 @@ module.exports = {
     filteredBody.status = 'assignedToExaminer';
     filteredBody.assignedAt = Date.now();
 
-    const examinerReport = await ExaminerReport.findOneAndUpdate(
-      { examiner: filteredBody.examiner, report: filteredBody.report },
-      { $set: filteredBody },
-      { upsert: true, new: true }
-    ).populate({ path: 'report', select: 'status _id title' });
+    let examinerReport;
+    if (numberOfAssignedInternalExaminers > 0) {
+      examinerReport = await ExaminerReport.findOneAndUpdate(
+        { examinerType: 'internal', report: filteredBody.report },
+        { $set: filteredBody },
+        { upsert: true, new: true }
+      ).populate({ path: 'report', select: 'status _id title' });
+    } else if (numberOfAssignedExternalExaminers > 0) {
+      examinerReport = await ExaminerReport.findOneAndUpdate(
+        { examinerType: 'external', report: filteredBody.report },
+        { $set: filteredBody },
+        { upsert: true, new: true }
+      ).populate({ path: 'report', select: 'status _id title' });
+    } else {
+      examinerReport = await ExaminerReport.findOneAndUpdate(
+        { examiner: filteredBody.examiner, report: filteredBody.report },
+        { $set: filteredBody },
+        { upsert: true, new: true }
+      ).populate({ path: 'report', select: 'status _id title' });
+    }
 
     const numberOfExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
