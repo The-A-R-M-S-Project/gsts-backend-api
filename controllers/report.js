@@ -180,7 +180,16 @@ module.exports = {
       examiner: req.params.id
     }).populate({
       path: 'report',
-      populate: [{ path: 'student', select: 'firstName lastName _id' }]
+      populate: [
+        {
+          path: 'student',
+          select: 'firstName lastName program department _id',
+          populate: [
+            { path: 'program', select: 'name -_id' },
+            { path: 'department', select: '-name -__v' }
+          ]
+        }
+      ]
     });
 
     //TODO: Implement sorts and filters for this query
