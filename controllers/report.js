@@ -514,14 +514,16 @@ module.exports = {
       status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
-    const numberOfAssignedInternalExaminers = await ExaminerReport.countDocuments({
+    const isExaminerAssignedAsInternal = await ExaminerReport.countDocuments({
       report: req.params.id,
+      examiner: req.body.examiner,
       examinerType: 'internal',
       status: { $in: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
-    const numberOfAssignedExternalExaminers = await ExaminerReport.countDocuments({
+    const isExaminerAssignedAsExternal = await ExaminerReport.countDocuments({
       report: req.params.id,
+      examiner: req.body.examiner,
       examinerType: 'external',
       status: { $in: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
@@ -550,21 +552,27 @@ module.exports = {
     filteredBody.assignedAt = Date.now();
 
     let examinerReport;
-    if (numberOfAssignedInternalExaminers > 0) {
+    if (filteredBody.examinerType === 'internal') {
+      if (isExaminerAssignedAsExternal) {
+        await ExaminerReport.deleteOne({
+          examinerType: 'external',
+          report: filteredBody.report
+        });
+      }
       examinerReport = await ExaminerReport.findOneAndUpdate(
         { examinerType: 'internal', report: filteredBody.report },
         { $set: filteredBody },
         { upsert: true, new: true }
       ).populate({ path: 'report', select: 'status _id title' });
-    } else if (numberOfAssignedExternalExaminers > 0) {
+    } else if (filteredBody.examinerType === 'external') {
+      if (isExaminerAssignedAsInternal) {
+        await ExaminerReport.deleteOne({
+          examinerType: 'internal',
+          report: filteredBody.report
+        });
+      }
       examinerReport = await ExaminerReport.findOneAndUpdate(
         { examinerType: 'external', report: filteredBody.report },
-        { $set: filteredBody },
-        { upsert: true, new: true }
-      ).populate({ path: 'report', select: 'status _id title' });
-    } else {
-      examinerReport = await ExaminerReport.findOneAndUpdate(
-        { examiner: filteredBody.examiner, report: filteredBody.report },
         { $set: filteredBody },
         { upsert: true, new: true }
       ).populate({ path: 'report', select: 'status _id title' });
