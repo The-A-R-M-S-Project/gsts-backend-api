@@ -215,7 +215,7 @@ module.exports = {
 
     if (
       report.status === 'assignedToExaminers' ||
-      report.status === 'recievedByExaminers'
+      report.status === 'receivedByExaminers'
     ) {
       return next(
         new AppError(
@@ -284,7 +284,7 @@ module.exports = {
     }
 
     if (report.status === 'notSubmitted') {
-      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
+      return next(new AppError(`Can't receive a report that is not submitted`, 400));
     }
 
     let examinerReport = await ExaminerReport.findOne({
@@ -294,7 +294,7 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
+        new AppError('examiner cannot receive Report that isnt assigned to them', 400)
       );
     }
 
@@ -303,7 +303,7 @@ module.exports = {
     }
 
     examinerReport.status = 'withExaminer';
-    examinerReport.save();
+    await examinerReport.save();
 
     const numberOfExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
@@ -313,7 +313,7 @@ module.exports = {
     if (numberOfExaminers === 2) {
       report = await Report.findByIdAndUpdate(
         req.params.id,
-        { status: 'recievedByExaminers' },
+        { status: 'receivedByExaminers' },
         {
           new: true,
           runValidators: true
@@ -346,7 +346,7 @@ module.exports = {
     }
 
     if (report.status === 'notSubmitted') {
-      return next(new AppError(`Can't recieve a report that is not submitted`, 400));
+      return next(new AppError(`Can't receive a report that is not submitted`, 400));
     }
 
     let examinerReport = await ExaminerReport.findOne({
@@ -356,7 +356,7 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
+        new AppError('examiner cannot receive Report that isnt assigned to them', 400)
       );
     }
 
@@ -396,7 +396,7 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('examiner cannot recieve Report that isnt assigned to them', 400)
+        new AppError('examiner cannot receive Report that isnt assigned to them', 400)
       );
     }
 
@@ -451,10 +451,7 @@ module.exports = {
       {
         new: true
       }
-    )
-      .populate({ path: 'report', select: 'status _id title' })
-      .populate({ path: 'reportAssessment' });
-
+    );
     const numberOfExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
       status: 'clearedByExaminer'
@@ -470,6 +467,13 @@ module.exports = {
         }
       );
     }
+
+    examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.user._id
+    })
+      .populate({ path: 'report', select: 'status _id title' })
+      .populate({ path: 'examiner', select: 'firstName LastName _id' });
 
     res.status(200).json({
       status: 'success',

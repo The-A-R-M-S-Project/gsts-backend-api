@@ -57,7 +57,7 @@ router.patch(
   controller.rejectReport
 );
 
-router.post(
+router.patch(
   '/staff/clear/:id',
   authController.restrictTo('examiner'),
   assessmentFormUpload.single('scannedAsssesmentform'),
