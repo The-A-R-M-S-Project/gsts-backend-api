@@ -12,6 +12,10 @@ workflows:
       - deploy:
           requires:
             - test
+          filters:
+            branches:
+                only:
+                  - master
 jobs:
   test:
     executor: node
@@ -39,8 +43,5 @@ jobs:
           name: Deploying to Digital Ocean
           command: |
             ssh -o "StrictHostKeyChecking no" arms-test@161.35.252.183 "cd ~ && cd grad-students-tracker-api && git pull && cp ../.env . && sh scripts/postDeploy.sh"
-    filters:
-      branches:
-        only:
-          - master
+    
 
