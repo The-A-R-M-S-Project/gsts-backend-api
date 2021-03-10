@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
 const AppError = require('../utils/appError');
 const sendEmail = require('./../utils/email');
 const catchAsync = require('../utils/catchAsync');
@@ -44,6 +43,13 @@ class AuthController {
     return catchAsync(async (req, res, next) => {
       let user;
       try {
+        if (req.body.role === undefined) {
+          return res.status(400).send({
+            status: 'fail',
+            message: `cannot create a user without a role. Please provide a role`
+          });
+        }
+
         user = await this.User.create(req.body);
       } catch (err) {
         // Catch specifically duplicate fields and send details to front-end
@@ -58,6 +64,10 @@ class AuthController {
             message: `This ${duplicateField} belongs to an already existing account!`
           });
         }
+        return res.status(400).send({
+          status: 'fail',
+          message: `${err.message}`
+        });
       }
       createSendToken(user, 201, res);
     });
