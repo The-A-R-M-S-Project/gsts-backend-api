@@ -1,4 +1,4 @@
-const Staff = require('../models/staff');
+const { Staff } = require('../models/staff');
 const Report = require('../models/reports');
 const Student = require('../models/students');
 const Department = require('../models/departments');
@@ -138,6 +138,12 @@ module.exports = {
     const staff = await Staff.find({});
 
     res.status(200).send(staff);
+  }),
+
+  getAllDeans: catchAsync(async (req, res, next) => {
+    const deans = await Staff.getALLDeanStudents();
+
+    res.status(200).send(deans);
   }),
 
   getStaff: catchAsync(async (req, res, next) => {

@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const Student = require('../models/students');
-const Staff = require('../models/staff');
+const { Staff } = require('../models/staff');
 const Program = require('../models/programs');
 const server = require('../server');
 const generators = require('./generators');
