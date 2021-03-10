@@ -3,68 +3,73 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 
-const StaffSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, 'Please tell us your first name!']
+const Student = require('./students');
+
+const StaffSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, 'Please tell us your first name!']
+    },
+    lastName: {
+      type: String,
+      required: [true, 'Please tell us your last name!']
+    },
+    email: {
+      type: String,
+      required: [true, 'Please provide your email'],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Please provide a valid email']
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      minlength: 8,
+      select: false
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'],
+      validate: {
+        validator: function(passConfirm) {
+          return passConfirm === this.password;
+        },
+        message: 'Passwords are not the same!'
+      }
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      validate: {
+        validator: function(number) {
+          return validator.isMobilePhone(number, 'en-UG');
+        },
+        message: 'Please enter a valid Phone Number (en-UG)'
+      }
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ['admin', 'principal', 'dean', 'examiner', 'secretary']
+    },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false
+    },
+    department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
+    school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
+    photo: String,
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
   },
-  lastName: {
-    type: String,
-    required: [true, 'Please tell us your last name!']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: 8,
-    select: false
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      validator: function(passConfirm) {
-        return passConfirm === this.password;
-      },
-      message: 'Passwords are not the same!'
-    }
-  },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  phoneNumber: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-    validate: {
-      validator: function(number) {
-        return validator.isMobilePhone(number, 'en-UG');
-      },
-      message: 'Please enter a valid Phone Number (en-UG)'
-    }
-  },
-  role: {
-    type: String,
-    enum: ['admin', 'principal', 'dean', 'examiner'],
-    default: 'examiner'
-  },
-  active: {
-    type: Boolean,
-    default: true,
-    select: false
-  },
-  department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
-  school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
-  photo: String,
-  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
-});
+  { discriminatorKey: 'role' }
+);
 
 StaffSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
@@ -119,4 +124,57 @@ StaffSchema.methods.createPasswordResetToken = function() {
   return resetToken; // return non-encrypted version to send through email
 };
 
-module.exports = mongoose.model('staff', StaffSchema);
+const Staff = mongoose.model('staff', StaffSchema);
+
+const PrincipalSchema = new mongoose.Schema({ college: String });
+
+PrincipalSchema.methods.getALLStudents = function() {
+  const students = Student.find({ school: this.school });
+};
+
+const Principal = Staff.discriminator('principal', PrincipalSchema, {
+  discriminatorKey: 'role'
+});
+
+const DeanSchema = new mongoose.Schema({
+  principal: { type: mongoose.Schema.Types.ObjectId, ref: 'principal' }
+});
+
+DeanSchema.statics.getALLDeanStudents = async function() {
+  const deans = await this.find({ role: 'dean' }).lean();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const dean of deans) {
+    // eslint-disable-next-line no-await-in-loop
+    const students = await Student.find({ school: dean.school });
+    dean.students = students;
+  }
+
+  return deans;
+};
+
+DeanSchema.methods.getStudents = async function() {
+  const students = await Student.find({ school: this.school });
+  this.students = students;
+  return this;
+};
+
+const Dean = Staff.discriminator('dean', DeanSchema, { discriminatorKey: 'role' });
+
+const Examiner = Staff.discriminator('examiner', new mongoose.Schema({}), {
+  discriminatorKey: 'role'
+});
+
+const Secretary = Staff.discriminator(
+  'secretary',
+  new mongoose.Schema({
+    dean: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'dean',
+      required: [true, 'Secretary must have a dean']
+    }
+  }),
+  { discriminatorKey: 'role' }
+);
+
+module.exports = { Staff, Principal, Dean, Examiner, Secretary };
