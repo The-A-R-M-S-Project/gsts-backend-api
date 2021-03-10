@@ -65,8 +65,8 @@ router.patch(
 );
 
 router.post(
-  '/staff/dean/uploadVivaCommitterreport/:id',
-  authController.restrictTo('dean'),
+  '/staff/uploadVivaCommitterreport/:id',
+  authController.restrictTo('dean', 'secretary'),
   vivaCommitteeReportUpload.single('vivaCommitteeReport'),
   controller.uploadVivaCommitterreport
 );
