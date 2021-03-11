@@ -65,8 +65,7 @@ const StaffSchema = new mongoose.Schema(
     },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
     school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
-    photo: String,
-    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }]
+    photo: String
   },
   { discriminatorKey: 'role' }
 );
@@ -128,6 +127,19 @@ const Staff = mongoose.model('staff', StaffSchema);
 
 const PrincipalSchema = new mongoose.Schema({ college: String });
 
+PrincipalSchema.statics.getALLDeans = async function() {
+  const deans = await Staff.find({ role: 'dean' }).lean();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const dean of deans) {
+    // eslint-disable-next-line no-await-in-loop
+    const students = await Student.find({ school: dean.school });
+    dean.students = students;
+  }
+
+  return deans;
+};
+
 PrincipalSchema.methods.getALLStudents = function() {
   const students = Student.find({ school: this.school });
 };
@@ -140,23 +152,11 @@ const DeanSchema = new mongoose.Schema({
   principal: { type: mongoose.Schema.Types.ObjectId, ref: 'principal' }
 });
 
-DeanSchema.statics.getALLDeanStudents = async function() {
-  const deans = await this.find({ role: 'dean' }).lean();
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const dean of deans) {
-    // eslint-disable-next-line no-await-in-loop
-    const students = await Student.find({ school: dean.school });
-    dean.students = students;
-  }
-
-  return deans;
-};
-
 DeanSchema.methods.getStudents = async function() {
-  const students = await Student.find({ school: this.school });
-  this.students = students;
-  return this;
+  const students = await Student.find({ school: this.school }).lean();
+  const dean = this.toObject();
+  dean.students = students;
+  return dean;
 };
 
 const Dean = Staff.discriminator('dean', DeanSchema, { discriminatorKey: 'role' });

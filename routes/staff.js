@@ -31,7 +31,11 @@ router.get(
   controller.dashboardStats
 );
 
-router.get('/dean', controller.getAllDeans);
+router.get(
+  '/dean-all',
+  authController.restrictTo('admin', 'principal'),
+  controller.getAllDeans
+);
 
 router
   .route('/')
