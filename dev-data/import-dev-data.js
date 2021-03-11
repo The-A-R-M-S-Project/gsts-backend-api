@@ -9,6 +9,10 @@ const Students = require('../models/students');
 const Staffs = require('../models/staff');
 const Admin = require('../models/admin');
 const Report = require('../models/reports');
+const Events = require('../models/events');
+const ExaminerReports = require('../models/examiner_report')
+const Vivas = require('../models/vivas')
+const ReportAssessment = require('../models/report_assessment')
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -89,6 +93,10 @@ const deleteData = async () => {
   await deleteDataFromModel(Staffs);
   await deleteDataFromModel(Admin);
   await deleteDataFromModel(Report);
+  await deleteDataFromModel(Events);
+  await deleteDataFromModel(ExaminerReports);
+  await deleteDataFromModel(Vivas);
+  await deleteDataFromModel(ReportAssessment);
   console.log('Data successfully deleted!');
   process.exit();
 };
