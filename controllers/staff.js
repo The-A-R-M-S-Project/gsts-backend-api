@@ -1,4 +1,4 @@
-const Staff = require('../models/staff');
+const { Staff, Principal, Dean } = require('../models/staff');
 const Report = require('../models/reports');
 const Student = require('../models/students');
 const Department = require('../models/departments');
@@ -140,8 +140,14 @@ module.exports = {
     res.status(200).send(staff);
   }),
 
+  getAllDeans: catchAsync(async (req, res, next) => {
+    const deans = await Principal.getALLDeans();
+
+    res.status(200).send(deans);
+  }),
+
   getStaff: catchAsync(async (req, res, next) => {
-    const staff = await Staff.findById(req.params.id).populate('students');
+    const staff = await Staff.findById(req.params.id);
 
     if (!staff) {
       return next(new AppError('No staff found with that id', 404));

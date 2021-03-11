@@ -18,7 +18,7 @@ module.exports = {
   }),
 
   getAdmin: catchAsync(async (req, res, next) => {
-    const admin = await Admin.findById(req.params.id).populate('students');
+    const admin = await Admin.findById(req.params.id);
 
     if (!admin) {
       return next(new AppError('No admin found with that id', 404));

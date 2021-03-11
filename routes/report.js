@@ -65,8 +65,8 @@ router.patch(
 );
 
 router.post(
-  '/staff/dean/uploadVivaCommitterreport/:id',
-  authController.restrictTo('dean'),
+  '/staff/uploadVivaCommitterreport/:id',
+  authController.restrictTo('dean', 'secretary'),
   vivaCommitteeReportUpload.single('vivaCommitteeReport'),
   controller.uploadVivaCommitterreport
 );
@@ -104,7 +104,7 @@ router.get(
 
 router
   .route('/')
-  .get(authController.restrictTo('admin', 'principal'), controller.getAllReports)
+  .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllReports)
   .post(
     authController.restrictTo('student'),
     authController.getMe(),

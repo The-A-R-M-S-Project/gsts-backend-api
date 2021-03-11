@@ -31,10 +31,17 @@ router.get(
   controller.dashboardStats
 );
 
+router.get(
+  '/dean-all',
+  authController.restrictTo('admin', 'principal'),
+  controller.getAllDeans
+);
+
 router
   .route('/')
   .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllStaff)
   .post(authController.restrictTo('admin'), controller.addStaff);
+
 router
   .route('/:id')
   .get(authController.restrictTo('admin', 'principal'), controller.getStaff)

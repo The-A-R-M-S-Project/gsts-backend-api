@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const Staff = require('../models/staff');
+const { Staff } = require('../models/staff');
 const Student = require('../models/students');
 const Admin = require('../models/admin');
 

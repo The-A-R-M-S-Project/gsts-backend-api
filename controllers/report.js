@@ -27,28 +27,16 @@ const guaranteeNoPasswordInfo = (req, res, next) => {
 
 module.exports = {
   getAllReports: catchAsync(async (req, res, next) => {
-    const reports = await Report.find({})
-      .populate({
-        path: 'student',
-        select: 'firstName lastName',
-        populate: [
-          { path: 'program', select: 'name -_id' },
-          { path: 'department', select: '-name -__v' }
-        ]
-      })
-      .lean();
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const report of reports) {
-      // eslint-disable-next-line no-await-in-loop
-      const examiners = await ExaminerReport.find({ report: report._id })
-        .select('-_id status examiner examinerType')
-        .populate({ path: 'examiner', select: '-_id firstName lastName school' });
-      report.examiners = examiners;
+    let reports;
+    if (req.user.role === 'dean') {
+      reports = await Report.getAllDeanReportsWithExaminers(req.user.school);
+    } else {
+      reports = await Report.getAllReportsWithExaminers();
     }
 
     res.status(200).json(reports);
   }),
+
   getMyReport: catchAsync(async (req, res, next) => {
     const report = await Report.findOne({ student: req.params.id }).populate({
       path: 'student',
@@ -174,7 +162,6 @@ module.exports = {
   }),
 
   // Staff Report controllers
-
   getExaminerReports: catchAsync(async (req, res, next) => {
     const reports = await ExaminerReport.find({
       examiner: req.params.id

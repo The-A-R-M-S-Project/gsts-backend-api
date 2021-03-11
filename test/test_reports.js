@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 
 const Report = require('../models/reports');
 const Student = require('../models/students');
-const Staff = require('../models/staff');
+const { Staff } = require('../models/staff');
 const server = require('../server');
 const generators = require('./generators');
 

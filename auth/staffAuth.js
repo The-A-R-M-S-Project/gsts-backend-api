@@ -1,5 +1,5 @@
 const AuthController = require('./authController');
-const Staff = require('../models/staff');
+const { Staff } = require('../models/staff');
 
 const StaffAuth = new AuthController(Staff);
 
