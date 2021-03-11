@@ -104,7 +104,7 @@ router.get(
 
 router
   .route('/')
-  .get(authController.restrictTo('admin', 'principal'), controller.getAllReports)
+  .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllReports)
   .post(
     authController.restrictTo('student'),
     authController.getMe(),
