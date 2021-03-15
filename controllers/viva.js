@@ -18,15 +18,17 @@ module.exports = {
       path: 'report',
       select: 'title abstract status'
     });
-
+    console.log(viva);
     if (viva.report.status !== 'vivaDateSet') {
       return next(
         new AppError('cannot add a viva member before setting a viva Date', 400)
       );
     }
 
+    const filteredBody = filterObj(req.body, 'email', 'affiliation');
+
     if (!viva.vivaCommittee.includes(req.body.vivaCommitteeMemberEmail)) {
-      viva.vivaCommittee.push(req.body.vivaCommitteeMemberEmail);
+      viva.vivaCommittee.push(filteredBody);
     }
 
     viva = await viva.save();
