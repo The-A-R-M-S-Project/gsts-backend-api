@@ -2,7 +2,6 @@ const Report = require('../models/reports');
 const Comment = require('../models/comments');
 const ExaminerReport = require('../models/examiner_report');
 const ReportAssessment = require('../models/report_assessment');
-const Student = require('../models/students');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -50,15 +49,13 @@ module.exports = {
   }),
 
   getStudentReport: catchAsync(async (req, res, next) => {
-    const student = await Student.findById(req.params.id);
-    if (!student) {
+    const report = await Report.findById(req.params.id).populate({
+      path: 'student',
+      select: 'firstName lastName school _id'
+    });
+    if (!report.student) {
       return next(new AppError('No student exists with that id', 404));
     }
-
-    const report = await Report.findOne({ student }).populate({
-      path: 'student',
-      select: 'firstName lastName _id'
-    });
 
     if (!report) {
       return next(new AppError('No report found with that id', 404));
@@ -66,16 +63,22 @@ module.exports = {
 
     //Ensure Dean doesn't make operations to objects belonging to other schools
     if (req.user.role === 'dean') {
-      if (req.user.school !== report.student.school) {
+      if (!req.user.school.equals(report.student.school)) {
         return next(
           new AppError('Dean Cannot get Report belonging to other schools', 400)
         );
       }
     }
+
     if (req.user.role === 'examiner') {
-      if (req.user._id !== report.examiner) {
+      const examinerReport = await ExaminerReport.findOne({
+        examiner: req.user._id,
+        report: req.params.id
+      });
+
+      if (!req.user._id.equals(examinerReport.examiner)) {
         return next(
-          new AppError('Examiner cannot get report that is not assigned to them', 400)
+          new AppError(`Examiner cannot get report that isn't assigned to them`, 400)
         );
       }
     }
