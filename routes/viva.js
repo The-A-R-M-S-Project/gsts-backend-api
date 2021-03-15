@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true });
 router.use(AuthProtector());
 
 router.get(
-  '/getSetVivaDateStudents',
+  '/staff/getSetVivaDateStudents',
   authController.restrictTo('admin', 'principal', 'dean', 'secretary'),
   controller.getSetVivaDateStudents
 );
