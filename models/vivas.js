@@ -13,6 +13,7 @@ const vivaSchema = new mongoose.Schema({
   vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' },
   vivaCommittee: [
     {
+      name: String,
       email: {
         type: String,
         unique: true,
