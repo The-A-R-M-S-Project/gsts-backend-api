@@ -7,6 +7,12 @@ const router = express.Router({ mergeParams: true });
 
 router.use(AuthProtector());
 
+router.get(
+  '/staff/getSetVivaDateStudents',
+  authController.restrictTo('admin', 'principal', 'dean', 'secretary'),
+  controller.getSetVivaDateStudents
+);
+
 router.patch(
   '/staff/vivadate/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
@@ -20,8 +26,8 @@ router.patch(
 );
 
 router.patch(
-  '/staff/addVivaCommitteeMember/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
+  '/staff/addVivaCommitteeMember/:report_id',
+  authController.restrictTo('admin', 'principal', 'dean', 'secretary'),
   controller.addVivaCommitteeMember
 );
 

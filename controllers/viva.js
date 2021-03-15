@@ -13,8 +13,20 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 module.exports = {
+  getSetVivaDateStudents: catchAsync(async (req, res, next) => {
+    const vivas = await Viva.find({ vivaEvent: { $ne: null } }).populate({
+      path: 'report',
+      select: 'title abstract status'
+    });
+
+    res.status(200).json({
+      status: 'success',
+      vivas
+    });
+  }),
+
   addVivaCommitteeMember: catchAsync(async (req, res, next) => {
-    let viva = await Viva.findOne({ report: req.params.id }).populate({
+    let viva = await Viva.findOne({ report: req.params.report_id }).populate({
       path: 'report',
       select: 'title abstract status'
     });
@@ -25,8 +37,10 @@ module.exports = {
       );
     }
 
+    const filteredBody = filterObj(req.body, 'name', 'email', 'affiliation');
+
     if (!viva.vivaCommittee.includes(req.body.vivaCommitteeMemberEmail)) {
-      viva.vivaCommittee.push(req.body.vivaCommitteeMemberEmail);
+      viva.vivaCommittee.push(filteredBody);
     }
 
     viva = await viva.save();

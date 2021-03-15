@@ -13,10 +13,14 @@ const vivaSchema = new mongoose.Schema({
   vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' },
   vivaCommittee: [
     {
-      type: String,
-      unique: true,
-      lowercase: true,
-      validate: [validator.isEmail, 'Please provide a valid email']
+      name: String,
+      email: {
+        type: String,
+        unique: true,
+        lowercase: true,
+        validate: [validator.isEmail, 'Please provide a valid email']
+      },
+      affiliation: String
     }
   ]
 });
