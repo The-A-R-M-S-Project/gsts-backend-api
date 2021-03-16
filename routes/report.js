@@ -14,6 +14,10 @@ const vivaCommitteeReportUpload = multer({
   storage: storageEngines.localVivaCommitteeReportStorage
 });
 
+const finalReportUpload = multer({
+  storage: storageEngines.localFinalReportStorage
+});
+
 const router = express.Router();
 
 router.use(AuthProtector());
@@ -30,11 +34,22 @@ router
   );
 
 router.patch(
-  '/submit',
+  'submit',
   authController.restrictTo('student'),
   authController.getMe(),
   reportUpload.single('report'),
   controller.submitReport
+);
+
+router.patch(
+  '/student/submitFinal',
+  authController.restrictTo('student'),
+  authController.getMe(),
+  finalReportUpload.fields([
+    { name: 'finalReport', maxCount: 1 },
+    { name: 'complainceReport', maxCount: 1 }
+  ]),
+  controller.submitFinalReport
 );
 
 //Staff report endpoints
@@ -64,7 +79,7 @@ router.patch(
   controller.clearReport
 );
 
-router.post(
+router.patch(
   '/staff/uploadVivaCommitterreport/:id',
   authController.restrictTo('dean', 'secretary'),
   vivaCommitteeReportUpload.single('vivaCommitteeReport'),

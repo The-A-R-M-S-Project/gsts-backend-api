@@ -164,6 +164,33 @@ module.exports = {
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
 
+  submitFinalReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findOne({ student: req.params.id });
+
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
+    }
+
+    if (report.vivaCommitteeReport === undefined) {
+      return next(
+        new AppError('Cannot submit final report without viva Committee Report', 400)
+      );
+    }
+
+    if (!req.files) {
+      return next(new AppError('Please upload required files', 400));
+    }
+
+    // const reports = {};
+    report.status = 'pendingRevision';
+    report.finalReportURL = req.files.finalReport[0].location;
+    report.complainceReportURL = req.files.complainceReport[0].location;
+
+    await report.save();
+
+    res.status(200).json({ status: 'success', message: 'Report Submitted', report });
+  }),
+
   // Staff Report controllers
   getExaminerReports: catchAsync(async (req, res, next) => {
     const reports = await ExaminerReport.find({

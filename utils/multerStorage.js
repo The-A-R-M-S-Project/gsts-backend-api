@@ -82,6 +82,31 @@ module.exports = contentDisposition => {
       filename: function(req, file, cb) {
         cb(null, file.originalname);
       }
+    }),
+    localFinalReportStorage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        const finalReportDirectory = 'finalReport';
+        const complainceReportDirectory = 'complainceReport';
+        const finalReportStorageLocation = createMissingDirectories(finalReportDirectory);
+        const complainceReportStorageLocation = createMissingDirectories(
+          complainceReportDirectory
+        );
+
+        if (file.fieldname === 'finalReport') {
+          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalReportDirectory}/${file.originalname}`;
+          cb(null, finalReportStorageLocation);
+        } else if (file.fieldname === 'complainceReport') {
+          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${complainceReportDirectory}/${file.originalname}`;
+          cb(null, complainceReportStorageLocation);
+        }
+      },
+      filename: function(req, file, cb) {
+        if (file.fieldname === 'finalReport') {
+          cb(null, file.originalname);
+        } else if (file.fieldname === 'complainceReport') {
+          cb(null, file.originalname);
+        }
+      }
     })
   };
   return storage;
