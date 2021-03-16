@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const ExaminerReport = require('./examiner_report');
+const Viva = require('./vivas');
 
 const ReportSchema = new mongoose.Schema({
   title: String,
@@ -25,9 +26,10 @@ const ReportSchema = new mongoose.Schema({
     default: Date.now
   },
   submittedAt: Date,
-  vivaCommitteeReport: String,
-  complainceReport: String,
   reportURL: String,
+  vivaCommitteeReport: String,
+  finalReportURL: String,
+  complainceReportURL: String,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
@@ -43,13 +45,21 @@ ReportSchema.statics.getAllReportsWithExaminers = async function() {
     })
     .lean();
 
+  // TODO: Replace for of loop with map function
   // eslint-disable-next-line no-restricted-syntax
   for (const report of reports) {
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
       .populate({ path: 'examiner', select: '-_id firstName lastName school' });
+
+    // eslint-disable-next-line no-await-in-loop
+    const viva = await Viva.findOne({ report: report._id })
+      .select('-_id vivaEvent vivaCommittee')
+      .populate({ path: 'vivaEvent' });
+
     report.examiners = examiners;
+    report.viva = viva;
   }
 
   return reports;
@@ -73,6 +83,13 @@ ReportSchema.statics.getAllDeanReportsWithExaminers = async function(deanSchool)
     const examiners = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
       .populate({ path: 'examiner', select: '-_id firstName lastName school' });
+
+    // eslint-disable-next-line no-await-in-loop
+    const viva = await Viva.findOne({ report: report._id })
+      .select('-_id vivaEvent vivaCommittee')
+      .populate({ path: 'vivaEvent' });
+
+    report.viva = viva;
     report.examiners = examiners;
   }
 
