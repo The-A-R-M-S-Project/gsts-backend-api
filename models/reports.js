@@ -30,6 +30,7 @@ const ReportSchema = new mongoose.Schema({
   vivaCommitteeReport: String,
   finalReportURL: String,
   complainceReportURL: String,
+  finalSubmissionAt: Date,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 

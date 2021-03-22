@@ -34,7 +34,7 @@ router
   );
 
 router.patch(
-  'submit',
+  '/submit',
   authController.restrictTo('student'),
   authController.getMe(),
   reportUpload.single('report'),

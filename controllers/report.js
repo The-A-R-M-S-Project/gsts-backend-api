@@ -151,7 +151,7 @@ module.exports = {
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.status = 'submitted';
-    filteredBody.submittedAt = Date.now();
+    filteredBody.submittedAt = req.submittedAt;
     filteredBody.reportURL = req.file.location;
 
     report = await Report.findByIdAndUpdate(report._id, filteredBody, {
@@ -165,7 +165,7 @@ module.exports = {
   }),
 
   submitFinalReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findOne({ student: req.params.id });
+    const report = await Report.findOne({ student: req.params.id });
 
     if (!report) {
       return next(new AppError('No report found with that for that student', 404));
