@@ -41,9 +41,9 @@ module.exports = contentDisposition => {
     }),
     localReportStorage: multer.diskStorage({
       destination: function(req, file, cb) {
-        const finalDirectory = 'reports';
-        req.submittedAt = Date.now();
-        file.filename = `${req.user.name}-${req.submittedAt}${path.extname(
+        const finalDirectory = 'Reports-v1';
+        file.submittedAt = Date.now();
+        file.filename = `${req.user.name}-${file.submittedAt}${path.extname(
           file.originalname
         )}`;
         const storagelocation = createMissingDirectories(finalDirectory);
@@ -89,7 +89,7 @@ module.exports = contentDisposition => {
     }),
     localFinalReportStorage: multer.diskStorage({
       destination: function(req, file, cb) {
-        const finalReportDirectory = 'finalReport';
+        const finalReportDirectory = 'Reports-v2';
         const complainceReportDirectory = 'complainceReport';
         const finalReportStorageLocation = createMissingDirectories(finalReportDirectory);
         const complainceReportStorageLocation = createMissingDirectories(
@@ -97,7 +97,11 @@ module.exports = contentDisposition => {
         );
 
         if (file.fieldname === 'finalReport') {
-          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalReportDirectory}/${file.originalname}`;
+          file.finalSubmissionAt = Date.now();
+          file.filename = `${req.user.name}-${file.finalSubmissionAt}${path.extname(
+            file.originalname
+          )}`;
+          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalReportDirectory}/${file.filename}`;
           cb(null, finalReportStorageLocation);
         } else if (file.fieldname === 'complainceReport') {
           file.location = `${req.protocol}://${req.headers.host}/static/uploads/${complainceReportDirectory}/${file.originalname}`;
@@ -106,7 +110,7 @@ module.exports = contentDisposition => {
       },
       filename: function(req, file, cb) {
         if (file.fieldname === 'finalReport') {
-          cb(null, file.originalname);
+          cb(null, file.filename);
         } else if (file.fieldname === 'complainceReport') {
           cb(null, file.originalname);
         }

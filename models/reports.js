@@ -15,7 +15,6 @@ const ReportSchema = new mongoose.Schema({
       'clearedByExaminers', //Implies report has been cleared to both internal and external examiners
       'vivaDateSet',
       'vivaComplete',
-      'pendingRevision',
       'complete'
     ],
     default: 'notSubmitted'
