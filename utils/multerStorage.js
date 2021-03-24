@@ -41,13 +41,17 @@ module.exports = contentDisposition => {
     }),
     localReportStorage: multer.diskStorage({
       destination: function(req, file, cb) {
-        const finalDirectory = 'reports';
+        const finalDirectory = 'Reports-v1';
+        file.submittedAt = Date.now();
+        file.filename = `${req.user.name}-${file.submittedAt}${path.extname(
+          file.originalname
+        )}`;
         const storagelocation = createMissingDirectories(finalDirectory);
-        file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.originalname}`;
+        file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalDirectory}/${file.filename}`;
         cb(null, storagelocation);
       },
       filename: function(req, file, cb) {
-        cb(null, file.originalname);
+        cb(null, `${file.filename}`);
       }
     }),
     localProfilePictureStorage: multer.diskStorage({
@@ -81,6 +85,35 @@ module.exports = contentDisposition => {
       },
       filename: function(req, file, cb) {
         cb(null, file.originalname);
+      }
+    }),
+    localFinalReportStorage: multer.diskStorage({
+      destination: function(req, file, cb) {
+        const finalReportDirectory = 'Reports-v2';
+        const complainceReportDirectory = 'complainceReport';
+        const finalReportStorageLocation = createMissingDirectories(finalReportDirectory);
+        const complainceReportStorageLocation = createMissingDirectories(
+          complainceReportDirectory
+        );
+
+        if (file.fieldname === 'finalReport') {
+          file.finalSubmissionAt = Date.now();
+          file.filename = `${req.user.name}-${file.finalSubmissionAt}${path.extname(
+            file.originalname
+          )}`;
+          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${finalReportDirectory}/${file.filename}`;
+          cb(null, finalReportStorageLocation);
+        } else if (file.fieldname === 'complainceReport') {
+          file.location = `${req.protocol}://${req.headers.host}/static/uploads/${complainceReportDirectory}/${file.originalname}`;
+          cb(null, complainceReportStorageLocation);
+        }
+      },
+      filename: function(req, file, cb) {
+        if (file.fieldname === 'finalReport') {
+          cb(null, file.filename);
+        } else if (file.fieldname === 'complainceReport') {
+          cb(null, file.originalname);
+        }
       }
     })
   };

@@ -151,7 +151,7 @@ module.exports = {
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
     filteredBody.status = 'submitted';
-    filteredBody.submittedAt = Date.now();
+    filteredBody.submittedAt = req.file.submittedAt;
     filteredBody.reportURL = req.file.location;
 
     report = await Report.findByIdAndUpdate(report._id, filteredBody, {
@@ -160,6 +160,38 @@ module.exports = {
       path: 'student',
       select: 'firstName lastName _id'
     });
+
+    res.status(200).json({ status: 'success', message: 'Report Submitted', report });
+  }),
+
+  submitFinalReport: catchAsync(async (req, res, next) => {
+    const report = await Report.findOne({ student: req.params.id });
+
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
+    }
+
+    if (report.status === 'complete') {
+      return next(new AppError('Already submitted final report', 400));
+    }
+
+    if (report.vivaCommitteeReport === undefined) {
+      return next(
+        new AppError('Cannot submit final report without viva Committee Report', 400)
+      );
+    }
+
+    if (!req.files) {
+      return next(new AppError('Please upload required files', 400));
+    }
+
+    // const reports = {};
+    report.status = 'complete';
+    report.finalSubmissionAt = req.files.finalReport[0].finalSubmissionAt;
+    report.finalReportURL = req.files.finalReport[0].location;
+    report.complainceReportURL = req.files.complainceReport[0].location;
+
+    await report.save();
 
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),

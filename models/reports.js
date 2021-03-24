@@ -15,7 +15,6 @@ const ReportSchema = new mongoose.Schema({
       'clearedByExaminers', //Implies report has been cleared to both internal and external examiners
       'vivaDateSet',
       'vivaComplete',
-      'pendingRevision',
       'complete'
     ],
     default: 'notSubmitted'
@@ -30,6 +29,7 @@ const ReportSchema = new mongoose.Schema({
   vivaCommitteeReport: String,
   finalReportURL: String,
   complainceReportURL: String,
+  finalSubmissionAt: Date,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
