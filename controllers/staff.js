@@ -1,6 +1,7 @@
 const { Staff, Principal, Dean } = require('../models/staff');
 const Report = require('../models/reports');
 const Student = require('../models/students');
+const School = require('../models/schools');
 const Department = require('../models/departments');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -154,7 +155,11 @@ module.exports = {
     }
     res.status(200).send(staff);
   }),
-
+  getSecretarySchool: catchAsync(async (req, res, next) => {
+    let secretaryDean = await Staff.findById(req.params.id);
+    let schoolOfDean = await School.findById(secretaryDean.school);
+    res.status(200).json({message: 'Success', schoolOfDean });
+  }),
   addStaff: catchAsync(async (req, res, next) => {
     const staff = await Staff.create(req.body);
 

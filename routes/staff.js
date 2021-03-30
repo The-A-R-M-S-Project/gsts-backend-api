@@ -16,6 +16,7 @@ router.use(AuthProtector());
 router.patch('/updateMe', controller.updateMe);
 router.delete('/deactivateMe', controller.deactivateMe);
 router.get('/me', authController.getMe(), controller.getStaff);
+router.get('/secretary/:id', controller.getSecretarySchool);
 router.patch('/updatePassword', authController.updatePassword());
 
 router.get(
