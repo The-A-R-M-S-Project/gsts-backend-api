@@ -11,5 +11,5 @@ module.exports = {
   forgotPassword: () => StaffAuth.forgotPassword(),
   resetPassword: () => StaffAuth.resetPassword(),
   updatePassword: () => StaffAuth.updatePassword(),
-  getMe: () => StaffAuth.getMe()
+  getMe: () => StaffAuth.getMe(),
 };

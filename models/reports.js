@@ -100,4 +100,33 @@ ReportSchema.statics.getAllDeanReportsWithExaminers = async function(deanSchool)
   return deanReports;
 };
 
+ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
+  const reports = await this.find({})
+    .populate({
+      path: 'student',
+      select: 'firstName lastName school',
+      populate: [
+        { path: 'program', select: 'name -_id' },
+        { path: 'department', select: '-name -__v' }
+      ]
+    })
+    .lean();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const report of reports) {    
+    // eslint-disable-next-line no-await-in-loop
+    const viva = await Viva.findOne({ report: report._id })
+      .select('-_id vivaEvent vivaCommittee')
+      .populate({ path: 'vivaEvent' });
+
+    report.viva = viva;
+  }
+
+  const deanReports = reports.filter(report => {
+    return deanSchool.equals(report.student.school) && (report.status === "vivaDateSet" || report.status === "vivaComplete")
+  });
+
+  return deanReports;
+};
+
 module.exports = mongoose.model('report', ReportSchema);

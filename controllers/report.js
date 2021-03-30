@@ -226,12 +226,12 @@ module.exports = {
     const report = await Report.findById(req.params.id).select('student status');
 
     if (!report) {
-      return next(new AppError('could not find a report with that ID', 404));
+      return next(new AppError('Could not find a report with that ID', 404));
     }
 
     if (report.status === 'notSubmitted') {
       return next(
-        new AppError('report hasnot yet been submitted, cannot complete this action', 400)
+        new AppError('Report has not yet been submitted. Cannot complete this action', 400)
       );
     }
 
@@ -241,15 +241,17 @@ module.exports = {
     ) {
       return next(
         new AppError(
-          'report is being assessed by examiners, cannot complete this action ',
+          'Report is being assessed by examiners. Cannot complete this action ',
           400
         )
       );
+
     }
 
     report.status = 'notSubmitted';
+    await report.save();
     const filteredBody = filterObj(req.body, 'text');
-    filteredBody.reason = `The ${req.user.role} has requested for this report to be resubmitted`;
+    filteredBody.text = `The ${req.user.role} has requested resubmission of this report! ${filteredBody.text}`;
     filteredBody.staff = req.user._id;
     filteredBody.student = report.student;
     filteredBody.report = req.params.id;
@@ -634,8 +636,8 @@ module.exports = {
   getExaminerReportstatus: catchAsync(async (req, res, next) => {
     const examinerReports = await ExaminerReport.find({ report: req.params.id })
       .populate({ path: 'report', select: 'status _id title' })
-      .populate({ path: 'examiner', select: 'firstName lastName school' });
-
+      .populate({ path: 'examiner', select: 'firstName lastName school' })
+      .populate({path: 'reportAssessment', select: 'assessment scannedAsssesmentform'})
     res.status(200).json({
       status: 'success',
       examinerReports: examinerReports
