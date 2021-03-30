@@ -19,19 +19,6 @@ router.get('/me', authController.getMe(), controller.getStaff);
 router.patch('/updatePassword', authController.updatePassword());
 
 router.get(
-  '/dashboard-stats/:school',
-  authController.restrictTo('admin', 'principal', 'dean'),
-  controller.dashboardStats
-);
-
-// dean should only see stats for their school
-router.get(
-  '/dashboard-stats/',
-  authController.restrictTo('dean'),
-  controller.dashboardStats
-);
-
-router.get(
   '/dean-all',
   authController.restrictTo('admin', 'principal'),
   controller.getAllDeans
