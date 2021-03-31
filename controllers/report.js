@@ -37,10 +37,8 @@ module.exports = {
   }),
 
   getMyReport: catchAsync(async (req, res, next) => {
-    const report = await Report.findOne({ student: req.params.id }).populate({
-      path: 'student',
-      select: 'firstName lastName _id'
-    });
+    const report = await Report.getReportWithViva(req.params.id);
+
     if (!report) {
       return next(new AppError('No report found with that for that student', 404));
     }
@@ -231,7 +229,10 @@ module.exports = {
 
     if (report.status === 'notSubmitted') {
       return next(
-        new AppError('Report has not yet been submitted. Cannot complete this action', 400)
+        new AppError(
+          'Report has not yet been submitted. Cannot complete this action',
+          400
+        )
       );
     }
 
@@ -245,7 +246,6 @@ module.exports = {
           400
         )
       );
-
     }
 
     report.status = 'notSubmitted';
@@ -637,7 +637,7 @@ module.exports = {
     const examinerReports = await ExaminerReport.find({ report: req.params.id })
       .populate({ path: 'report', select: 'status _id title' })
       .populate({ path: 'examiner', select: 'firstName lastName school' })
-      .populate({path: 'reportAssessment', select: 'assessment scannedAsssesmentform'})
+      .populate({ path: 'reportAssessment', select: 'assessment scannedAsssesmentform' });
     res.status(200).json({
       status: 'success',
       examinerReports: examinerReports
