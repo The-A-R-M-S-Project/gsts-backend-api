@@ -19,6 +19,7 @@ const ReportSchema = new mongoose.Schema({
     ],
     default: 'notSubmitted'
   },
+  grade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
   finalScore: Number,
   createdAt: {
     type: Date,
@@ -32,6 +33,27 @@ const ReportSchema = new mongoose.Schema({
   finalSubmissionAt: Date,
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
+
+ReportSchema.statics.getReportWithViva = async function(id) {
+  const report = await this.findOne({ student: id })
+    .populate({
+      path: 'student',
+      select: 'firstName lastName',
+      populate: [
+        { path: 'program', select: 'name -_id' },
+        { path: 'department', select: '-name -__v' }
+      ]
+    })
+    .lean();
+
+  const viva = await Viva.findOne({ report: report._id })
+    .select('-_id vivaEvent vivaCommittee')
+    .populate({ path: 'vivaEvent' });
+
+  report.viva = viva;
+
+  return report;
+};
 
 ReportSchema.statics.getAllReportsWithExaminers = async function() {
   const reports = await this.find({})
@@ -113,7 +135,7 @@ ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
     .lean();
 
   // eslint-disable-next-line no-restricted-syntax
-  for (const report of reports) {    
+  for (const report of reports) {
     // eslint-disable-next-line no-await-in-loop
     const viva = await Viva.findOne({ report: report._id })
       .select('-_id vivaEvent vivaCommittee')
@@ -123,7 +145,10 @@ ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
   }
 
   const deanReports = reports.filter(report => {
-    return deanSchool.equals(report.student.school) && (report.status === "vivaDateSet" || report.status === "vivaComplete")
+    return (
+      deanSchool.equals(report.student.school) &&
+      (report.status === 'vivaDateSet' || report.status === 'vivaComplete')
+    );
   });
 
   return deanReports;
