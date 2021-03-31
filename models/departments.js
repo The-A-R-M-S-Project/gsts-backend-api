@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Report = require('./reports');
 const Student = require('./students');
 
+function* repeat(x) {
+  while (true) yield x;
+}
+
 const DepartmentSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' }
@@ -11,117 +15,119 @@ const DepartmentSchema = new mongoose.Schema({
 DepartmentSchema.statics.getDepartmentPerformance = async function(departmentId) {
   const departmentName = await this.findById(departmentId);
   const studentIds = await Student.find({ department: departmentId }).distinct('_id');
-  const numA = await Report.aggregate([
+
+  const performanceStats = await Report.aggregate([
     {
       $match: { student: { $in: studentIds } }
     },
     {
-      $match: {
-        examinerGrade: { $eq: 'A' }
-      }
-    }
-  ]);
-  const numB = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        examinerGrade: { $eq: 'B' }
-      }
-    }
-  ]);
-  const numC = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        examinerGrade: { $eq: 'C' }
-      }
-    }
-  ]);
-  const numD = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        examinerGrade: { $eq: 'D' }
-      }
-    }
-  ]);
-  const numE = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        examinerGrade: { $eq: 'E' }
-      }
-    }
-  ]);
-  const numF = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        examinerGrade: { $eq: 'F' }
+      $group: {
+        _id: '$grade',
+        count: { $sum: 1 }
       }
     }
   ]);
 
+  let [numA, numB, numC, numD, numE, numF] = repeat(0);
+
+  performanceStats.forEach(function(status) {
+    switch (status._id) {
+      case 'A':
+        numA = status.count;
+        break;
+      case 'B':
+        numB = status.count;
+        break;
+      case 'C':
+        numC = status.count;
+        break;
+      case 'D':
+        numD = status.count;
+        break;
+      case 'E':
+        numE = status.count;
+        break;
+      case 'F':
+        numF = status.count;
+        break;
+      default:
+        break;
+    }
+  });
+
   return {
-    [departmentName.name]: [
-      numA.length,
-      numB.length,
-      numC.length,
-      numD.length,
-      numE.length,
-      numF.length
-    ]
+    [departmentName.name]: { A: numA, B: numB, C: numC, D: numD, E: numE, F: numF }
   };
 };
 
 DepartmentSchema.statics.getDepartmentReportStatus = async function(departmentId) {
   const departmentName = await this.findById(departmentId);
   const studentIds = await Student.find({ department: departmentId }).distinct('_id');
-  const submitted = await Report.aggregate([
+
+  const reportStatusStats = await Report.aggregate([
     {
       $match: { student: { $in: studentIds } }
     },
     {
-      $match: {
-        status: { $eq: 'submitted' }
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 }
       }
     }
   ]);
-  const withExaminer = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        status: { $eq: 'receivedByExaminers' }
-      }
+
+  let [
+    notSubmitted,
+    submitted,
+    assignedToExaminers,
+    receivedByExaminers,
+    clearedByExaminers,
+    vivaDateSet,
+    vivaComplete,
+    complete
+  ] = repeat(0);
+
+  reportStatusStats.forEach(function(status) {
+    switch (status._id) {
+      case 'notSubmitted':
+        notSubmitted = status.count;
+        break;
+      case 'submitted':
+        submitted = status.count;
+        break;
+      case 'assignedToExaminers':
+        assignedToExaminers = status.count;
+        break;
+      case 'receivedByExaminers':
+        receivedByExaminers = status.count;
+        break;
+      case 'clearedByExaminers':
+        clearedByExaminers = status.count;
+        break;
+      case 'vivaDateSet':
+        vivaDateSet = status.count;
+        break;
+      case 'vivaComplete':
+        vivaComplete = status.count;
+        break;
+      case 'complete':
+        complete = status.count;
+        break;
+      default:
+        break;
     }
-  ]);
-  const cleared = await Report.aggregate([
-    {
-      $match: { student: { $in: studentIds } }
-    },
-    {
-      $match: {
-        status: { $eq: 'clearedByExaminers' }
-      }
-    }
-  ]);
+  });
+
   return {
     [departmentName.name]: {
-      submitted: submitted.length,
-      withExaminers: withExaminer.length,
-      clearedByExaminers: cleared.length
+      notSubmitted: notSubmitted,
+      submitted: submitted,
+      assignedToExaminers: assignedToExaminers,
+      receivedByExaminers: receivedByExaminers,
+      clearedByExaminers: clearedByExaminers,
+      vivaDateSet: vivaDateSet,
+      vivaComplete: vivaComplete,
+      complete: complete
     }
   };
 };
