@@ -19,6 +19,7 @@ const ReportSchema = new mongoose.Schema({
     ],
     default: 'notSubmitted'
   },
+  grade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
   finalScore: Number,
   createdAt: {
     type: Date,
@@ -113,7 +114,7 @@ ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
     .lean();
 
   // eslint-disable-next-line no-restricted-syntax
-  for (const report of reports) {    
+  for (const report of reports) {
     // eslint-disable-next-line no-await-in-loop
     const viva = await Viva.findOne({ report: report._id })
       .select('-_id vivaEvent vivaCommittee')
@@ -123,7 +124,10 @@ ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
   }
 
   const deanReports = reports.filter(report => {
-    return deanSchool.equals(report.student.school) && (report.status === "vivaDateSet" || report.status === "vivaComplete")
+    return (
+      deanSchool.equals(report.student.school) &&
+      (report.status === 'vivaDateSet' || report.status === 'vivaComplete')
+    );
   });
 
   return deanReports;

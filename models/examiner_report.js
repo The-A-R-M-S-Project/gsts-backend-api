@@ -19,7 +19,6 @@ const ExaminerReportSchema = new mongoose.Schema({
   },
   examinerScore: Number,
   examinerScoreDate: Date,
-  examinerGrade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
   reportAssessment: { type: mongoose.Schema.Types.ObjectId, ref: 'reportAssessment' },
   assignedAt: Date,
   receivedAt: Date, // date when examiner acknowledges receipt of the report
