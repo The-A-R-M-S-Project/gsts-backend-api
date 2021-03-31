@@ -118,6 +118,19 @@ DepartmentSchema.statics.getDepartmentReportStatus = async function(departmentId
     }
   });
 
+  const clearedReports = clearedByExaminers + vivaDateSet + vivaComplete + complete;
+  const unClearedReports =
+    notSubmitted + submitted + assignedToExaminers + receivedByExaminers;
+
+  const uncomplete =
+    notSubmitted +
+    submitted +
+    assignedToExaminers +
+    receivedByExaminers +
+    clearedByExaminers +
+    vivaDateSet +
+    vivaComplete;
+
   return {
     [departmentName.name]: {
       notSubmitted: notSubmitted,
@@ -127,9 +140,14 @@ DepartmentSchema.statics.getDepartmentReportStatus = async function(departmentId
       clearedByExaminers: clearedByExaminers,
       vivaDateSet: vivaDateSet,
       vivaComplete: vivaComplete,
-      complete: complete
+      complete: complete,
+      uncomplete: uncomplete,
+      clearedReports: clearedReports,
+      unClearedReports: unClearedReports
     }
   };
 };
+
+DepartmentSchema.statics.getDepartmentPerformance = async function(departmentId) {};
 
 module.exports = mongoose.model('department', DepartmentSchema);
