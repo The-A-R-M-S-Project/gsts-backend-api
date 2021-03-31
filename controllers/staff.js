@@ -35,11 +35,13 @@ module.exports = {
     }
     res.status(200).send(staff);
   }),
+
   getSecretarySchool: catchAsync(async (req, res, next) => {
     let secretaryDean = await Staff.findById(req.params.id);
     let schoolOfDean = await School.findById(secretaryDean.school);
-    res.status(200).json({message: 'Success', schoolOfDean });
+    res.status(200).json({ message: 'Success', schoolOfDean });
   }),
+
   addStaff: catchAsync(async (req, res, next) => {
     const staff = await Staff.create(req.body);
 

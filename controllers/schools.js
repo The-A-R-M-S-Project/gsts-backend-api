@@ -73,8 +73,7 @@ module.exports = {
       // eslint-disable-next-line prefer-destructuring
       school = req.params.school;
     } else {
-      console.log('yeah');
-      if (!req.user.school.equals(req.params.school)) {
+      if (!req.user.school.equals(req.params.school) && req.params.school) {
         return next(
           new AppError('You are trying to access stats for another school', 400)
         );
