@@ -112,7 +112,7 @@ module.exports = {
       return next(new AppError('No report found with that for that student', 404));
     }
 
-    if (report.status !== 'notSubmitted' && report.status !== 'pendingRevision') {
+    if (report.status !== 'notSubmitted') {
       return next(new AppError('Cannot edit already submitted report', 400));
     }
 
