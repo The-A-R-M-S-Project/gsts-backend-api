@@ -6,6 +6,7 @@ const AuthProtector = require('../auth/authProtector');
 const storageEngines = require('./../utils/multerStorage')('inline');
 
 const reportUpload = multer({ storage: storageEngines.localReportStorage });
+const reportUpdate = multer({ storage: storageEngines.localReportResubmitStorage });
 const assessmentFormUpload = multer({
   storage: storageEngines.localAssessmentFormStorage
 });
@@ -29,7 +30,7 @@ router
   .get(authController.getMe(), controller.getMyReport)
   .patch(
     authController.getMe(),
-    reportUpload.single('report'),
+    reportUpdate.single('report'),
     controller.updateMyReport
   );
 
