@@ -38,7 +38,7 @@ ReportSchema.statics.getReportWithViva = async function(id) {
   const report = await this.findOne({ student: id })
     .populate({
       path: 'student',
-      select: 'firstName lastName',
+      select: 'firstName lastName school _id',
       populate: [
         { path: 'program', select: 'name -_id' },
         { path: 'department', select: '-name -__v' }
@@ -47,7 +47,7 @@ ReportSchema.statics.getReportWithViva = async function(id) {
     .lean();
 
   const viva = await Viva.findOne({ report: report._id })
-    .select('-_id vivaEvent vivaCommittee')
+    .select('-_id vivaEvent vivaScore vivaScoreDate')
     .populate({ path: 'vivaEvent' });
 
   report.viva = viva;

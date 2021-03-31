@@ -47,13 +47,13 @@ module.exports = {
   }),
 
   getStudentReport: catchAsync(async (req, res, next) => {
-    const report = await Report.findById(req.params.id).populate({
+    let report = await Report.findById(req.params.id)
+      .populate({
       path: 'student',
       select: 'firstName lastName school _id'
-    });
-    if (!report.student) {
-      return next(new AppError('No student exists with that id', 404));
-    }
+      })
+    
+    report = await Report.getReportWithViva(report.student._id);
 
     if (!report) {
       return next(new AppError('No report found with that id', 404));
