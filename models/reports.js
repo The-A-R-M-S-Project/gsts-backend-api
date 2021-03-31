@@ -26,6 +26,12 @@ const ReportSchema = new mongoose.Schema({
     default: Date.now
   },
   submittedAt: Date,
+  assignedAt: Date,
+  receivedAt: Date,
+  resubmittedAt: Date,
+  clearedAt: Date,
+  vivaDateSetAt: Date,
+  completedAt: Date,
   reportURL: String,
   vivaCommitteeReport: String,
   finalReportURL: String,

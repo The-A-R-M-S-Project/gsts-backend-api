@@ -1,5 +1,5 @@
 const Report = require('../models/reports');
-const Staff = require('../models/staff')
+const Staff = require('../models/staff');
 const Viva = require('../models/vivas');
 const Event = require('../models/events');
 const catchAsync = require('./../utils/catchAsync');
@@ -16,8 +16,8 @@ const filterObj = (obj, ...allowedFields) => {
 module.exports = {
   getSetVivaDateStudents: catchAsync(async (req, res, next) => {
     //Find the school of this secretary's dean
-    const dean = await Staff.Dean.findById(req.user.dean)
-    const vivas = await Report.getAllDeanSecretaryReports(dean.school)
+    const dean = await Staff.Dean.findById(req.user.dean);
+    const vivas = await Report.getAllDeanSecretaryReports(dean.school);
 
     res.status(200).json({
       status: 'success',
@@ -81,7 +81,7 @@ module.exports = {
 
     report = await Report.findByIdAndUpdate(
       req.params.id,
-      { status: 'vivaDateSet' },
+      { status: 'vivaDateSet', vivaDateSetAt: Date.now() },
       {
         new: true,
         runValidators: true

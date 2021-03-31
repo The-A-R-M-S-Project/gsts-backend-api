@@ -117,6 +117,7 @@ module.exports = {
     }
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
+    filteredBody.resubmittedAt = Date.now();
     if (req.file) {
       filteredBody.reportURL = req.file.location;
     }
@@ -182,10 +183,8 @@ module.exports = {
     if (!req.files) {
       return next(new AppError('Please upload required files', 400));
     }
-
-    // const reports = {};
     report.status = 'complete';
-    report.finalSubmissionAt = req.files.finalReport[0].finalSubmissionAt;
+    report.completedAt = req.files.finalReport[0].finalSubmissionAt;
     report.finalReportURL = req.files.finalReport[0].location;
     report.complainceReportURL = req.files.complainceReport[0].location;
 
@@ -250,6 +249,7 @@ module.exports = {
 
     report.status = 'notSubmitted';
     await report.save();
+
     const filteredBody = filterObj(req.body, 'text');
     filteredBody.text = `The ${req.user.role} has requested resubmission of this report! ${filteredBody.text}`;
     filteredBody.staff = req.user._id;
@@ -297,7 +297,7 @@ module.exports = {
   }),
 
   receiveReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id)
+    const report = await Report.findById(req.params.id)
       .select('status examinerInternal student')
       .populate({
         path: 'student'
@@ -335,14 +335,9 @@ module.exports = {
     });
 
     if (numberOfExaminers === 2) {
-      report = await Report.findByIdAndUpdate(
-        req.params.id,
-        { status: 'receivedByExaminers' },
-        {
-          new: true,
-          runValidators: true
-        }
-      );
+      report.status = 'receivedByExaminers';
+      report.receivedAt = Date.now();
+      await report.save();
     }
 
     examinerReport = await ExaminerReport.findOne({
@@ -407,7 +402,7 @@ module.exports = {
   }),
 
   clearReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id).select('status');
+    const report = await Report.findById(req.params.id).select('status');
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
@@ -482,14 +477,9 @@ module.exports = {
     });
 
     if (numberOfExaminers === 2) {
-      report = await Report.findByIdAndUpdate(
-        req.params.id,
-        { status: 'clearedByExaminers' },
-        {
-          new: true,
-          runValidators: true
-        }
-      );
+      report.status = 'clearedByExaminers';
+      report.clearedAt = Date.now();
+      await report.save();
     }
 
     examinerReport = await ExaminerReport.findOne({
@@ -612,6 +602,7 @@ module.exports = {
     });
 
     if (numberOfExaminers === 2) {
+      report.assignedAt = Date.now();
       report.status = 'assignedToExaminers';
       await report.save();
     }
