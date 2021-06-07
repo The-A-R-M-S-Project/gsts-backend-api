@@ -122,7 +122,7 @@ module.exports = {
 
     report = await Report.findByIdAndUpdate(
       req.params.id,
-      { status: 'vivaComplete' },
+      { status: 'vivaComplete', vivaCompleteAt: Date.now() },
       {
         new: true,
         runValidators: true
