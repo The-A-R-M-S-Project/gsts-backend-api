@@ -334,7 +334,7 @@ module.exports = {
       status: 'withExaminer'
     });
 
-    if (numberOfExaminers === 2) {
+    if (numberOfExaminers === 3) {
       report.status = 'receivedByExaminers';
       report.receivedAt = Date.now();
       await report.save();
@@ -476,7 +476,7 @@ module.exports = {
       status: 'clearedByExaminer'
     });
 
-    if (numberOfExaminers === 2) {
+    if (numberOfExaminers === 3) {
       report.status = 'clearedByExaminers';
       report.clearedAt = Date.now();
       await report.save();
@@ -572,17 +572,29 @@ module.exports = {
         await ExaminerReport.deleteOne({
           examinerType: 'external',
           report: filteredBody.report,
-          examiner: req.body.examiner
+          examiner: filteredBody.examiner
         });
 
         examinerReport = await ExaminerReport.findOneAndUpdate(
-          { examinerType: 'internal', report: filteredBody.report },
+          {
+            examinerType: 'internal',
+            report: filteredBody.report,
+            examiner: filteredBody.examiner
+          },
+          { $set: filteredBody },
+          { upsert: true, new: true }
+        ).populate({ path: 'report', select: 'status _id title' });
+      } else {
+        examinerReport = await ExaminerReport.findOneAndUpdate(
+          {
+            examinerType: 'internal',
+            report: filteredBody.report,
+            examiner: filteredBody.examiner
+          },
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
       }
-
-      examinerReport = await ExaminerReport.create(filteredBody);
     } else if (filteredBody.examinerType === 'external') {
       if (numberOfExternalExaminers > 0) {
         return next(
@@ -595,14 +607,30 @@ module.exports = {
       if (isExaminerAssignedAsInternal) {
         await ExaminerReport.deleteOne({
           examinerType: 'internal',
-          report: filteredBody.report
+          report: filteredBody.report,
+          examiner: filteredBody.examiner
         });
+
+        examinerReport = await ExaminerReport.findOneAndUpdate(
+          {
+            examinerType: 'external',
+            report: filteredBody.report,
+            examiner: filteredBody.examiner
+          },
+          { $set: filteredBody },
+          { upsert: true, new: true }
+        ).populate({ path: 'report', select: 'status _id title' });
+      } else {
+        examinerReport = await ExaminerReport.findOneAndUpdate(
+          {
+            examinerType: 'internal',
+            report: filteredBody.report,
+            examiner: filteredBody.examiner
+          },
+          { $set: filteredBody },
+          { upsert: true, new: true }
+        ).populate({ path: 'report', select: 'status _id title' });
       }
-      examinerReport = await ExaminerReport.findOneAndUpdate(
-        { examinerType: 'external', report: filteredBody.report },
-        { $set: filteredBody },
-        { upsert: true, new: true }
-      ).populate({ path: 'report', select: 'status _id title' });
     }
 
     const numberOfExaminers = await ExaminerReport.countDocuments({
@@ -610,7 +638,7 @@ module.exports = {
       status: 'assignedToExaminer'
     });
 
-    if (numberOfExaminers === 2) {
+    if (numberOfExaminers === 3) {
       report.assignedAt = Date.now();
       report.status = 'assignedToExaminers';
       await report.save();
