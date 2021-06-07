@@ -31,6 +31,7 @@ const ReportSchema = new mongoose.Schema({
   resubmittedAt: Date,
   clearedAt: Date,
   vivaDateSetAt: Date,
+  vivaCompleteAt: Date,
   completedAt: Date,
   reportURL: String,
   vivaCommitteeReport: String,

@@ -264,7 +264,7 @@ module.exports = {
     });
   }),
 
-  uploadVivaCommitterreport: catchAsync(async (req, res, next) => {
+  uploadVivaCommitteereport: catchAsync(async (req, res, next) => {
     let report = await Report.findById(req.params.id);
 
     if (!report) {
