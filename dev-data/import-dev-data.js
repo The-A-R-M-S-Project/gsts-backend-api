@@ -10,9 +10,9 @@ const Staffs = require('../models/staff');
 const Admin = require('../models/admin');
 const Report = require('../models/reports');
 const Events = require('../models/events');
-const ExaminerReports = require('../models/examiner_report')
-const Vivas = require('../models/vivas')
-const ReportAssessment = require('../models/report_assessment')
+const ExaminerReports = require('../models/examiner_report');
+const Vivas = require('../models/vivas');
+const ReportAssessment = require('../models/report_assessment');
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 

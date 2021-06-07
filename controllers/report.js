@@ -4,6 +4,7 @@ const ExaminerReport = require('../models/examiner_report');
 const ReportAssessment = require('../models/report_assessment');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const { Staff } = require('../models/staff');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -47,12 +48,11 @@ module.exports = {
   }),
 
   getStudentReport: catchAsync(async (req, res, next) => {
-    let report = await Report.findById(req.params.id)
-      .populate({
+    let report = await Report.findById(req.params.id).populate({
       path: 'student',
       select: 'firstName lastName school _id'
-      })
-    
+    });
+
     report = await Report.getReportWithViva(report.student._id);
 
     if (!report) {
@@ -506,7 +506,14 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
 
-    //Ensure Dean doesn't make operations to students belonging to other schools
+    // check if examiner exists
+    const examiner = await Staff.findById(req.body.examiner);
+
+    if (!examiner) {
+      return next(new AppError('No examiner found with that id', 404));
+    }
+
+    // Ensure Dean doesn't make operations to students belonging to other schools
     if (req.user.role === 'dean') {
       if (!req.user.school.equals(report.student.school)) {
         return next(
@@ -523,13 +530,13 @@ module.exports = {
     const numberOfInternalExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
       examinerType: 'internal',
-      status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
+      status: { $in: ['assignedToExaminer', 'withExaminer', 'clearedByExaminer'] }
     });
 
     const numberOfExternalExaminers = await ExaminerReport.countDocuments({
       report: req.params.id,
       examinerType: 'external',
-      status: { $nin: ['assignedToExaminer', 'rejectedByExaminer'] }
+      status: { $in: ['assignedToExaminer', 'withExaminer', 'clearedByExaminer'] }
     });
 
     const isExaminerAssignedAsInternal = await ExaminerReport.countDocuments({
@@ -546,24 +553,6 @@ module.exports = {
       status: { $in: ['assignedToExaminer', 'rejectedByExaminer'] }
     });
 
-    if (numberOfInternalExaminers > 0) {
-      return next(
-        new AppError(
-          'report already accepted by internal examiner, cannot assign more than one internal examiner',
-          400
-        )
-      );
-    }
-
-    if (numberOfExternalExaminers > 0) {
-      return next(
-        new AppError(
-          'report already accepted by external examiner, cannot assign more than one external examiner',
-          400
-        )
-      );
-    }
-
     const filteredBody = filterObj(req.body, 'examinerType', 'examiner');
     filteredBody.report = req.params.id;
     filteredBody.status = 'assignedToExaminer';
@@ -571,18 +560,38 @@ module.exports = {
 
     let examinerReport;
     if (filteredBody.examinerType === 'internal') {
+      if (numberOfInternalExaminers > 1) {
+        return next(
+          new AppError(
+            'report already assigned to internal examiners, cannot assign more than two internal examiners',
+            400
+          )
+        );
+      }
       if (isExaminerAssignedAsExternal) {
         await ExaminerReport.deleteOne({
           examinerType: 'external',
-          report: filteredBody.report
+          report: filteredBody.report,
+          examiner: req.body.examiner
         });
+
+        examinerReport = await ExaminerReport.findOneAndUpdate(
+          { examinerType: 'internal', report: filteredBody.report },
+          { $set: filteredBody },
+          { upsert: true, new: true }
+        ).populate({ path: 'report', select: 'status _id title' });
       }
-      examinerReport = await ExaminerReport.findOneAndUpdate(
-        { examinerType: 'internal', report: filteredBody.report },
-        { $set: filteredBody },
-        { upsert: true, new: true }
-      ).populate({ path: 'report', select: 'status _id title' });
+
+      examinerReport = await ExaminerReport.create(filteredBody);
     } else if (filteredBody.examinerType === 'external') {
+      if (numberOfExternalExaminers > 0) {
+        return next(
+          new AppError(
+            'report already assigned to external examiner, cannot assign more than one external examiner',
+            400
+          )
+        );
+      }
       if (isExaminerAssignedAsInternal) {
         await ExaminerReport.deleteOne({
           examinerType: 'internal',
