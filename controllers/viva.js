@@ -26,16 +26,13 @@ module.exports = {
   }),
 
   addVivaCommitteeMember: catchAsync(async (req, res, next) => {
-    let viva = await Viva.findOne({ report: req.params.report_id }).populate({
-      path: 'report',
-      select: 'title abstract status'
-    });
-
-    if (viva.report.status !== 'vivaDateSet') {
-      return next(
-        new AppError('cannot add a viva member before setting a viva Date', 400)
-      );
-    }
+    let viva = await Viva.findOneAndUpdate(
+      {
+        report: req.params.report_id
+      },
+      { $set: { report: req.params.report_id } },
+      { upsert: true, new: true }
+    );
 
     const filteredBody = filterObj(req.body, 'name', 'email', 'affiliation');
 
@@ -68,15 +65,6 @@ module.exports = {
       );
     }
 
-    // if (!report.finalScore) {
-    //   return next(
-    //     new AppError(
-    //       'Cannot set viva date for ungraded report. Please ensure that report has been graded',
-    //       400
-    //     )
-    //   );
-    // }
-
     const filteredBody = filterObj(req.body, 'vivaDate', 'location');
 
     report = await Report.findByIdAndUpdate(
@@ -96,7 +84,13 @@ module.exports = {
     filteredBody.report = req.params.id;
     filteredBody.vivaEvent = event;
     // create function only saves fields that were defined in the schema
-    const viva = await Viva.create(filteredBody);
+    const viva = await Viva.findOneAndUpdate(
+      {
+        report: filteredBody.report
+      },
+      { $set: filteredBody },
+      { upsert: true, new: true }
+    );
 
     res.status(200).json({
       status: 'success',
