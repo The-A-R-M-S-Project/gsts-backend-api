@@ -52,12 +52,14 @@ ReportSchema.statics.getReportWithViva = async function(id) {
       ]
     })
     .lean();
-
-  const viva = await Viva.findOne({ report: report._id })
-    .select('-_id vivaEvent vivaScore vivaScoreDate')
-    .populate({ path: 'vivaEvent' });
-
-  report.viva = viva;
+  
+  if (report) {
+    const viva = await Viva.findOne({ report: report._id })
+      .select('-_id vivaEvent vivaScore vivaScoreDate')
+      .populate({ path: 'vivaEvent' });
+  
+    report.viva = viva;
+  }
 
   return report;
 };
