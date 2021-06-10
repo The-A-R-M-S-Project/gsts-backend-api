@@ -327,6 +327,7 @@ module.exports = {
     }
 
     examinerReport.status = 'withExaminer';
+    examinerReport.receivedAt = Date.now();
     await examinerReport.save();
 
     const numberOfExaminers = await ExaminerReport.countDocuments({
@@ -388,6 +389,7 @@ module.exports = {
     }
 
     examinerReport.status = 'rejectedByExaminer';
+    examinerReport.rejectedAt = Date.now();
     await examinerReport.save();
 
     examinerReport = await ExaminerReport.findOne({
@@ -461,6 +463,7 @@ module.exports = {
     filteredBody.reportAssessment = reportAssessment;
     filteredBody.status = 'clearedByExaminer';
     filteredBody.examinerScoreDate = Date.now();
+    filteredBody.clearedAt = Date.now();
     filteredBody.examinerGrade = 'C';
     // TODO: Add examinerGrade based on Standard Grading System
 

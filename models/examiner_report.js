@@ -21,7 +21,8 @@ const ExaminerReportSchema = new mongoose.Schema({
   examinerScoreDate: Date,
   reportAssessment: { type: mongoose.Schema.Types.ObjectId, ref: 'reportAssessment' },
   assignedAt: Date,
-  receivedAt: Date, // date when examiner acknowledges receipt of the report
+  receivedAt: Date,
+  rejectedAt: Date,
   clearedAt: Date
 });
 
