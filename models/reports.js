@@ -41,7 +41,7 @@ const ReportSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
-ReportSchema.statics.getReportWithViva = async function(id) {
+ReportSchema.statics.getReportWithExaminerViva = async function(id) {
   const report = await this.findOne({ student: id })
     .populate({
       path: 'student',
@@ -54,11 +54,16 @@ ReportSchema.statics.getReportWithViva = async function(id) {
     .lean();
 
   if (report) {
+    const examiner = await ExaminerReport.find({ report: report._id })
+      .select('-_id status examiner examinerType')
+      .populate({ path: 'examiner', select: 'firstName lastName school' });
+
     const viva = await Viva.findOne({ report: report._id })
       .select('-_id vivaEvent vivaScore vivaScoreDate')
       .populate({ path: 'vivaEvent' });
 
     report.viva = viva;
+    report.examiner = examiner;
   }
 
   return report;
@@ -82,7 +87,7 @@ ReportSchema.statics.getAllReportsWithExaminers = async function() {
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
-      .populate({ path: 'examiner', select: '-_id firstName lastName school' });
+      .populate({ path: 'examiner', select: '_id firstName lastName school' });
 
     // eslint-disable-next-line no-await-in-loop
     const viva = await Viva.findOne({ report: report._id })

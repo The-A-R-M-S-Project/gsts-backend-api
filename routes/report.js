@@ -99,6 +99,11 @@ router.patch(
   controller.assignExaminer
 );
 
+router.delete(
+  '/staff/examiner/remove/:id/:examinerId',
+  authController.restrictTo('admin', 'principal', 'dean'),
+  controller.removeExaminer
+);
 router.get(
   '/staff/examiner/status',
   authController.restrictTo('examiner'),

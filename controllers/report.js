@@ -53,11 +53,11 @@ module.exports = {
       select: 'firstName lastName school _id'
     });
 
-    report = await Report.getReportWithViva(report.student._id);
-
     if (!report) {
       return next(new AppError('No report found with that id', 404));
     }
+
+    report = await Report.getReportWithExaminerViva(report.student._id);
 
     //Ensure Dean doesn't make operations to objects belonging to other schools
     if (req.user.role === 'dean') {
@@ -650,6 +650,25 @@ module.exports = {
     res.status(200).json({
       status: 'success',
       examinerReport: examinerReport
+    });
+  }),
+
+  removeExaminer: catchAsync(async (req, res, next) => {
+    const examinerReport = await ExaminerReport.deleteOne({
+      report: req.params.id,
+      examiner: req.params.examinerId,
+      status: 'assignedToExaminer'
+    });
+
+    if (examinerReport.deletedCount === 0) {
+      return next(
+        new AppError('report already accepted by examiner, cannot delete', 400)
+      );
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Report successfully deleted'
     });
   }),
 

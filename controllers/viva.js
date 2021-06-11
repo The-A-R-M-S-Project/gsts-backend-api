@@ -83,7 +83,7 @@ module.exports = {
 
     filteredBody.report = req.params.id;
     filteredBody.vivaEvent = event;
-    // create function only saves fields that were defined in the schema
+
     const viva = await Viva.findOneAndUpdate(
       {
         report: filteredBody.report
