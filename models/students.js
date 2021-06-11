@@ -68,7 +68,11 @@ const StudentSchema = new mongoose.Schema(
     profilePicture: String,
     program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
-    school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' }
+    school: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, 'Please provide your email'],
+      ref: 'school'
+    }
   },
   {
     toJSON: {
