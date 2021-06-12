@@ -38,7 +38,7 @@ module.exports = {
   }),
 
   getMyReport: catchAsync(async (req, res, next) => {
-    const report = await Report.getReportWithViva(req.params.id);
+    const report = await Report.getReportWithExaminerViva(req.params.id);
 
     if (!report) {
       return next(new AppError('No report found with that for that student', 404));
