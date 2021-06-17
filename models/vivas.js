@@ -16,7 +16,6 @@ const vivaSchema = new mongoose.Schema({
       name: String,
       email: {
         type: String,
-        unique: true,
         lowercase: true,
         validate: [validator.isEmail, 'Please provide a valid email']
       },

@@ -36,9 +36,16 @@ module.exports = {
 
     const filteredBody = filterObj(req.body, 'name', 'email', 'affiliation');
 
-    if (!viva.vivaCommittee.includes(req.body.vivaCommitteeMemberEmail)) {
-      viva.vivaCommittee.push(filteredBody);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const member of viva.vivaCommittee) {
+      if (member.email === req.body.email) {
+        return next(
+          new AppError('Cannot add duplicate email for viva committee member', 404)
+        );
+      }
     }
+
+    viva.vivaCommittee.push(filteredBody);
 
     viva = await viva.save();
 

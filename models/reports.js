@@ -28,6 +28,7 @@ const ReportSchema = new mongoose.Schema({
   submittedAt: Date,
   assignedAt: Date,
   receivedAt: Date,
+  updatedAt: Date,
   resubmittedAt: Date,
   clearedAt: Date,
   vivaDateSetAt: Date,

@@ -38,7 +38,7 @@ module.exports = {
   }),
 
   getMyReport: catchAsync(async (req, res, next) => {
-    const report = await Report.getReportWithViva(req.params.id);
+    const report = await Report.getReportWithExaminerViva(req.params.id);
 
     if (!report) {
       return next(new AppError('No report found with that for that student', 404));
@@ -117,7 +117,7 @@ module.exports = {
     }
 
     const filteredBody = filterObj(req.body, 'title', 'abstract');
-    filteredBody.resubmittedAt = Date.now();
+    filteredBody.updatedAt = Date.now();
     if (req.file) {
       filteredBody.reportURL = req.file.location;
     }
