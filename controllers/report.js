@@ -566,7 +566,7 @@ module.exports = {
       if (numberOfInternalExaminers > 1) {
         return next(
           new AppError(
-            'report already assigned to internal examiners, cannot assign more than two internal examiners',
+            'Cannot assign more than two internal examiners',
             400
           )
         );
@@ -602,7 +602,7 @@ module.exports = {
       if (numberOfExternalExaminers > 0) {
         return next(
           new AppError(
-            'report already assigned to external examiner, cannot assign more than one external examiner',
+            'Cannot assign more than one external examiner',
             400
           )
         );
@@ -662,7 +662,7 @@ module.exports = {
 
     if (examinerReport.deletedCount === 0) {
       return next(
-        new AppError('report already accepted by examiner, cannot delete', 400)
+        new AppError('Report already accepted by examiner', 400)
       );
     }
 
