@@ -70,7 +70,7 @@ const StudentSchema = new mongoose.Schema(
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
     school: {
       type: mongoose.Schema.Types.ObjectId,
-      required: [true, 'Please provide your email'],
+      required: [true, 'Please provide your school'],
       ref: 'school'
     }
   },
