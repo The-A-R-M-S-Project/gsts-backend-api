@@ -66,11 +66,14 @@ const StudentSchema = new mongoose.Schema(
     },
     yearOfStudy: Number,
     profilePicture: String,
-    program: { type: mongoose.Schema.Types.ObjectId, ref: 'program' },
+    program: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, 'Please provide your program'],
+      ref: 'program'
+    },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'department' },
     school: {
       type: mongoose.Schema.Types.ObjectId,
-      required: [true, 'Please provide your school'],
       ref: 'school'
     }
   },
