@@ -19,6 +19,7 @@ const ExaminerReportSchema = new mongoose.Schema({
   },
   examinerScore: Number,
   examinerScoreDate: Date,
+  rejectionReason: String,
   reportAssessment: { type: mongoose.Schema.Types.ObjectId, ref: 'reportAssessment' },
   assignedAt: Date,
   receivedAt: Date,

@@ -366,7 +366,7 @@ module.exports = {
     }
 
     if (report.status === 'notSubmitted') {
-      return next(new AppError(`Can't receive a report that is not submitted`, 400));
+      return next(new AppError(`Can't reject a report that is not submitted`, 400));
     }
 
     let examinerReport = await ExaminerReport.findOne({
@@ -376,7 +376,7 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('examiner cannot receive Report that isnt assigned to them', 400)
+        new AppError('examiner cannot reject Report that isnt assigned to them', 400)
       );
     }
 
@@ -389,6 +389,7 @@ module.exports = {
     }
 
     examinerReport.status = 'rejectedByExaminer';
+    examinerReport.rejectionReason = req.body.reason;
     examinerReport.rejectedAt = Date.now();
     await examinerReport.save();
 
@@ -564,12 +565,7 @@ module.exports = {
     let examinerReport;
     if (filteredBody.examinerType === 'internal') {
       if (numberOfInternalExaminers > 1) {
-        return next(
-          new AppError(
-            'Cannot assign more than two internal examiners',
-            400
-          )
-        );
+        return next(new AppError('Cannot assign more than two internal examiners', 400));
       }
       if (isExaminerAssignedAsExternal) {
         await ExaminerReport.deleteOne({
@@ -600,12 +596,7 @@ module.exports = {
       }
     } else if (filteredBody.examinerType === 'external') {
       if (numberOfExternalExaminers > 0) {
-        return next(
-          new AppError(
-            'Cannot assign more than one external examiner',
-            400
-          )
-        );
+        return next(new AppError('Cannot assign more than one external examiner', 400));
       }
       if (isExaminerAssignedAsInternal) {
         await ExaminerReport.deleteOne({
@@ -661,9 +652,7 @@ module.exports = {
     });
 
     if (examinerReport.deletedCount === 0) {
-      return next(
-        new AppError('Report already accepted by examiner', 400)
-      );
+      return next(new AppError('Report already accepted by examiner', 400));
     }
 
     res.status(200).json({
