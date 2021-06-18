@@ -59,7 +59,10 @@ ReportSchema.statics.getReportWithExaminerViva = async function(id) {
   if (report) {
     const examiner = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
-      .populate({ path: 'examiner', select: '_id firstName lastName school' });
+      .populate({
+        path: 'examiner',
+        select: '_id firstName lastName school rejectionReason examinerScore'
+      });
 
     const viva = await Viva.findOne({ report: report._id })
       .select('_id vivaEvent vivaScore vivaScoreDate')
@@ -90,7 +93,10 @@ ReportSchema.statics.getAllReportsWithExaminers = async function() {
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
-      .populate({ path: 'examiner', select: '_id firstName lastName school' });
+      .populate({
+        path: 'examiner',
+        select: '_id firstName lastName school rejectionReason examinerScore'
+      });
 
     // eslint-disable-next-line no-await-in-loop
     const viva = await Viva.findOne({ report: report._id })
@@ -121,7 +127,10 @@ ReportSchema.statics.getAllDeanReportsWithExaminers = async function(deanSchool)
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
       .select('-_id status examiner examinerType')
-      .populate({ path: 'examiner', select: '_id firstName lastName school' });
+      .populate({
+        path: 'examiner',
+        select: '_id firstName lastName school rejectionReason examinerScore'
+      });
 
     // eslint-disable-next-line no-await-in-loop
     const viva = await Viva.findOne({ report: report._id })

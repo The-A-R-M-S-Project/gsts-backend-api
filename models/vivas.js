@@ -14,6 +14,15 @@ const vivaSchema = new mongoose.Schema({
   vivaCommittee: [
     {
       name: String,
+      phone: {
+        type: String,
+        validate: {
+          validator: function(number) {
+            return validator.isMobilePhone(number, 'en-UG');
+          },
+          message: 'Please enter a valid Phone Number (en-UG)'
+        }
+      },
       email: {
         type: String,
         lowercase: true,

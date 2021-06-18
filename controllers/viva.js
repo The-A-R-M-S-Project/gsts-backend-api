@@ -34,7 +34,7 @@ module.exports = {
       { upsert: true, new: true }
     );
 
-    const filteredBody = filterObj(req.body, 'name', 'email', 'affiliation');
+    const filteredBody = filterObj(req.body, 'name', 'email', 'phone', 'affiliation');
 
     // eslint-disable-next-line no-restricted-syntax
     for (const member of viva.vivaCommittee) {
