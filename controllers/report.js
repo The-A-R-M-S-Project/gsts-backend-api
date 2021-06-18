@@ -163,6 +163,42 @@ module.exports = {
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
 
+  resubmitReport: catchAsync(async (req, res, next) => {
+    let report = await Report.findOne({ student: req.params.id });
+
+    if (!report) {
+      return next(new AppError('No report found with that for that student', 404));
+    }
+
+    if (report.status !== 'resubmit') {
+      return next(
+        new AppError(
+          'Cannot resubmit this report, please contact your principal or dean first',
+          400
+        )
+      );
+    }
+
+    // multer middleware adds a file object to the request including the details about where the file is stored
+    if (!req.file) {
+      return next(new AppError('Please upload a file', 400));
+    }
+
+    const filteredBody = filterObj(req.body, 'title', 'abstract');
+    filteredBody.status = 'submitted';
+    filteredBody.resubmittedAt = Date.now();
+    filteredBody.resubmittedReportURL = req.file.location;
+
+    report = await Report.findByIdAndUpdate(report._id, filteredBody, {
+      new: true
+    }).populate({
+      path: 'student',
+      select: 'firstName lastName _id'
+    });
+
+    res.status(200).json({ status: 'success', message: 'Report Re-submitted', report });
+  }),
+
   submitFinalReport: catchAsync(async (req, res, next) => {
     const report = await Report.findOne({ student: req.params.id });
 
@@ -211,15 +247,13 @@ module.exports = {
       ]
     });
 
-    //TODO: Implement sorts and filters for this query
-
     res.status(200).json({
       status: 'success',
       reports
     });
   }),
 
-  resubmitReport: catchAsync(async (req, res, next) => {
+  requestResubmitReport: catchAsync(async (req, res, next) => {
     const report = await Report.findById(req.params.id).select('student status');
 
     if (!report) {
@@ -247,11 +281,11 @@ module.exports = {
       );
     }
 
-    report.status = 'notSubmitted';
+    report.status = 'resubmit';
     await report.save();
 
-    const filteredBody = filterObj(req.body, 'text');
-    filteredBody.text = `The ${req.user.role} has requested resubmission of this report! ${filteredBody.text}`;
+    const filteredBody = filterObj(req.body, 'reason');
+    filteredBody.text = `The ${req.user.role} has requested resubmission of this report! Reason: ${filteredBody.reason}`;
     filteredBody.staff = req.user._id;
     filteredBody.student = report.student;
     filteredBody.report = req.params.id;
@@ -260,7 +294,8 @@ module.exports = {
 
     res.status(201).json({
       status: 'success',
-      examinerReport: comment
+      report: report,
+      comment: comment
     });
   }),
 

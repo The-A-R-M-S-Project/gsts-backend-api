@@ -6,7 +6,7 @@ const AuthProtector = require('../auth/authProtector');
 const storageEngines = require('./../utils/multerStorage')('inline');
 
 const reportUpload = multer({ storage: storageEngines.localReportStorage });
-const reportUpdate = multer({ storage: storageEngines.localReportResubmitStorage });
+const reportResubmit = multer({ storage: storageEngines.localReportResubmitStorage });
 const assessmentFormUpload = multer({
   storage: storageEngines.localAssessmentFormStorage
 });
@@ -30,7 +30,7 @@ router
   .get(authController.getMe(), controller.getMyReport)
   .patch(
     authController.getMe(),
-    reportUpdate.single('report'),
+    reportUpload.single('report'),
     controller.updateMyReport
   );
 
@@ -40,6 +40,14 @@ router.patch(
   authController.getMe(),
   reportUpload.single('report'),
   controller.submitReport
+);
+
+router.patch(
+  '/student/resubmit',
+  authController.restrictTo('student'),
+  authController.getMe(),
+  reportResubmit.single('report'),
+  controller.resubmitReport
 );
 
 router.patch(
@@ -88,9 +96,9 @@ router.patch(
 );
 
 router.patch(
-  '/staff/student/resubmit/:id',
+  '/staff/requestResubmit/:id',
   authController.restrictTo('admin', 'principal', 'dean'),
-  controller.resubmitReport
+  controller.requestResubmitReport
 );
 
 router.patch(

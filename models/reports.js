@@ -9,6 +9,7 @@ const ReportSchema = new mongoose.Schema({
     type: String,
     enum: [
       'notSubmitted',
+      'resubmit',
       'submitted',
       'assignedToExaminers', //Implies report has been assigned to both internal and external examiners
       'receivedByExaminers', //Implies report has been received to both internal and external examiners
@@ -35,6 +36,7 @@ const ReportSchema = new mongoose.Schema({
   vivaCompleteAt: Date,
   completedAt: Date,
   reportURL: String,
+  resubmittedReportURL: String,
   vivaCommitteeReport: String,
   finalReportURL: String,
   complainceReportURL: String,
