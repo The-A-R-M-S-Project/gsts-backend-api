@@ -92,7 +92,7 @@ ReportSchema.statics.getAllReportsWithExaminers = async function() {
   for (const report of reports) {
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
-      .select('-_id status examiner examinerType')
+      .select('-_id status examiner examinerType rejectionReason')
       .populate({
         path: 'examiner',
         select: '_id firstName lastName school rejectionReason examinerScore'
@@ -126,7 +126,7 @@ ReportSchema.statics.getAllDeanReportsWithExaminers = async function(deanSchool)
   for (const report of reports) {
     // eslint-disable-next-line no-await-in-loop
     const examiners = await ExaminerReport.find({ report: report._id })
-      .select('-_id status examiner examinerType')
+      .select('-_id status examiner examinerType rejectionReason')
       .populate({
         path: 'examiner',
         select: '_id firstName lastName school rejectionReason examinerScore'
