@@ -25,6 +25,12 @@ router.get(
   controller.getAllDeans
 );
 
+router.patch(
+  '/principal/requestReportAgents/',
+  authController.restrictTo('admin', 'principal'),
+  controller.requestReportAgents
+);
+
 router
   .route('/')
   .get(authController.restrictTo('admin', 'principal', 'dean'), controller.getAllStaff)

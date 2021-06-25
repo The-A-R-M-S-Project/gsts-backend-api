@@ -67,8 +67,21 @@ const StaffSchema = new mongoose.Schema(
     school: { type: mongoose.Schema.Types.ObjectId, ref: 'school' },
     photo: String
   },
-  { discriminatorKey: 'role' }
+  {
+    discriminatorKey: 'role',
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+      transform: function(doc, ret) {
+        delete ret.id;
+      }
+    }
+  }
 );
+
+StaffSchema.virtual('name').get(function() {
+  return `${this.firstName} ${this.lastName}`;
+});
 
 StaffSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
