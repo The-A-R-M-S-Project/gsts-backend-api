@@ -41,6 +41,7 @@ const ReportSchema = new mongoose.Schema({
   finalReportURL: String,
   complainceReportURL: String,
   finalSubmissionAt: Date,
+  principalRequestedAgents: { type: Boolean, default: false },
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
@@ -79,7 +80,7 @@ ReportSchema.statics.getAllReportsWithExaminers = async function() {
   const reports = await this.find({})
     .populate({
       path: 'student',
-      select: 'firstName lastName',
+      select: 'firstName lastName name',
       populate: [
         { path: 'program', select: 'name -_id' },
         { path: 'department', select: '-name -__v' }
@@ -114,7 +115,7 @@ ReportSchema.statics.getAllDeanReportsWithExaminers = async function(deanSchool)
   const reports = await this.find({})
     .populate({
       path: 'student',
-      select: 'firstName lastName school',
+      select: 'firstName lastName school name',
       populate: [
         { path: 'program', select: 'name -_id' },
         { path: 'department', select: '-name -__v' }
