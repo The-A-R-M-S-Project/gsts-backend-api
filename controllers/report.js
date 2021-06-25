@@ -44,6 +44,9 @@ module.exports = {
       return next(new AppError('No report found with that for that student', 404));
     }
 
+    //Remove examiners from logged-in student report response
+    delete report.examiner;
+
     res.status(200).json(report);
   }),
 
@@ -245,7 +248,11 @@ module.exports = {
           ]
         }
       ]
+    }).populate({
+      path: 'reportAssessment'
     });
+
+
 
     res.status(200).json({
       status: 'success',
