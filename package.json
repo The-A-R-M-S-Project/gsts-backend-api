@@ -36,6 +36,7 @@
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.18",
     "nodemon": "^2.0.7",
+    "pdfkit": "^0.12.1",
     "validator": "^11.1.0",
     "xss-clean": "^0.1.1"
   },
