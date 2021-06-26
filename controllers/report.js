@@ -553,6 +553,10 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
 
+    if (report.principalRequestedAgents === false && req.user.role === 'dean') {
+      return next(new AppError('Wait for principal approval', 400));
+    }
+
     // check if examiner exists
     const examiner = await Staff.findById(req.body.examiner);
 

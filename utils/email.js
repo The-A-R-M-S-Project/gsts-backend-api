@@ -16,8 +16,8 @@ const sendEmail = async options => {
     from: 'GSTS ADMIN <admin_gsts@cedat.mak.ac.ug>',
     to: options.email,
     subject: options.subject,
-    text: options.message
-    // html:
+    text: options.message,
+    attachments: options.attachments
   };
 
   // 3) Actually send the email

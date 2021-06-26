@@ -1,8 +1,11 @@
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
+
 const { Staff, Principal, Dean } = require('../models/staff');
 const Report = require('../models/reports');
-const Student = require('../models/students');
+const sendEmail = require('./../utils/email');
 const School = require('../models/schools');
-const Department = require('../models/departments');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -27,6 +30,72 @@ module.exports = {
     res.status(200).send(deans);
   }),
 
+  requestReportAgents: catchAsync(async (req, res, next) => {
+    const dean = await Dean.findOne({ school: req.body.school }).populate({
+      path: 'school'
+    });
+
+    const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
+
+    const principalRequest = `Dear ${dean.name},
+
+I am kindly requesting you to assign examiners and viva committee for the following students of the ${dean.school.name};
+
+${req.body.studentNames}
+
+Kind Regards,
+Pricipal Cedat.`;
+
+    // 1: Create a document
+    const doc = new PDFDocument();
+
+    // 2: Pipe its output somewhere, like to a file or HTTP response
+    doc.pipe(fs.createWriteStream(pathToFile));
+
+    // Embed a font, set the font size, and render some text
+    doc
+      .font('Courier')
+      .fontSize(22)
+      .text('PRINCIPAL REQUEST FOR ASSIGNMENT OF EXAMINERS TO STUDENTS.', 100, 50);
+
+    doc.moveDown();
+
+    // Using a standard PDF font
+    doc
+      .font('Times-Roman')
+      .text(principalRequest)
+      .moveDown();
+
+    // Finalize PDF file
+    doc.end();
+
+    const attachments = [
+      {
+        filename: 'principalRequest.pdf',
+        path: pathToFile
+      }
+    ];
+
+    try {
+      await sendEmail({
+        email: dean.email,
+        subject: `Request to assign examiners to students of the ${dean.school.name}`,
+        message: principalRequest,
+        attachments
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: `Request sent to the Dean of the ${dean.school.name}`
+      });
+    } catch (error) {
+      return next(
+        new AppError('There was an error sending the email. Try again later!'),
+        500
+      );
+    }
+  }),
+
   getStaff: catchAsync(async (req, res, next) => {
     const staff = await Staff.findById(req.params.id);
 
@@ -37,8 +106,8 @@ module.exports = {
   }),
 
   getSecretarySchool: catchAsync(async (req, res, next) => {
-    let secretaryDean = await Staff.findById(req.params.id);
-    let schoolOfDean = await School.findById(secretaryDean.school);
+    const secretaryDean = await Staff.findById(req.params.id);
+    const schoolOfDean = await School.findById(secretaryDean.school);
     res.status(200).json({ message: 'Success', schoolOfDean });
   }),
 
