@@ -103,7 +103,7 @@ router.patch(
 
 router.patch(
   '/staff/examiner/assign/:id',
-  authController.restrictTo('admin', 'principal', 'dean'),
+  authController.restrictTo('admin', 'principal'),
   controller.assignExaminer
 );
 

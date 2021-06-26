@@ -20,7 +20,10 @@ const ReportSchema = new mongoose.Schema({
     ],
     default: 'notSubmitted'
   },
-  grade: { type: String, enum: ['A', 'B', 'C', 'D', 'E', 'F'] },
+  grade: {
+    type: String,
+    enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'E', 'E-', 'F']
+  },
   finalScore: Number,
   createdAt: {
     type: Date,
