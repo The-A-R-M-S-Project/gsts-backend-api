@@ -8,6 +8,7 @@ const ExaminerReportSchema = new mongoose.Schema({
     enum: [
       'assignedToExaminer',
       'withExaminer',
+      'withdrawnFromExaminer',
       'rejectedByExaminer',
       'clearedByExaminer'
     ],
