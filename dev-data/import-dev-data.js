@@ -76,10 +76,10 @@ const importData = async () => {
   await importDataFromModel(Schools, JSON.parse(schools));
   await importDataFromModel(Departments, JSON.parse(departments));
   await importDataFromModel(Programs, JSON.parse(programs));
-  await importDataFromModel(Students, JSON.parse(students));
+  // await importDataFromModel(Students, JSON.parse(students));
   await importDataFromModel(Staffs, JSON.parse(staff));
   await importDataFromModel(Admin, JSON.parse(admin));
-  await importDataFromModel(Report, JSON.parse(reports));
+  // await importDataFromModel(Report, JSON.parse(reports));
   console.log('Data successfully imported!');
   process.exit();
 };
