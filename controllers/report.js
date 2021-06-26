@@ -276,13 +276,14 @@ module.exports = {
       );
     }
 
-    if (
-      report.status === 'assignedToExaminers' ||
-      report.status === 'receivedByExaminers'
+    let examinerReports = await ExaminerReport.find({ report: report._id });
+
+    if (examinerReports.length > 0 &&
+      (report.status === 'submitted' || report.status === 'assignedToExaminers' || report.status === 'receivedByExaminers')
     ) {
       return next(
         new AppError(
-          'Report is being assessed by examiners. Cannot complete this action ',
+          'The report is already assigned to examiners!',
           400
         )
       );
@@ -687,15 +688,14 @@ module.exports = {
   }),
 
   removeExaminer: catchAsync(async (req, res, next) => {
-    const examinerReport = await ExaminerReport.deleteOne({
+    const examinerReport = await ExaminerReport.findOne({
       report: req.params.id,
       examiner: req.params.examinerId,
       status: 'assignedToExaminer'
     });
 
-    if (examinerReport.deletedCount === 0) {
-      return next(new AppError('Report already accepted by examiner', 400));
-    }
+    examinerReport.status = "withdrawnFromExaminer";
+    await examinerReport.save();
 
     res.status(200).json({
       status: 'success',
