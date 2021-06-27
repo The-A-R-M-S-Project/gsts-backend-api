@@ -236,23 +236,23 @@ module.exports = {
   getExaminerReports: catchAsync(async (req, res, next) => {
     const reports = await ExaminerReport.find({
       examiner: req.params.id
-    }).populate({
-      path: 'report',
-      populate: [
-        {
-          path: 'student',
-          select: 'firstName lastName program department _id',
-          populate: [
-            { path: 'program', select: 'name -_id' },
-            { path: 'department', select: '-name -__v' }
-          ]
-        }
-      ]
-    }).populate({
-      path: 'reportAssessment'
-    });
-
-
+    })
+      .populate({
+        path: 'report',
+        populate: [
+          {
+            path: 'student',
+            select: 'firstName lastName program department _id',
+            populate: [
+              { path: 'program', select: 'name -_id' },
+              { path: 'department', select: '-name -__v' }
+            ]
+          }
+        ]
+      })
+      .populate({
+        path: 'reportAssessment'
+      });
 
     res.status(200).json({
       status: 'success',
@@ -278,15 +278,13 @@ module.exports = {
 
     let examinerReports = await ExaminerReport.find({ report: report._id });
 
-    if (examinerReports.length > 0 &&
-      (report.status === 'submitted' || report.status === 'assignedToExaminers' || report.status === 'receivedByExaminers')
+    if (
+      examinerReports.length > 0 &&
+      (report.status === 'submitted' ||
+        report.status === 'assignedToExaminers' ||
+        report.status === 'receivedByExaminers')
     ) {
-      return next(
-        new AppError(
-          'The report is already assigned to examiners!',
-          400
-        )
-      );
+      return next(new AppError('The report is already assigned to examiners!', 400));
     }
 
     report.status = 'resubmit';
@@ -448,7 +446,7 @@ module.exports = {
   }),
 
   clearReport: catchAsync(async (req, res, next) => {
-    const report = await Report.findById(req.params.id).select('status');
+    const report = await Report.findById(req.params.id).select('status grade finalScore');
 
     if (!report) {
       return next(new AppError('could not find a report with that ID', 404));
@@ -508,7 +506,6 @@ module.exports = {
     filteredBody.status = 'clearedByExaminer';
     filteredBody.examinerScoreDate = Date.now();
     filteredBody.clearedAt = Date.now();
-    filteredBody.examinerGrade = 'C';
     // TODO: Add examinerGrade based on Standard Grading System
 
     examinerReport = await ExaminerReport.findOneAndUpdate(
@@ -526,6 +523,7 @@ module.exports = {
     if (numberOfExaminers === 3) {
       report.status = 'clearedByExaminers';
       report.clearedAt = Date.now();
+      await report.calculateFinalGrade();
       await report.save();
     }
 
@@ -698,7 +696,7 @@ module.exports = {
       status: 'assignedToExaminer'
     });
 
-    examinerReport.status = "withdrawnFromExaminer";
+    examinerReport.status = 'withdrawnFromExaminer';
     await examinerReport.save();
 
     res.status(200).json({

@@ -48,6 +48,35 @@ const ReportSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
+function determineGrade(score) {
+  let grade;
+  if (score >= 90) {
+    grade = 'A+';
+  } else if (score >= 80) {
+    grade = 'A';
+  } else if (score >= 75) {
+    grade = 'B+';
+  } else if (score >= 70) {
+    grade = 'B';
+  } else if (score >= 65) {
+    grade = 'C+';
+  } else if (score >= 60) {
+    grade = 'C';
+  } else if (score >= 55) {
+    grade = 'D+';
+  } else if (score >= 50) {
+    grade = 'D';
+  } else if (score >= 45) {
+    grade = 'E';
+  } else if (score >= 40) {
+    grade = 'E-';
+  } else if (score < 40) {
+    grade = 'F';
+  }
+
+  return grade;
+}
+
 ReportSchema.statics.getReportWithExaminerViva = async function(id) {
   const report = await this.findOne({ student: id })
     .populate({
@@ -182,6 +211,19 @@ ReportSchema.statics.getAllDeanSecretaryReports = async function(deanSchool) {
   });
 
   return deanReports;
+};
+
+ReportSchema.methods.calculateFinalGrade = async function() {
+  let sum = 0;
+  const examinerScores = await ExaminerReport.find({ report: this._id })
+    .select('examinerScore')
+    .lean();
+
+  examinerScores.forEach(value => {
+    sum += value.examinerScore;
+  });
+  this.finalScore = Math.round(sum / 3);
+  this.grade = determineGrade(this.finalScore);
 };
 
 module.exports = mongoose.model('report', ReportSchema);
