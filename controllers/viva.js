@@ -13,6 +13,35 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+function determineGrade(score) {
+  let grade;
+  if (score >= 90) {
+    grade = 'A+';
+  } else if (score >= 80) {
+    grade = 'A';
+  } else if (score >= 75) {
+    grade = 'B+';
+  } else if (score >= 70) {
+    grade = 'B';
+  } else if (score >= 65) {
+    grade = 'C+';
+  } else if (score >= 60) {
+    grade = 'C';
+  } else if (score >= 55) {
+    grade = 'D+';
+  } else if (score >= 50) {
+    grade = 'D';
+  } else if (score >= 45) {
+    grade = 'E';
+  } else if (score >= 40) {
+    grade = 'E-';
+  } else if (score < 40) {
+    grade = 'F';
+  }
+
+  return grade;
+}
+
 module.exports = {
   getSetVivaDateStudents: catchAsync(async (req, res, next) => {
     //Find the school of this secretary's dean
@@ -144,6 +173,7 @@ module.exports = {
     );
 
     const filteredBody = filterObj(req.body, 'vivaScore');
+    filteredBody.vivaGrade = determineGrade(filteredBody.vivaScore);
     filteredBody.vivaScoreDate = Date.now();
     filteredBody.vivaStatus = 'done';
 

@@ -8,6 +8,10 @@ const vivaSchema = new mongoose.Schema({
     default: 'pending'
   },
   vivaScore: Number,
+  vivaGrade: {
+    type: String,
+    enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'E', 'E-', 'F']
+  },
   vivaScoreDate: Date,
   report: { type: mongoose.Schema.Types.ObjectId, ref: 'report' },
   vivaEvent: { type: mongoose.Schema.Types.ObjectId, ref: 'event' },
