@@ -11,7 +11,7 @@ const generators = require('./generators');
 chai.use(chaiHttp);
 const client = chai.request.agent(server);
 
-describe('Reports', () => {
+describe.skip('Reports', () => {
   beforeEach(done => {
     Report.deleteMany({}, () => {});
     Student.deleteMany({}, () => {});
