@@ -27,7 +27,7 @@ router.patch(
 
 router.patch(
   '/staff/addVivaCommitteeMember/:report_id',
-  authController.restrictTo('admin', 'principal', 'dean', 'secretary'),
+  authController.restrictTo('admin', 'dean', 'secretary'),
   controller.addVivaCommitteeMember
 );
 

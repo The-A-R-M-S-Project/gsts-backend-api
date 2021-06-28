@@ -32,7 +32,19 @@ module.exports = {
       },
       { $set: { report: req.params.report_id } },
       { upsert: true, new: true }
-    );
+    ).populate({
+      path: 'report',
+      select: 'status'
+    });
+
+    if (viva.report.status === 'notSubmitted' || viva.report.status === 'resubmit') {
+      return next(
+        new AppError(
+          'Cannot add viva committee member to a report that is not submitted',
+          404
+        )
+      );
+    }
 
     const filteredBody = filterObj(req.body, 'name', 'email', 'phone', 'affiliation');
 
@@ -50,6 +62,7 @@ module.exports = {
     viva = await viva.save();
 
     res.status(200).json({
+      status: 'success',
       viva
     });
   }),

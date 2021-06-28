@@ -276,7 +276,7 @@ module.exports = {
       );
     }
 
-    let examinerReports = await ExaminerReport.find({ report: report._id });
+    const examinerReports = await ExaminerReport.find({ report: report._id });
 
     if (
       examinerReports.length > 0 &&
