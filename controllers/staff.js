@@ -30,18 +30,20 @@ module.exports = {
     res.status(200).send(deans);
   }),
 
-  requestReportAgents: catchAsync(async (req, res, next) => {
+  requestReportExaminers: catchAsync(async (req, res, next) => {
     const dean = await Dean.findOne({ school: req.body.school }).populate({
       path: 'school'
+    });
+
+    const report = await (await Report.findById(req.body.report)).populate({
+      path: 'student'
     });
 
     const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
 
     const principalRequest = `Dear ${dean.name},
 
-I am kindly requesting you to assign examiners and viva committee for the following students of the ${dean.school.name};
-
-${req.body.studentNames}
+I am kindly requesting you to provide a list of examiners for ${report.student.name} from the ${dean.school.name};
 
 Kind Regards,
 Pricipal Cedat.`;
@@ -56,7 +58,7 @@ Pricipal Cedat.`;
     doc
       .font('Courier')
       .fontSize(22)
-      .text('PRINCIPAL REQUEST FOR ASSIGNMENT OF EXAMINERS TO STUDENTS.', 100, 50);
+      .text('PRINCIPAL REQUEST FOR LIST OF EXAMINERS TO STUDENT.', 100, 50);
 
     doc.moveDown();
 
@@ -94,6 +96,15 @@ Pricipal Cedat.`;
         500
       );
     }
+  }),
+
+  respondToExaminerAssignmentRequest: catchAsync(async (req, res, next) => {
+    const staff = await Staff.findById(req.params.id);
+
+    if (!staff) {
+      return next(new AppError('No staff found with that id', 404));
+    }
+    res.status(200).send(staff);
   }),
 
   getStaff: catchAsync(async (req, res, next) => {
