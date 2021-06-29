@@ -26,9 +26,15 @@ router.get(
 );
 
 router.patch(
-  '/principal/requestReportAgents/',
+  '/principal/requestReportExaminers/',
   authController.restrictTo('admin', 'principal'),
-  controller.requestReportAgents
+  controller.requestReportExaminers
+);
+
+router.patch(
+  '/dean/respondToExaminerAssignmentRequest',
+  authController.restrictTo('admin', 'principal'),
+  controller.respondToExaminerAssignmentRequest
 );
 
 router

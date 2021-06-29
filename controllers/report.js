@@ -523,7 +523,7 @@ module.exports = {
     if (numberOfExaminers === 3) {
       report.status = 'clearedByExaminers';
       report.clearedAt = Date.now();
-      await report.calculateFinalGrade();
+      await report.calculateFinalGrade(); //Will flag a retake if score <60
       await report.save();
     }
 
@@ -549,10 +549,6 @@ module.exports = {
 
     if (!report) {
       return next(new AppError('No report found with that id', 404));
-    }
-
-    if (report.principalRequestedAgents === false && req.user.role === 'dean') {
-      return next(new AppError('Wait for principal approval', 400));
     }
 
     // check if examiner exists

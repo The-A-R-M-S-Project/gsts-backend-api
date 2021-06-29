@@ -29,6 +29,7 @@ const ReportSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  retake: { type: 'String', enum: ['yes', 'no'], default: 'no' },
   submittedAt: Date,
   assignedAt: Date,
   receivedAt: Date,
@@ -44,7 +45,6 @@ const ReportSchema = new mongoose.Schema({
   finalReportURL: String,
   complainceReportURL: String,
   finalSubmissionAt: Date,
-  principalRequestedAgents: { type: Boolean, default: false },
   student: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'student' }
 });
 
@@ -224,6 +224,11 @@ ReportSchema.methods.calculateFinalGrade = async function() {
   });
   this.finalScore = Math.round(sum / 3);
   this.grade = determineGrade(this.finalScore);
+  if (this.finalScore < 60) {
+    // revert progress back to notSubmitted and move student's data into another folder in server.
+    this.status = 'notSubmitted';
+    this.retake = 'yes';
+  }
 };
 
 module.exports = mongoose.model('report', ReportSchema);
