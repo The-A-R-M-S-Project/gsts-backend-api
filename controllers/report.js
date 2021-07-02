@@ -692,11 +692,16 @@ module.exports = {
       status: 'assignedToExaminer'
     });
 
+    if (examinerReport.status !== 'assignedToExaminer') {
+      return next(new AppError("Cannot remove examiner who has already responded!", 400));
+    }
+
     examinerReport.status = 'withdrawnFromExaminer';
     await examinerReport.save();
 
     res.status(200).json({
       status: 'success',
+
       message: 'Report successfully deleted'
     });
   }),
