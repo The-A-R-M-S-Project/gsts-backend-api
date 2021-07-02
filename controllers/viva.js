@@ -81,13 +81,43 @@ module.exports = {
     for (const member of viva.vivaCommittee) {
       if (member.email === req.body.email) {
         return next(
-          new AppError('Cannot add duplicate email for viva committee member', 404)
+          new AppError('Viva member with this email already exists!', 400)
         );
       }
     }
 
     viva.vivaCommittee.push(filteredBody);
 
+    viva = await viva.save();
+
+    res.status(200).json({
+      status: 'success',
+      viva
+    });
+  }),
+
+  removeVivaCommitteeMember: catchAsync(async (req, res, next) => {
+    let viva = await Viva.findOneAndUpdate(
+      {
+        report: req.params.report_id
+      },
+      { $set: { report: req.params.report_id } },
+      { upsert: true, new: true }
+    ).populate({
+      path: 'report',
+      select: 'status'
+    });
+
+    if (viva.report.status === 'vivaDateSet' || viva.report.status === 'vivaComplete' || viva.report.status === 'complete') {
+      return next(new AppError('Cannot remove viva committee member after viva date has already been set',400));
+    }
+
+    let memberExists = viva.vivaCommittee.some(member => member.email === req.body.email);
+    if (!memberExists) {
+      return next(new AppError('Viva member with that email doesn\'t exist!', 400));
+    }
+
+    viva.vivaCommittee = viva.vivaCommittee.filter(member => member.email !== req.body.email);
     viva = await viva.save();
 
     res.status(200).json({
