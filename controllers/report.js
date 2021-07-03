@@ -27,28 +27,28 @@ const sendPrincipalRequest = async (examiner, password) => {
   if (password) {
     principalRequest = `Dear ${examiner.firstName},
 
-I am Inviting you to assess a student's report for a student of Makerere University;
+    I am Inviting you to assess a student's report for a student of Makerere University;
 
-Login in your dashboard using the following link
-http://161.35.252.183:8020/
+    Login in your dashboard using the following link
+    http://161.35.252.183:8020/
 
-Username: ${examiner.email}
-Password: ${password}
+    Username: ${examiner.email}
+    Password: ${password}
 
-Please update your password on login for improved security reasons.
+    Please update your password on login for improved security reasons.
 
-Kind Regards,
-Pricipal Cedat.`;
+    Kind Regards,
+    Pricipal Cedat.`;
   } else {
     principalRequest = `Dear ${examiner.firstName},
 
-I am Inviting you to assess a student's report for a student of Makerere University.;
+    I am Inviting you to assess a student's report for a student of Makerere University.;
 
-Login in to your dashboard using the following link
-http://161.35.252.183:8020/
+    Login in to your dashboard using the following link
+    http://161.35.252.183:8020/
 
-Kind Regards,
-Pricipal Cedat.`;
+    Kind Regards,
+    Pricipal Cedat.`;
   }
 
   // 1: Create a document
@@ -60,8 +60,8 @@ Pricipal Cedat.`;
   // 3: Create the pdf body
   const pdfBody = `The Pricipal of Cedat is inviting you to assess a student's report for a student of Makerere University
 
-Kind Regards,
-Pricipal Cedat.`;
+  Kind Regards,
+  Principal Cedat.`;
 
   doc.font('Times-Bold');
   doc.fontSize(16);
@@ -94,7 +94,7 @@ Pricipal Cedat.`;
   try {
     await sendEmail({
       email: examiner.email,
-      subject: `Request to assign examiner you to student Report of Makerere University`,
+      subject: `Invitation to assess student's report at Makerere University`,
       message: principalRequest,
       attachments
     });
@@ -644,19 +644,19 @@ module.exports = {
     // check if examiner exists
     let examiner = await Staff.findById(req.body.examiner);
 
-    if (!examiner) {
-      const filteredExaminerObj = filterObj(
-        req.body,
-        'firstName',
-        'lastName',
-        'email',
-        'password',
-        'role',
-        'passwordConfirm',
-        'phoneNumber'
-      );
-      examiner = await Staff.create(filteredExaminerObj);
-    }
+    // if (!examiner) {
+    //   const filteredExaminerObj = filterObj(
+    //     req.body,
+    //     'firstName',
+    //     'lastName',
+    //     'email',
+    //     'password',
+    //     'role',
+    //     'passwordConfirm',
+    //     'phoneNumber'
+    //   );
+    //   examiner = await Staff.create(filteredExaminerObj);
+    // }
 
     // Ensure Dean doesn't make operations to students belonging to other schools
     if (req.user.role === 'dean') {
@@ -724,7 +724,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -738,7 +738,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -763,7 +763,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -777,7 +777,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
