@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
+
 const Report = require('../models/reports');
 const Comment = require('../models/comments');
 const ExaminerReport = require('../models/examiner_report');
@@ -5,6 +9,7 @@ const ReportAssessment = require('../models/report_assessment');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const { Staff } = require('../models/staff');
+const sendEmail = require('./../utils/email');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -12,6 +17,92 @@ const filterObj = (obj, ...allowedFields) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
+};
+
+const sendPrincipalRequest = async (examiner, password) => {
+  const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
+  const pathToMukLog = path.resolve(__dirname, '../assets/private/makererelogo.png');
+  let principalRequest;
+
+  if (password) {
+    principalRequest = `Dear ${examiner.firstName},
+
+I am Inviting you to assess a student's report for a student of Makerere University;
+
+Login in your dashboard using the following link
+http://161.35.252.183:8020/
+
+Username: ${examiner.email}
+Password: ${password}
+
+Please update your password on login for improved security reasons.
+
+Kind Regards,
+Pricipal Cedat.`;
+  } else {
+    principalRequest = `Dear ${examiner.firstName},
+
+I am Inviting you to assess a student's report for a student of Makerere University.;
+
+Login in to your dashboard using the following link
+http://161.35.252.183:8020/
+
+Kind Regards,
+Pricipal Cedat.`;
+  }
+
+  // 1: Create a document
+  const doc = new PDFDocument();
+
+  // 2: Pipe its output somewhere, like to a file or HTTP response
+  doc.pipe(fs.createWriteStream(pathToFile));
+
+  // 3: Create the pdf body
+  const pdfBody = `The Pricipal of Cedat is inviting you to assess a student's report for a student of Makerere University
+
+Kind Regards,
+Pricipal Cedat.`;
+
+  doc.font('Times-Bold');
+  doc.fontSize(16);
+  doc.image(pathToMukLog, 250, 50, { fit: [100, 100] }).text('MAKERERE', 150, 115);
+
+  doc.text('UNIVERSITY', 355, 115);
+  doc.text('', 100, 150);
+
+  doc
+    .font('Times-Roman')
+    .fontSize(20)
+    .text('PRINCIPAL REQUEST TO ASSIGN YOU TO STUDENT REPORT.', { align: 'center' })
+    .moveDown(1);
+
+  doc.fontSize(12);
+
+  // Using a standard PDF font
+  doc.font('Times-Roman').text(pdfBody);
+
+  // Finalize PDF file
+  doc.end();
+
+  const attachments = [
+    {
+      filename: 'principalRequest.pdf',
+      path: pathToFile
+    }
+  ];
+
+  try {
+    await sendEmail({
+      email: examiner.email,
+      subject: `Request to assign examiner you to student Report of Makerere University`,
+      message: principalRequest,
+      attachments
+    });
+  } catch (error) {
+    return error;
+  }
+
+  return 'success';
 };
 
 const guaranteeNoPasswordInfo = (req, res, next) => {
@@ -506,7 +597,6 @@ module.exports = {
     filteredBody.status = 'clearedByExaminer';
     filteredBody.examinerScoreDate = Date.now();
     filteredBody.clearedAt = Date.now();
-    // TODO: Add examinerGrade based on Standard Grading System
 
     examinerReport = await ExaminerReport.findOneAndUpdate(
       { examiner: req.user._id, report: req.params.id },
@@ -552,10 +642,20 @@ module.exports = {
     }
 
     // check if examiner exists
-    const examiner = await Staff.findById(req.body.examiner);
+    let examiner = await Staff.findById(req.body.examiner);
 
     if (!examiner) {
-      return next(new AppError('No examiner found with that id', 404));
+      const filteredExaminerObj = filterObj(
+        req.body,
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'role',
+        'passwordConfirm',
+        'phoneNumber'
+      );
+      examiner = await Staff.create(filteredExaminerObj);
     }
 
     // Ensure Dean doesn't make operations to students belonging to other schools
@@ -624,6 +724,10 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
+        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        if (sendEmailRes !== 'success') {
+          return next(new AppError('There was a problem sending the email', 400));
+        }
       } else {
         examinerReport = await ExaminerReport.findOneAndUpdate(
           {
@@ -634,6 +738,10 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
+        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        if (sendEmailRes !== 'success') {
+          return next(new AppError('There was a problem sending the email', 400));
+        }
       }
     } else if (filteredBody.examinerType === 'external') {
       if (numberOfExternalExaminers > 0) {
@@ -655,6 +763,10 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
+        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        if (sendEmailRes !== 'success') {
+          return next(new AppError('There was a problem sending the email', 400));
+        }
       } else {
         examinerReport = await ExaminerReport.findOneAndUpdate(
           {
@@ -665,6 +777,10 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
+        const sendEmailRes = await sendPrincipalRequest(examiner, req.body.password);
+        if (sendEmailRes !== 'success') {
+          return next(new AppError('There was a problem sending the email', 400));
+        }
       }
     }
 
@@ -693,7 +809,7 @@ module.exports = {
     });
 
     if (examinerReport.status !== 'assignedToExaminer') {
-      return next(new AppError("Cannot remove examiner who has already responded!", 400));
+      return next(new AppError('Cannot remove examiner who has already responded!', 400));
     }
 
     examinerReport.status = 'withdrawnFromExaminer';
@@ -701,8 +817,7 @@ module.exports = {
 
     res.status(200).json({
       status: 'success',
-
-      message: 'Report successfully deleted'
+      message: 'Examiner withdrawn from report'
     });
   }),
 

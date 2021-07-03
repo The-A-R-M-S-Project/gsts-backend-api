@@ -42,6 +42,7 @@ const ReportSchema = new mongoose.Schema({
   reportURL: String,
   resubmittedReportURL: String,
   vivaCommitteeReport: String,
+  principalRequestedExaminer: { type: Boolean, default: false },
   finalReportURL: String,
   complainceReportURL: String,
   finalSubmissionAt: Date,

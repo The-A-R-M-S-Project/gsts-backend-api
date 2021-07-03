@@ -35,9 +35,16 @@ module.exports = {
       path: 'school'
     });
 
-    const report = await (await Report.findById(req.body.report)).populate({
+    const report = await Report.findById(req.body.report).populate({
       path: 'student'
     });
+
+    if (!report) {
+      return next(new AppError('No report found with that id', 404));
+    }
+
+    report.principalRequestedExaminer = true;
+    await report.save();
 
     const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
 

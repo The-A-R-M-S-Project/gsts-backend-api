@@ -32,7 +32,7 @@ router.patch(
 );
 
 router.patch(
-  '/dean/respondToExaminerAssignmentRequest',
+  '/dean/requestExaminer',
   authController.restrictTo('admin', 'principal'),
   controller.respondToExaminerAssignmentRequest
 );
