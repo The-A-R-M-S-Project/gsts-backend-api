@@ -656,6 +656,7 @@ module.exports = {
         'phoneNumber'
       );
       examiner = await Staff.create(filteredExaminerObj);
+      req.body.examiner = examiner._id;
     }
 
     // Ensure Dean doesn't make operations to students belonging to other schools
