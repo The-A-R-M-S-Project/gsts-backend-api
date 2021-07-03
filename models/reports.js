@@ -229,6 +229,8 @@ ReportSchema.methods.calculateFinalGrade = async function() {
     // revert progress back to notSubmitted and move student's data into another folder in server.
     this.status = 'notSubmitted';
     this.retake = 'yes';
+    this.principalRequestedExaminer = false;
+    await ExaminerReport.deleteMany({ report: this._id });
   }
 };
 
