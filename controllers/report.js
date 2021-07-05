@@ -19,37 +19,21 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-const sendPrincipalRequest = async (examiner, password) => {
+const sendExaminerInvitation = async (examiner) => {
   const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
   const pathToMukLog = path.resolve(__dirname, '../assets/private/makererelogo.png');
   let principalRequest;
+    principalRequest = `Hello ${examiner.firstName} ${examiner.lastName},
 
-  if (password) {
-    principalRequest = `Dear ${examiner.firstName},
+    You have been invited to assess a student's report at Makerere University.
 
-    I am Inviting you to assess a student's report for a student of Makerere University;
-
-    Login in your dashboard using the following link
+    Login in to your dashboard using the following link to see further details.
     http://161.35.252.183:8020/
 
-    Username: ${examiner.email}
-    Password: ${password}
-
-    Please update your password on login for improved security reasons.
+    Attached to this email is a letter from the university officially inviting to carry out this role.
 
     Kind Regards,
-    Pricipal Cedat.`;
-  } else {
-    principalRequest = `Dear ${examiner.firstName},
-
-    I am Inviting you to assess a student's report for a student of Makerere University.;
-
-    Login in to your dashboard using the following link
-    http://161.35.252.183:8020/
-
-    Kind Regards,
-    Pricipal Cedat.`;
-  }
+    Principal Cedat`;
 
   // 1: Create a document
   const doc = new PDFDocument();
@@ -58,7 +42,7 @@ const sendPrincipalRequest = async (examiner, password) => {
   doc.pipe(fs.createWriteStream(pathToFile));
 
   // 3: Create the pdf body
-  const pdfBody = `The Pricipal of Cedat is inviting you to assess a student's report for a student of Makerere University
+  const pdfBody = `The College of Design, Engineering, Art and Technology (CEDAT) warmly invite you to assess a student's report.
 
   Kind Regards,
   Principal Cedat.`;
@@ -73,7 +57,7 @@ const sendPrincipalRequest = async (examiner, password) => {
   doc
     .font('Times-Roman')
     .fontSize(20)
-    .text('PRINCIPAL REQUEST TO ASSIGN YOU TO STUDENT REPORT.', { align: 'center' })
+    .text('INVITATION TO ASSESS STUDENT\'S REPORT', { align: 'center' })
     .moveDown(1);
 
   doc.fontSize(12);
@@ -94,7 +78,7 @@ const sendPrincipalRequest = async (examiner, password) => {
   try {
     await sendEmail({
       email: examiner.email,
-      subject: `Invitation to assess student's report at Makerere University`,
+      subject: `Examiner invitation`,
       message: principalRequest,
       attachments
     });
@@ -641,22 +625,8 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
 
-    // check if examiner exists
+    // Fetch examiner
     let examiner = await Staff.findById(req.body.examiner);
-
-    // if (!examiner) {
-    //   const filteredExaminerObj = filterObj(
-    //     req.body,
-    //     'firstName',
-    //     'lastName',
-    //     'email',
-    //     'password',
-    //     'role',
-    //     'passwordConfirm',
-    //     'phoneNumber'
-    //   );
-    //   examiner = await Staff.create(filteredExaminerObj);
-    // }
 
     // Ensure Dean doesn't make operations to students belonging to other schools
     if (req.user.role === 'dean') {
@@ -704,17 +674,21 @@ module.exports = {
     filteredBody.assignedAt = Date.now();
 
     let examinerReport;
+    // If requested to assign as internal
     if (filteredBody.examinerType === 'internal') {
+      // Throw error if trying to assign more than 2 internal examiners
       if (numberOfInternalExaminers > 1) {
         return next(new AppError('Cannot assign more than two internal examiners', 400));
       }
+
       if (isExaminerAssignedAsExternal) {
+        // If examiner already assigned as external, delete their external examiner record...
         await ExaminerReport.deleteOne({
           examinerType: 'external',
           report: filteredBody.report,
           examiner: filteredBody.examiner
         });
-
+        // Register them as an internal examiner on the same report
         examinerReport = await ExaminerReport.findOneAndUpdate(
           {
             examinerType: 'internal',
@@ -724,7 +698,8 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
+
+        const sendEmailRes = await sendExaminerInvitation(examiner);
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -738,7 +713,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
+        const sendEmailRes = await sendExaminerInvitation(examiner);
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -763,7 +738,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
+        const sendEmailRes = await sendExaminerInvitation(examiner);
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
@@ -777,7 +752,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendPrincipalRequest(examiner, "12345678");
+        const sendEmailRes = await sendExaminerInvitation(examiner);
         if (sendEmailRes !== 'success') {
           return next(new AppError('There was a problem sending the email', 400));
         }
