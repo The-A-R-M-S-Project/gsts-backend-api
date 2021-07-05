@@ -49,8 +49,38 @@ class AuthController {
             message: `cannot create a user without a role. Please provide a role`
           });
         }
+        if (req.body.role === 'examiner') {
+          /* Generate random password again for examiner */
+          // Length of password
+          let length = 8;
+          // Character to mix
+          let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          let result = '';
+          for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+          
+          req.body.password = result;
+          req.body.passwordConfirm = result;
 
+          /* Send email to examiner with their credentials */
+          const message = `Hello ${req.body.firstName} ${req.body.lastName}, \n
+          Welcome to GSTS (Graduate Student Tracking System)!\n
+          You have been registered on the GSTS platform as an examiner.\n\n
+          You can log into your dashboard at http://161.35.252.183:8020/ using the following credentials: \n
+          Username: ${req.body.email}
+          Password: ${req.body.password}\n\n
+          You may be invited to assess students' reports so watch out for that email and the notification in your dashboard.\n
+
+          Note: This is an automated email! Please do not reply.\n
+          Regards
+          `;
+          await sendEmail({
+            email: req.body.email,
+            subject: `Welcome to GSTS!`,
+            message: message
+          });
+        }
         user = await this.User.create(req.body);
+        
       } catch (err) {
         // Catch specifically duplicate fields and send details to front-end
         if (err.name === 'MongoError' && err.code === 11000) {
