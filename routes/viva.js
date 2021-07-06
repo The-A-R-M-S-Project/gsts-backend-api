@@ -9,7 +9,7 @@ router.use(AuthProtector());
 
 router.get(
   '/staff/getSetVivaDateStudents',
-  authController.restrictTo('admin', 'dean'),
+  authController.restrictTo('admin', 'dean', 'secretary'),
   controller.getSetVivaDateStudents
 );
 
