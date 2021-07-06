@@ -238,6 +238,11 @@ module.exports = {
       select: 'firstName lastName _id'
     });
 
+    // Delete examiners if the retaker resubmits
+    if (report.retake === "yes") {
+      await ExaminerReport.deleteMany({ report: report._id });
+    }
+
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
 
