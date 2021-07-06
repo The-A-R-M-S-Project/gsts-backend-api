@@ -35,6 +35,10 @@ module.exports = {
       path: 'school'
     });
 
+    if (!dean) {
+      return next(new AppError('There is no dean for this student\'s school!', 404));
+    }
+
     const report = await Report.findById(req.body.report).populate({
       path: 'student'
     });
