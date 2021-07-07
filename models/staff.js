@@ -174,9 +174,15 @@ DeanSchema.methods.getStudents = async function() {
 
 const Dean = Staff.discriminator('dean', DeanSchema, { discriminatorKey: 'role' });
 
-const Examiner = Staff.discriminator('examiner', new mongoose.Schema({}), {
-  discriminatorKey: 'role'
-});
+const Examiner = Staff.discriminator(
+  'examiner',
+  new mongoose.Schema({
+    affiliation: { type: String, required: [true, 'Please provide your affiliation'] }
+  }),
+  {
+    discriminatorKey: 'role'
+  }
+);
 
 const Secretary = Staff.discriminator(
   'secretary',
