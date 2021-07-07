@@ -4,6 +4,7 @@ const PDFDocument = require('pdfkit');
 
 const Report = require('../models/reports');
 const Comment = require('../models/comments');
+const Student = require('../models/students.js');
 const ExaminerReport = require('../models/examiner_report');
 const ReportAssessment = require('../models/report_assessment');
 const catchAsync = require('./../utils/catchAsync');
@@ -295,7 +296,7 @@ module.exports = {
 
     if (report.vivaCommitteeReport === undefined) {
       return next(
-        new AppError('Cannot submit final report without viva Committee Report', 400)
+        new AppError('Cannot submit final report without viva committee report', 400)
       );
     }
 
@@ -308,6 +309,13 @@ module.exports = {
     report.complainceReportURL = req.files.complainceReport[0].location;
 
     await report.save();
+
+    // Register student's academic year of completion
+    let yearOne = new Date().getFullYear();
+    let yearTwo = yearOne - 1;
+    const student = await Student.findByIdAndUpdate(req.params.id, {
+      exitAcademicYear: `${yearTwo}/${yearOne}`
+    }, {new: false});
 
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
