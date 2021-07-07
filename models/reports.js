@@ -99,7 +99,7 @@ ReportSchema.statics.getReportWithExaminerViva = async function(id) {
       });
 
     const viva = await Viva.findOne({ report: report._id })
-      .select('_id vivaEvent vivaScore vivaScoreDate')
+      .select('_id vivaEvent vivaScore vivaGrade vivaScoreDate')
       .populate({ path: 'vivaEvent' });
 
     report.viva = viva;
