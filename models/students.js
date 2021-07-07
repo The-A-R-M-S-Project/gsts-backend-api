@@ -44,6 +44,22 @@ const StudentSchema = new mongoose.Schema(
         message: 'Please enter a valid academic year'
       }
     },
+    exitAcademicYear: {
+      type: String,
+      required: false,
+      validate: {
+        validator: function(year) {
+          const componentYears = year.split('/');
+          const firstYear = parseInt(componentYears[0]);
+          const secondYear = parseInt(componentYears[1]);
+          const currentYear = new Date().getFullYear();
+          const componentYearLogic =
+            secondYear - firstYear === 1 && secondYear <= currentYear + 1;
+          return year.length === 9 && /^\d{4}\/\d{4}$/.test(year) && componentYearLogic;
+        },
+        message: 'Please enter a valid academic year'
+      }
+    },
     passwordConfirm: {
       type: String,
       required: [true, 'Please confirm your password'],
