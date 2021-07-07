@@ -1,12 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const PDFDocument = require('pdfkit');
-
 const { Staff, Principal, Dean } = require('../models/staff');
 const Report = require('../models/reports');
-const sendEmail = require('./../utils/email');
 const School = require('../models/schools');
 const AppError = require('../utils/appError');
+const principalRequest = require('../utils/principalRequest');
 const catchAsync = require('../utils/catchAsync');
 
 const filterObj = (obj, ...allowedFields) => {
@@ -36,7 +32,7 @@ module.exports = {
     });
 
     if (!dean) {
-      return next(new AppError('There is no dean for this student\'s school!', 404));
+      return next(new AppError("There is no dean for this student's school!", 404));
     }
 
     const report = await Report.findById(req.body.report).populate({
@@ -50,63 +46,12 @@ module.exports = {
     report.principalRequestedExaminer = true;
     await report.save();
 
-    const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
+    principalRequest.sendExaminerRequest(dean, report);
 
-    const principalRequest = `Dear ${dean.name},
-
-I am kindly requesting you to provide a list of examiners for ${report.student.name} from the ${dean.school.name};
-
-Kind Regards,
-Pricipal Cedat.`;
-
-    // 1: Create a document
-    const doc = new PDFDocument();
-
-    // 2: Pipe its output somewhere, like to a file or HTTP response
-    doc.pipe(fs.createWriteStream(pathToFile));
-
-    // Embed a font, set the font size, and render some text
-    doc
-      .font('Courier')
-      .fontSize(22)
-      .text('PRINCIPAL REQUEST FOR LIST OF EXAMINERS TO STUDENT.', 100, 50);
-
-    doc.moveDown();
-
-    // Using a standard PDF font
-    doc
-      .font('Times-Roman')
-      .text(principalRequest)
-      .moveDown();
-
-    // Finalize PDF file
-    doc.end();
-
-    const attachments = [
-      {
-        filename: 'principalRequest.pdf',
-        path: pathToFile
-      }
-    ];
-
-    try {
-      await sendEmail({
-        email: dean.email,
-        subject: `Request to assign examiners to students of the ${dean.school.name}`,
-        message: principalRequest,
-        attachments
-      });
-
-      res.status(200).json({
-        status: 'success',
-        message: `Request sent to the Dean of the ${dean.school.name}`
-      });
-    } catch (error) {
-      return next(
-        new AppError('There was an error sending the email. Try again later!'),
-        500
-      );
-    }
+    res.status(200).json({
+      status: 'success',
+      message: `Request sent to the Dean of the ${dean.school.name}`
+    });
   }),
 
   respondToExaminerAssignmentRequest: catchAsync(async (req, res, next) => {

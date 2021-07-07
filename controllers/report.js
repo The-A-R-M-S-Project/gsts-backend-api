@@ -1,7 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const PDFDocument = require('pdfkit');
-
 const Report = require('../models/reports');
 const Comment = require('../models/comments');
 const ExaminerReport = require('../models/examiner_report');
@@ -9,7 +5,7 @@ const ReportAssessment = require('../models/report_assessment');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const { Staff } = require('../models/staff');
-const sendEmail = require('./../utils/email');
+const principalRequest = require('../utils/principalRequest');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -17,76 +13,6 @@ const filterObj = (obj, ...allowedFields) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
-};
-
-const sendExaminerInvitation = async examiner => {
-  const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
-  const pathToMukLog = path.resolve(__dirname, '../assets/private/makererelogo.png');
-  let principalRequest;
-  principalRequest = `Hello ${examiner.firstName} ${examiner.lastName},
-
-    You have been invited to assess a student's report at Makerere University.
-
-    Login in to your dashboard using the following link to see further details.
-    http://161.35.252.183:8020/
-
-    Attached to this email is a letter from the university officially inviting to carry out this role.
-
-    Kind Regards,
-    Principal Cedat`;
-
-  // 1: Create a document
-  const doc = new PDFDocument();
-
-  // 2: Pipe its output somewhere, like to a file or HTTP response
-  doc.pipe(fs.createWriteStream(pathToFile));
-
-  // 3: Create the pdf body
-  const pdfBody = `The College of Design, Engineering, Art and Technology (CEDAT) warmly invite you to assess a student's report.
-
-  Kind Regards,
-  Principal Cedat.`;
-
-  doc.font('Times-Bold');
-  doc.fontSize(16);
-  doc.image(pathToMukLog, 250, 50, { fit: [100, 100] }).text('MAKERERE', 150, 115);
-
-  doc.text('UNIVERSITY', 355, 115);
-  doc.text('', 100, 150);
-
-  doc
-    .font('Times-Roman')
-    .fontSize(20)
-    .text("INVITATION TO ASSESS STUDENT'S REPORT", { align: 'center' })
-    .moveDown(1);
-
-  doc.fontSize(12);
-
-  // Using a standard PDF font
-  doc.font('Times-Roman').text(pdfBody);
-
-  // Finalize PDF file
-  doc.end();
-
-  const attachments = [
-    {
-      filename: 'principalRequest.pdf',
-      path: pathToFile
-    }
-  ];
-
-  try {
-    await sendEmail({
-      email: examiner.email,
-      subject: `Examiner invitation`,
-      message: principalRequest,
-      attachments
-    });
-  } catch (error) {
-    return error;
-  }
-
-  return 'success';
 };
 
 const guaranteeNoPasswordInfo = (req, res, next) => {
@@ -239,7 +165,7 @@ module.exports = {
     });
 
     // Delete examiners if the retaker resubmits
-    if (report.retake === "yes") {
+    if (report.retake === 'yes') {
       await ExaminerReport.deleteMany({ report: report._id });
     }
 
@@ -539,16 +465,20 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('Examiner cannot clear report that isn\'t assigned to them', 400)
+        new AppError("Examiner cannot clear report that isn't assigned to them", 400)
       );
     }
 
     if (examinerReport.status === 'assignedToExaminer') {
-      return next(new AppError('Examiner cannot clear report they did not receive!', 400));
+      return next(
+        new AppError('Examiner cannot clear report they did not receive!', 400)
+      );
     }
 
     if (examinerReport.status === 'clearedByExaminer') {
-      return next(new AppError('Examiner cannot clear report that is already cleared!', 400));
+      return next(
+        new AppError('Examiner cannot clear report that is already cleared!', 400)
+      );
     }
 
     const filteredBody = filterObj(req.body, 'examinerScore');
@@ -707,10 +637,7 @@ module.exports = {
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
 
-        const sendEmailRes = await sendExaminerInvitation(examiner);
-        if (sendEmailRes !== 'success') {
-          return next(new AppError('There was a problem sending the email', 400));
-        }
+        principalRequest.sendExaminerInvitation(examiner);
       } else {
         examinerReport = await ExaminerReport.findOneAndUpdate(
           {
@@ -721,10 +648,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendExaminerInvitation(examiner);
-        if (sendEmailRes !== 'success') {
-          return next(new AppError('There was a problem sending the email', 400));
-        }
+        principalRequest.sendExaminerInvitation(examiner);
       }
     } else if (filteredBody.examinerType === 'external') {
       if (numberOfExternalExaminers > 0) {
@@ -746,10 +670,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendExaminerInvitation(examiner);
-        if (sendEmailRes !== 'success') {
-          return next(new AppError('There was a problem sending the email', 400));
-        }
+        principalRequest.sendExaminerInvitation(examiner);
       } else {
         examinerReport = await ExaminerReport.findOneAndUpdate(
           {
@@ -760,10 +681,7 @@ module.exports = {
           { $set: filteredBody },
           { upsert: true, new: true }
         ).populate({ path: 'report', select: 'status _id title' });
-        const sendEmailRes = await sendExaminerInvitation(examiner);
-        if (sendEmailRes !== 'success') {
-          return next(new AppError('There was a problem sending the email', 400));
-        }
+        principalRequest.sendExaminerInvitation(examiner);
       }
     }
 
