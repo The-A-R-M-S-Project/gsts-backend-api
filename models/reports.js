@@ -230,7 +230,6 @@ ReportSchema.methods.calculateFinalGrade = async function() {
     this.status = 'notSubmitted';
     this.retake = 'yes';
     this.principalRequestedExaminer = false;
-    await ExaminerReport.deleteMany({ report: this._id });
   }
 };
 

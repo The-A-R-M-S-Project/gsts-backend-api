@@ -238,6 +238,11 @@ module.exports = {
       select: 'firstName lastName _id'
     });
 
+    // Delete examiners if the retaker resubmits
+    if (report.retake === "yes") {
+      await ExaminerReport.deleteMany({ report: report._id });
+    }
+
     res.status(200).json({ status: 'success', message: 'Report Submitted', report });
   }),
 
@@ -524,7 +529,7 @@ module.exports = {
     const report = await Report.findById(req.params.id).select('status grade finalScore');
 
     if (!report) {
-      return next(new AppError('could not find a report with that ID', 404));
+      return next(new AppError('Could not find a report with that ID', 404));
     }
 
     let examinerReport = await ExaminerReport.findOne({
@@ -534,16 +539,16 @@ module.exports = {
 
     if (!examinerReport) {
       return next(
-        new AppError('examiner cannot receive Report that isnt assigned to them', 400)
+        new AppError('Examiner cannot clear report that isn\'t assigned to them', 400)
       );
     }
 
     if (examinerReport.status === 'assignedToExaminer') {
-      return next(new AppError('acknowledge receipt of report first', 400));
+      return next(new AppError('Examiner cannot clear report they did not receive!', 400));
     }
 
     if (examinerReport.status === 'clearedByExaminer') {
-      return next(new AppError('report already cleared', 400));
+      return next(new AppError('Examiner cannot clear report that is already cleared!', 400));
     }
 
     const filteredBody = filterObj(req.body, 'examinerScore');
@@ -564,7 +569,7 @@ module.exports = {
 
     if (!Object.prototype.hasOwnProperty.call(filteredBody, 'examinerScore')) {
       return next(
-        new AppError('please provide a score for the report before clearing it', 400)
+        new AppError('Please provide a score for the report before clearing it', 400)
       );
     }
 
