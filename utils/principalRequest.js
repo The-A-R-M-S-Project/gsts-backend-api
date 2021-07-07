@@ -133,18 +133,18 @@ Pricipal Cedat.`;
     }
     return 'success';
   },
-  withdrawExaminerRequest: async (dean, report) => {
-    const principalRequest = `Dear ${dean.name},
+  withdrawExaminerRequest: async (examiner, report) => {
+    const principalRequest = `Dear ${examiner.name},
 
-You have been withdrawn from assessment of a student's report at Makerere University for the student with name ${report.student.name}.
+You have been withdrawn from assessment of a student's report at Makerere University for the student with name ${report.student.firstName} ${report.student.lastName}.
 
 Kind Regards,
 Pricipal Cedat.`;
 
     try {
       await sendEmail({
-        email: dean.email,
-        subject: `Request to assign examiners to students of the ${dean.school.name}`,
+        email: examiner.email,
+        subject: `Notification of withdrawal from student report`,
         message: principalRequest
       });
     } catch (error) {

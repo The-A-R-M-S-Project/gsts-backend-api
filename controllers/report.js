@@ -707,7 +707,18 @@ module.exports = {
       report: req.params.id,
       examiner: req.params.examinerId,
       status: 'assignedToExaminer'
-    });
+    })
+      .populate({
+        path: 'examiner'
+      })
+      .populate({
+        path: 'report',
+        populate: [
+          {
+            path: 'student'
+          }
+        ]
+      });
 
     if (examinerReport.status !== 'assignedToExaminer') {
       return next(new AppError('Cannot remove examiner who has already responded!', 400));
@@ -715,6 +726,11 @@ module.exports = {
 
     examinerReport.status = 'withdrawnFromExaminer';
     await examinerReport.save();
+
+    principalRequest.withdrawExaminerRequest(
+      examinerReport.examiner,
+      examinerReport.report
+    );
 
     res.status(200).json({
       status: 'success',
