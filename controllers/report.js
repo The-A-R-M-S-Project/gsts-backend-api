@@ -19,11 +19,11 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-const sendExaminerInvitation = async (examiner) => {
+const sendExaminerInvitation = async examiner => {
   const pathToFile = path.resolve(__dirname, '../assets/private/principalRequest.pdf');
   const pathToMukLog = path.resolve(__dirname, '../assets/private/makererelogo.png');
   let principalRequest;
-    principalRequest = `Hello ${examiner.firstName} ${examiner.lastName},
+  principalRequest = `Hello ${examiner.firstName} ${examiner.lastName},
 
     You have been invited to assess a student's report at Makerere University.
 
@@ -57,7 +57,7 @@ const sendExaminerInvitation = async (examiner) => {
   doc
     .font('Times-Roman')
     .fontSize(20)
-    .text('INVITATION TO ASSESS STUDENT\'S REPORT', { align: 'center' })
+    .text("INVITATION TO ASSESS STUDENT'S REPORT", { align: 'center' })
     .moveDown(1);
 
   doc.fontSize(12);
@@ -625,8 +625,11 @@ module.exports = {
       return next(new AppError('No report found with that id', 404));
     }
 
-    // Fetch examiner
-    let examiner = await Staff.findById(req.body.examiner);
+    const examiner = await Staff.findById(req.body.examiner);
+
+    if (!examiner) {
+      return next(new AppError('could not find a examiner with that ID', 404));
+    }
 
     // Ensure Dean doesn't make operations to students belonging to other schools
     if (req.user.role === 'dean') {
