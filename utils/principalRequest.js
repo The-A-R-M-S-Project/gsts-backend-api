@@ -9,15 +9,15 @@ module.exports = {
     const pathToMukLog = path.resolve(__dirname, '../assets/private/makererelogo.png');
     const principalRequest = `Dear ${examiner.firstName} ${examiner.lastName},
       
-You have been invited to assess a student's report at Makerere University.
+      You have been invited to assess a student's report at Makerere University.
 
-Login in to your dashboard using the following link to see further details.
-http://161.35.252.183:8020/
+      Login in to your dashboard using the following link to see further details.
+      http://161.35.252.183:8020/
 
-Attached to this email is a letter from the university officially inviting to carry out this role.
+      Attached to this email is a letter from the university officially inviting to carry out this role.
 
-Kind Regards,
-Principal Cedat`;
+      Kind Regards,
+      Principal Cedat`;
 
     // 1: Create a document
     const doc = new PDFDocument();
@@ -28,8 +28,8 @@ Principal Cedat`;
     // 3: Create the pdf body
     const pdfBody = `The College of Design, Engineering, Art and Technology (CEDAT) warmly invite you to assess a student's report.
 
-Kind Regards,
-Principal Cedat.`;
+      Kind Regards,
+      Principal Cedat.`;
 
     doc.font('Times-Bold');
     doc.fontSize(16);
@@ -78,10 +78,10 @@ Principal Cedat.`;
 
     const principalRequest = `Dear ${dean.name},
 
-I am kindly requesting you to provide a list of examiners for ${report.student.name} from the ${dean.school.name};
+      I am kindly requesting you to provide a list of examiners for ${report.student.name} from the ${dean.school.name};
 
-Kind Regards,
-Pricipal Cedat.`;
+      Kind Regards,
+      Pricipal Cedat.`;
 
     // 1: Create a document
     const doc = new PDFDocument();
@@ -135,11 +135,11 @@ Pricipal Cedat.`;
   },
   withdrawExaminerRequest: async (examiner, report) => {
     const principalRequest = `Dear ${examiner.name},
+      Your invitation to assess ${report.student.firstName} ${report.student.lastName}'s report has been withdrawn.
+      Apologies for any inconveniences caused. 
 
-You have been withdrawn from assessment of a student's report at Makerere University for the student with name ${report.student.firstName} ${report.student.lastName}.
-
-Kind Regards,
-Pricipal Cedat.`;
+      Kind Regards,
+      Pricipal Cedat.`;
 
     try {
       await sendEmail({
