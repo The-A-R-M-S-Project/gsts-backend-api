@@ -574,11 +574,6 @@ module.exports = {
       return next(new AppError('could not find a examiner with that ID', 404));
     }
 
-    // Ensure Dean doesn't make operations to students belonging to other schools
-    if (req.user.role === 'dean') {
-      return next(new AppError('Dean cant assign Student report belonging to other schools', 400));
-    }
-
     // only assign examiner for report that has been submitted
     if (report.status === 'notSubmitted') {
       return next(new AppError('cannot assign examiner to unsubmitted report', 400));
@@ -704,6 +699,60 @@ module.exports = {
       status: 'success',
       examinerReport: examinerReport
     });
+  }),
+
+  inviteExaminer: catchAsync(async (req, res, next) => {
+    const report = await Report.findById(req.params.id)
+      .select('status examiner student')
+      .populate({
+        path: 'student'
+      });
+      
+    if (!report) {
+      return next(new AppError('No report found with that ID', 404));
+    }
+
+    const examiner = await Staff.findById(req.body.examiner);
+    console.log("Examiner: ", req.body.examiner);
+
+    if (!examiner) {
+      return next(new AppError('could not find a examiner with that ID', 404));
+    }
+
+    // Only send invitation for an already submitted report
+    if (report.status === 'notSubmitted') {
+      return next(new AppError('cannot assign examiner to unsubmitted report', 400));
+    }
+
+    const examinerReport = await ExaminerReport.findOne({
+      report: req.params.id,
+      examiner: req.body.examiner,
+      status: 'assignedToExaminer'
+    })
+      .populate({
+        path: 'examiner'
+      })
+      .populate({
+        path: 'report',
+        populate: [
+          {
+            path: 'student'
+          }
+        ]
+      });
+
+    //Ensure examiner is attached to this report and that their status is "assignedToExaminer"
+    if (!examinerReport) {
+      return next(new AppError("Ensure the examiner has been invited to assess this report and they haven't responded!", 400));
+    }
+
+    principalRequest.sendExaminerInvitation(examinerReport.examiner);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Invitation successfully sent!'
+    });
+    
   }),
 
   removeExaminer: catchAsync(async (req, res, next) => {

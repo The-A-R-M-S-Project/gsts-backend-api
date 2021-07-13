@@ -109,8 +109,13 @@ router.patch(
 
 router.delete(
   '/staff/examiner/remove/:id/:examinerId',
-  authController.restrictTo('admin', 'principal', 'dean'),
+  authController.restrictTo('admin', 'principal'),
   controller.removeExaminer
+);
+router.post(
+  '/staff/examiner/invite/:id',
+  authController.restrictTo('admin', 'principal'),
+  controller.inviteExaminer
 );
 router.get(
   '/staff/examiner/status',
