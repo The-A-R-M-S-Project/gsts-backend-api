@@ -576,11 +576,7 @@ module.exports = {
 
     // Ensure Dean doesn't make operations to students belonging to other schools
     if (req.user.role === 'dean') {
-      if (!req.user.school.equals(report.student.school)) {
-        return next(
-          new AppError('Dean cant assign Student report belonging to other schools', 400)
-        );
-      }
+      return next(new AppError('Dean cant assign Student report belonging to other schools', 400));
     }
 
     // only assign examiner for report that has been submitted
